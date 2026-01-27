@@ -1,0 +1,42 @@
+{
+  "name": "@cbeta/backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CBETA 后端服务",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "lint": "eslint src",
+    "test": "vitest",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx src/db/seed.ts"
+  },
+  "keywords": [
+    "cbeta",
+    "backend",
+    "api"
+  ],
+  "dependencies": {
+    "@cbeta/scripts": "workspace:*",
+    "@hono/node-server": "^1.0.0",
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.0.0",
+    "opencc-js": "^1.0.5",
+    "postgres": "^3.4.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "drizzle-kit": "^0.31.8",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,114 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap");
+
+/* 罕见汉字字体 - CJK 扩展 B 区 (U+20000-U+2A6DF) */
+@font-face {
+  font-family: "HanaMin";
+  src: url("/fonts/HanaMinB.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+20000-U+2A6DF;
+}
+@import "tailwindcss";
+@source "./**/*.{ts,tsx,js,jsx}";
+
+:root {
+  --font-display: "Noto Serif SC", "Source Han Serif SC", "HanaMin", "Songti SC", "STSong", "SimSun", serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "HanaMin", "Songti SC", "STSong", "SimSun", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft Yahei", sans-serif;
+  --ink: #2b2620;
+  --ink-muted: #5d5348;
+  --paper: #f7f1e5;
+  --accent: #b45309;
+  --accent-2: #0f766e;
+  --accent-3: #be123c;
+  font-family: var(--font-serif);
+  line-height: 1.9;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-serif);
+  color: var(--ink);
+  background-color: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  /* overflow-x: hidden 会破坏 sticky 定位，改用 overscroll-behavior */
+  overscroll-behavior-x: none;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: rgba(180, 83, 9, 0.2);
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes loading-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+/* 首页排版优化 - 工具类 */
+@layer utilities {
+  /* 卡片悬停动画 */
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  /* 装饰分隔线 */
+  .divider-ornament {
+    @apply relative flex items-center;
+  }
+  .divider-ornament::before {
+    content: '';
+    @apply flex-1 border-t border-[#e8dcc8];
+  }
+  .divider-ornament::after {
+    content: '◆';
+    @apply mx-4 text-xs text-[#caa46a];
+  }
+}

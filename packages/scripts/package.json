@@ -1,0 +1,42 @@
+{
+  "name": "@cbeta/scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CBETA XML 解析和转换脚本",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src",
+    "test": "vitest",
+    "parse": "tsx src/cli.ts",
+    "convert": "tsx src/batch-convert.ts",
+    "simplify": "tsx src/simplify-convert.ts",
+    "extract": "tsx src/extract-metadata.ts",
+    "ai-extract": "tsx src/ai-extract-metadata.ts",
+    "import-db": "tsx src/import-to-db.ts",
+    "import-dict": "tsx src/import-dictionary.ts"
+  },
+  "keywords": [
+    "cbeta",
+    "xml",
+    "parser",
+    "tei"
+  ],
+  "dependencies": {
+    "fast-xml-parser": "^4.5.0",
+    "js-mdict": "^6.0.8",
+    "opencc-js": "^1.0.5",
+    "pg": "^8.17.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.16.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  }
+}

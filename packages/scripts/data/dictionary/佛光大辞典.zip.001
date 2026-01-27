@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>找不到页面 - FreeMdict Forum</title>
+  <meta name="description" content="">
+  <meta name="generator" content="Discourse 3.6.0.beta3-latest - https://github.com/discourse/discourse version ced334aedfc69d1d752819ede75939922f8ef60b">
+<link rel="icon" type="image/png" href="https://forumcdn.freemdict.com/uploads/default/optimized/1X/2180ed6a0534a9290a33abd13226859a832f6207_2_32x32.png">
+<link rel="apple-touch-icon" type="image/png" href="https://forumcdn.freemdict.com/uploads/default/optimized/1X/2180ed6a0534a9290a33abd13226859a832f6207_2_180x180.png">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ededed">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111111">
+
+<meta name="color-scheme" content="light dark">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+<link rel="canonical" href="http://forum.freemdict.com/uploads/short-url/7DcNPE9EaYOMD9GqZ8F2BQnPpxX.001" />
+
+<link rel="search" type="application/opensearchdescription+xml" href="http://forum.freemdict.com/opensearch.xml" title="FreeMdict Forum Search">
+
+  <link href="https://forumcdn.freemdict.com/stylesheets/color_definitions_scheme_2_3_8d3053506316c2a727bebc6a0f4561de71dd8da7.css?__ws=forum.freemdict.com" media="(prefers-color-scheme: light)" rel="stylesheet" class="light-scheme" data-scheme-id="2"/><link href="https://forumcdn.freemdict.com/stylesheets/color_definitions_scheme_1_3_4e9af954d2f8f7a3b5ed58042d140dc3b3d7e55f.css?__ws=forum.freemdict.com" media="(prefers-color-scheme: dark)" rel="stylesheet" class="dark-scheme" data-scheme-id="1"/>
+
+<link href="https://forumcdn.freemdict.com/stylesheets/common_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common"  />
+
+  <link href="https://forumcdn.freemdict.com/stylesheets/mobile_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="mobile"  />
+  <link href="https://forumcdn.freemdict.com/stylesheets/desktop_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="desktop"  />
+
+
+
+    <link href="https://forumcdn.freemdict.com/stylesheets/checklist_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="checklist"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-akismet_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-akismet"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-cakeday_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-cakeday"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-data-explorer_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-data-explorer"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-details_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-details"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-follow_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-follow"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-formatting-toolbar_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-formatting-toolbar"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-gamification_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-gamification"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-lazy-videos_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-lazy-videos"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-local-dates_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-local-dates"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-math_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-math"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-narrative-bot_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-narrative-bot"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-post-voting_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-post-voting"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-presence_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-presence"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-reactions_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-reactions"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-solved_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-solved"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-templates_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-templates"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-tooltips_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-tooltips"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-topic-voting_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-topic-voting"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-user-notes_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-user-notes"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-yearly-review_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="discourse-yearly-review"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/docker_manager_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="docker_manager"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/footnote_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="footnote"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/poll_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="poll"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/spoiler-alert_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="spoiler-alert"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-gamification_mobile_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="discourse-gamification_mobile"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-post-voting_mobile_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="discourse-post-voting_mobile"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-reactions_mobile_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="discourse-reactions_mobile"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-solved_mobile_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="discourse-solved_mobile"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-topic-voting_mobile_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="discourse-topic-voting_mobile"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-gamification_desktop_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="discourse-gamification_desktop"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-post-voting_desktop_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="discourse-post-voting_desktop"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-reactions_desktop_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="discourse-reactions_desktop"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/discourse-topic-voting_desktop_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="discourse-topic-voting_desktop"  />
+    <link href="https://forumcdn.freemdict.com/stylesheets/poll_desktop_8c0bfaadf9d97b6bd1109ba22931701acb19fa4a.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="poll_desktop"  />
+
+  <link href="https://forumcdn.freemdict.com/stylesheets/common_theme_60_ccb552028be7d00cf59d7c794377cd77189e3278.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="60" data-theme-name="category badge styles"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_8_6ec1aa3303c00911c7f38ce0b7d9b1f908971fe8.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="8" data-theme-name="discotoc"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_46_3ba6b88cb08698a8b2cf387e6cae35cc322d3601.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="46" data-theme-name="discourse clickable topic"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_47_5544cd070d612177f5e18b269f07d475c4651332.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="47" data-theme-name="discourse docs card filter"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_13_87388a5b3d7ae704142e436f9e8bb95a5ce87b6d.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="13" data-theme-name="easy footer"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_9_a874baab253a3dc29937a0ace382d33b43517f38.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="9" data-theme-name="header links theme component"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_15_dc0c06c9827bc0bfce985b96d48e587250c31bd5.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="15" data-theme-name="header submenus"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_11_4eb08fb8b68bd590f3568a8fe7ae9dc6658e3e82.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="11" data-theme-name="new topic button"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_53_8750bbfd1aced4345ed44bd62c27745672d5e161.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="53" data-theme-name="post views counter"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_33_5a5e622363fd50a83bd497a6a25c68312fb0f802.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="33" data-theme-name="scroll to top"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_19_4080089bc7d02403cb356793f62160782bdac261.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="19" data-theme-name="scrollable post content"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_14_b6c2797e74df84dc1ebb95c45acb77ff19e7206c.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="14" data-theme-name="slick - gallery component"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_22_10ce41f501d95f509b5abc700850d24f10246902.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="22" data-theme-name="tag icons"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_20_bf637f197989e121c23a86726a873991810db673.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="20" data-theme-name="tiles - gallery component"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_42_8ac14c5445071cf3adfce093224b8184d1a5a637.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="42" data-theme-name="trust level avatar flair"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_25_13a1a7940b8cbc49ec14ca636f26c2c66db3267f.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="25" data-theme-name="user card directory"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/common_theme_3_7e14ba41932c27daf0aabb92ca9f12ba5d748185.css?__ws=forum.freemdict.com" media="all" rel="stylesheet" data-target="common_theme" data-theme-id="3" data-theme-name="蓝黑"/>
+    <link href="https://forumcdn.freemdict.com/stylesheets/mobile_theme_15_638a298a05ba60d223cb79085786da6dff635a50.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="mobile_theme" data-theme-id="15" data-theme-name="header submenus"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/mobile_theme_33_8b4bfcc1ae3bccff5d922ff0f5f665c132f4b888.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="mobile_theme" data-theme-id="33" data-theme-name="scroll to top"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/mobile_theme_3_115ea41fe11cb3644ad90a878385f2d88bcc085c.css?__ws=forum.freemdict.com" media="(max-width: 39.99999rem)" rel="stylesheet" data-target="mobile_theme" data-theme-id="3" data-theme-name="蓝黑"/>
+    <link href="https://forumcdn.freemdict.com/stylesheets/desktop_theme_47_68d6931189ce1d9c606db95f5ade64d7a4ec1ad9.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="desktop_theme" data-theme-id="47" data-theme-name="discourse docs card filter"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/desktop_theme_15_bcd0d06a87700c124e197285e3f84036865b8f9a.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="desktop_theme" data-theme-id="15" data-theme-name="header submenus"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/desktop_theme_33_5eb3954c20b69ee2099b0665cc99478ecada1bf9.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="desktop_theme" data-theme-id="33" data-theme-name="scroll to top"/>
+<link href="https://forumcdn.freemdict.com/stylesheets/desktop_theme_3_126b68bcde3296217b163dd158b1a5647c5fc35c.css?__ws=forum.freemdict.com" media="(min-width: 40rem)" rel="stylesheet" data-target="desktop_theme" data-theme-id="3" data-theme-name="蓝黑"/>
+
+  
+
+    <script defer="" src="https://forumcdn.freemdict.com/theme-javascripts/f45ed9c3e4fb116accb2f68d1aa82d13f9f88f4f.js?__ws=forum.freemdict.com" data-theme-id="3" nonce="sfwztBtPSD60F4DkTcrWPNLB7"></script>
+
+<link rel="modulepreload" href="https://forumcdn.freemdict.com/theme-javascripts/a8c74756d725c88121199816ea981692a6da3fcf.js?__ws=forum.freemdict.com" data-theme-id="3" nonce="sfwztBtPSD60F4DkTcrWPNLB7">
+
+
+    <meta id="discourse-error" data-discourse-error="true">
+
+
+    
+
+
+
+  <script defer src="https://forumcdn.freemdict.com/assets/pageview-941a854e.js" data-discourse-entrypoint="pageview" nonce="sfwztBtPSD60F4DkTcrWPNLB7"></script>
+
+</head>
+<body class="no-ember ">
+    
+
+    
+
+    
+
+  <section id='main'>
+    
+  <header class="d-header">
+    <div class="wrap">
+      <div class="contents clearfix">
+        <div class="title">
+          <a href="/">
+              <picture>
+                <img src="https://forumcdn.freemdict.com/uploads/default/original/1X/afcc41c41a6c220fc82f04c4b402732d24a57020.png" alt="FreeMdict Forum" id="site-logo" />
+              </picture>
+          </a>
+        </div>
+        <div class="panel clearfix">
+            <span class='header-buttons'>
+              <span class='auth-buttons'>
+                  <a href="/signup" class='btn btn-text btn-primary btn-small sign-up-button'>注册</a>
+                <a href="/login" class='btn btn-icon-text btn-primary btn-small login-button'><svg class="fa d-icon svg-icon svg-node" aria-hidden="true"><svg id="user" viewBox="0 0 448 512">
+  <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/>
+</svg></svg>
+登录</a>
+              </span>
+            </span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <div id="main-outlet" class="wrap not-found-container">
+      
+
+
+
+<div class="page-not-found">
+
+<div class="heading">
+<div class="illustration-not-found">
+  <svg viewBox="0 0 219 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="101" cy="163" rx="96" ry="7" fill="var(--secondary)"/>
+<path d="M149.726 24.5874C151.174 24.9801 152.037 26.4529 151.644 27.9005C151.374 28.8958 150.563 29.6472 149.558 29.8602L147.46 30.4324L147.331 30.9074C147.221 31.3146 146.796 31.5392 146.411 31.4349C146.004 31.3244 145.773 30.9218 145.884 30.5147L146.129 29.6099C146.197 29.3611 146.371 29.1655 146.634 29.0912L149.201 28.4033C149.715 28.2998 150.074 27.9602 150.197 27.5078C150.368 26.8744 149.967 26.2069 149.333 26.035L146.89 25.3723C146.483 25.2618 146.081 25.4926 145.97 25.8997C145.872 26.2616 145.441 26.5089 145.056 26.4046C144.649 26.2941 144.418 25.8915 144.522 25.507C144.848 24.3081 146.084 23.5993 147.283 23.9246L149.726 24.5874ZM146.117 32.5206C146.614 32.6556 146.905 33.1959 146.776 33.6709C146.641 34.1685 146.123 34.4652 145.626 34.3302C145.105 34.1891 144.825 33.7002 144.966 33.18C145.101 32.6823 145.596 32.3795 146.117 32.5206Z" fill="var(--tertiary-high)"/>
+<path d="M58.1071 115.793C58.4765 115.94 58.7754 116.22 58.9328 116.586L61.7934 123.239C62.1267 124.014 61.7615 124.886 61.0079 125.21L55.4958 127.58C54.7206 127.913 53.8585 127.569 53.5253 126.794L49.9703 118.526C49.6463 117.772 49.9807 116.889 50.7558 116.555L54.653 114.88C55.0191 114.722 55.4284 114.725 55.7979 114.872L58.1071 115.793ZM60.7599 123.683L60.7383 123.693L58.0721 117.492L56.3711 118.223C55.9836 118.39 55.5525 118.218 55.3859 117.83L54.6545 116.129L51.2094 117.61C51.0157 117.694 50.9297 117.909 51.0131 118.103L54.5588 126.35C54.6421 126.543 54.8576 126.629 55.0514 126.546L60.5635 124.176C60.7358 124.102 60.8432 123.877 60.7599 123.683ZM54.037 122.288C53.9166 122.008 54.0301 121.679 54.3316 121.549L57.4321 120.216C57.712 120.096 58.0507 120.231 58.1711 120.51C58.3007 120.812 58.1564 121.129 57.8765 121.249L54.7759 122.583C54.4745 122.712 54.1666 122.589 54.037 122.288ZM58.3209 122.283C58.6008 122.163 58.9395 122.298 59.0598 122.578C59.1894 122.879 59.0451 123.196 58.7652 123.316L55.6647 124.65C55.3632 124.779 55.0553 124.656 54.9257 124.355C54.8054 124.075 54.9189 123.746 55.2203 123.616L58.3209 122.283Z" fill="var(--tertiary-high)"/>
+<path d="M10.6672 15.165C10.8922 15.5133 10.7695 15.9899 10.4043 16.1864C10.2331 16.2875 10.0339 16.3088 9.85236 16.2621C9.64809 16.2095 9.48403 16.0947 9.3829 15.9234L7.61313 12.9267L4.59371 14.6906C4.42247 14.7918 4.22336 14.8131 4.04178 14.7664C3.83751 14.7138 3.67345 14.599 3.57232 14.4277C3.34737 14.0794 3.47006 13.6027 3.83524 13.4063L6.83781 11.6139L5.06804 8.61714C4.84308 8.26882 4.96577 7.79217 5.33095 7.59575C5.67928 7.37079 6.15593 7.49349 6.35234 7.85867L8.14481 10.8612L11.1415 9.09146C11.4899 8.86651 11.9665 8.9892 12.1629 9.35438C12.3879 9.70271 12.2652 10.1794 11.9 10.3758L8.89744 12.1682L10.6672 15.165Z" fill="#var(--tertiary-high)"/>
+<circle cx="73" cy="47" r="46" fill="var(--secondary)" stroke="var(--tertiary-high)" stroke-width="2"/>
+<rect x="101" y="85.2603" width="14" height="31" transform="rotate(-47.1283 101 85.2603)" fill="var(--tertiary-medium)"/>
+<rect x="113" y="106.626" width="29.5091" height="65.3415" rx="6" transform="rotate(-47.1283 113 106.626)" fill="var(--tertiary-high)"/>
+<circle cx="73" cy="47" r="37.5" fill="var(--tertiary-medium)" stroke="var(--tertiary-high)"/>
+<circle cx="60.5" cy="36.5" r="4" fill="var(--secondary)" stroke="var(--secondary)"/>
+<circle cx="85.5" cy="36.5" r="4" fill="var(--secondary)" stroke="var(--secondary)"/>
+<path d="M58 61.8011C66.2918 53.492 75.574 55.8621 83 63.0002" stroke="var(--secondary)" stroke-width="2"/>
+<path d="M200.473 105.782C200.473 95.2311 201.557 82.8566 193.945 74.5196C189.225 69.3502 174.712 64.2654 174.712 64.2654C163.984 62.2082 157.391 67.0725 163.108 77.871C165.857 83.0642 172.298 87.4386 177.964 88.4503C186.94 90.0531 198.843 86.3663 205.425 80.1219C214.619 71.3993 223.721 36.595 211.728 27" stroke="var(--tertiary-high)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 4"/>
+</svg>
+</div>
+
+<div class="title_wrapper">
+  <h1 class="title">糟糕！该页面不存在或者是一个不公开页面。</h1>
+  <a class="btn btn-primary btn-large --home" href="http://forum.freemdict.com"> <svg class="fa d-icon svg-icon svg-node" aria-hidden="true"><svg id="house" viewBox="0 0 576 512">
+  <path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/>
+</svg></svg>
+ Take me home
+  </a>
+  </div>
+</div>
+  <div class="row">
+    <div class="page-not-found-search">
+      <form action='/search' id='discourse-search'>
+        <label for="search-input">Try searching instead?</label>
+        <div class="search-input__wrapper">
+        <input type="text" id="search-input" class="search-input" placeholder="Search topics by title or keywords…" name="q" value="">
+        <div class="search-input__icon" aria-hidden="true"><svg class="fa d-icon svg-icon svg-node" aria-hidden="true"><svg id="magnifying-glass" viewBox="0 0 512 512">
+  <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+</svg></svg>
+</div>
+        </div>
+        <button class="btn btn-primary">搜索</button>
+      </form>
+    </div>
+  </div>
+
+  <script defer src="https://forumcdn.freemdict.com/assets/onpopstate-handler-41316d0a.js" data-discourse-entrypoint="onpopstate-handler" nonce="sfwztBtPSD60F4DkTcrWPNLB7"></script>
+
+
+</div>
+
+
+
+<div class="row page-not-found-topics">
+    <div class="popular-topics">
+      <h2 class="popular-topics-title">热门话题</h2>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42555">Cobuild8</a><a class='badge-category__wrapper ' href='/c/12-category/12'><span data-category-id='12' style='--category-badge-color: #12A89D; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>英汉</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42494">Cobuild American</a><a class='badge-category__wrapper ' href='/c/12-category/12'><span data-category-id='12' style='--category-badge-color: #12A89D; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>英汉</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42714">Vocabulary.com Lite / VC Examples</a><a class='badge-category__wrapper ' href='/c/13-category/13'><span data-category-id='13' style='--category-badge-color: #25AAE2; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>英英</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42674">Ced14</a><a class='badge-category__wrapper ' href='/c/13-category/13'><span data-category-id='13' style='--category-badge-color: #25AAE2; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>英英</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42856">三省堂 全訳読解古語辞典 第五版</a><a class='badge-category__wrapper ' href='/c/17-category/17'><span data-category-id='17' style='--category-badge-color: #9EB83B; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>日语</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42948">牛津初阶英汉双解词典第5版</a><a class='badge-category__wrapper ' href='/c/12-category/12'><span data-category-id='12' style='--category-badge-color: #12A89D; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>英汉</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42473">Mdx文件详解：mdx 2.0 及 mdd 2.0（经验证）</a><a class='badge-category__wrapper ' href='/c/makedict/5'><span data-category-id='5' style='--category-badge-color: #0088CC; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' title='制作电子词典的技巧'><span class='badge-category__name'>技术交流与词典编修</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42679">《韩中双解韩国语学习词典》pdf及ocr文本数据</a><a class='badge-category__wrapper ' href='/c/20-category/20'><span data-category-id='20' style='--category-badge-color: #7d565F; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>小语种</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42454">[Dean] 朗文 LLA 文本转语音</a><a class='badge-category__wrapper ' href='/c/22-category/22'><span data-category-id='22' style='--category-badge-color: #0088CC; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>词典及语言学习交流</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42442">《新时代俄汉详解大词典》 OCR文本数据（有5页缺失）</a><a class='badge-category__wrapper ' href='/c/20-category/20'><span data-category-id='20' style='--category-badge-color: #7d565F; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>小语种</span></span></a>
+        </div>
+      <a href="/top" class="btn btn-default">更多&hellip;</a>
+    </div>
+    <div class="recent-topics">
+      <h2 class="recent-topics-title">Recent topics</h2>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42998">《てにをは辞典》和《てにをは連想表現辞典》ocr文本数据</a><a class='badge-category__wrapper ' href='/c/17-category/17'><span data-category-id='17' style='--category-badge-color: #9EB83B; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>日语</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42997">魁北克法语俗语词典Dictionnaire des expressions québécoises</a><a class='badge-category__wrapper ' href='/c/18-category/18'><span data-category-id='18' style='--category-badge-color: #B3B5B4; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>法语</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42995">且将新火试新茶 制定新的词典格式而不是继续使用mdx</a><a class='badge-category__wrapper ' href='/c/makedict/5'><span data-category-id='5' style='--category-badge-color: #0088CC; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' title='制作电子词典的技巧'><span class='badge-category__name'>技术交流与词典编修</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42994">GoldenDict ng 最新的几版词典词性标签显示出错怎么回事呢？</a><a class='badge-category__wrapper ' href='/c/dicttool/10'><span data-category-id='10' style='--category-badge-color: #8C6238; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' title='学习、词典、计算工具的使用经验，使用心得，增强方法、使用疑惑等'><span class='badge-category__name'>软件经验交流展望</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42992">写了一个OCR文本和图像的三方对比校对工具</a><a class='badge-category__wrapper ' href='/c/makedict/5'><span data-category-id='5' style='--category-badge-color: #0088CC; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' title='制作电子词典的技巧'><span class='badge-category__name'>技术交流与词典编修</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42987">《辭源》音序版正式出版兩年了，有沒有pdf和mdd和mdx的資源下載？</a><a class='badge-category__wrapper ' href='/c/findmaterial/11'><span data-category-id='11' style='--category-badge-color: #3AB54A; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' title='发布资源求助，资源寻找，但是不能刷屏、短时间多开帖子'><span class='badge-category__name'>资源求助</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42986">Where to upload the 72GB MDX of the English Wikipedia?</a><a class='badge-category__wrapper ' href='/c/21-category/21'><span data-category-id='21' style='--category-badge-color: #F2B880; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>词典装饰排版交流分享</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42983">推荐“屏幕取词”词典 （Scan Dictionary）</a><a class='badge-category__wrapper ' href='/c/14-category/14'><span data-category-id='14' style='--category-badge-color: #0E76BD; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' ><span class='badge-category__name'>英汉汉英</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42979">用python写了个自己用的PC端词典，需要的可以分享</a><a class='badge-category__wrapper ' href='/c/makedict/5'><span data-category-id='5' style='--category-badge-color: #0088CC; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' title='制作电子词典的技巧'><span class='badge-category__name'>技术交流与词典编修</span></span></a>
+        </div>
+        <div class='not-found-topic'>
+          <a href="/t/topic/42976">拉取了朗文官方最新的内容</a><a class='badge-category__wrapper ' href='/c/makedict/5'><span data-category-id='5' style='--category-badge-color: #0088CC; --category-badge-text-color: #FFFFFF;' data-drop-close='true' class='badge-category --style-square ' title='制作电子词典的技巧'><span class='badge-category__name'>技术交流与词典编修</span></span></a>
+        </div>
+      <a href="/latest" class="btn btn-default">更多&hellip;</a>
+    </div>
+</div>
+
+
+
+
+    </div>
+  </section>
+
+    
+    <script defer="" src="https://forumcdn.freemdict.com/theme-javascripts/b5d8390c81608a1a2baf2fb6f15fef114f1c7ee7.js?__ws=forum.freemdict.com" data-theme-id="33" nonce="sfwztBtPSD60F4DkTcrWPNLB7"></script>
+
+<form class="move-up" action="#up">
+<button>
+<svg class="fa d-icon d-icon-chevron-up svg-icon svg-node" aria-hidden="true"><use xlink:href="#chevron-up"></use></svg>
+</button>
+</form>
+
+    
+    
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "yoho-cbeta",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CBETA 佛典工具集 - 包含脚本、后端和前端",
+  "scripts": {
+    "dev:backend": "pnpm --filter @cbeta/backend dev",
+    "dev:frontend": "pnpm --filter @cbeta/frontend dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test"
+  },
+  "keywords": ["cbeta", "buddhist", "tei", "xml"],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
