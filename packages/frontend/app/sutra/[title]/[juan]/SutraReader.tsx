@@ -831,156 +831,178 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
           <div className="space-y-4">
             {/* 区块一：分卷/分品 */}
             {(juanCount > 1 || fullToc.some(item => item.type === '品' || item.type === 'pin')) && (
-              <div className="bg-white/60 rounded-2xl p-4 shadow-sm border border-[#e8e0d5]/50">
-                {/* Tab 切换 */}
-                <div className="flex items-center gap-1.5 mb-4 pb-3 border-b border-[#e8e0d5]">
+              <div className="rounded-2xl shadow-sm border border-[#e8e0d5]/50 overflow-hidden">
+                {/* Tab 切换 - 融合顶部圆角 */}
+                <div className="flex bg-[#f5f2ed]">
                   {juanCount > 1 && (
                     <button
                       onClick={() => setJuanPinTab('juan')}
-                      className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+                      className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
                         juanPinTab === 'juan'
-                          ? 'bg-[#3d3229] text-white shadow-md'
-                          : 'text-[#6a5a4a] hover:bg-[#f0ebe5]'
+                          ? 'bg-white/80 text-[#3d3229]'
+                          : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
                       }`}
                     >
                       分卷
+                      {juanPinTab === 'juan' && (
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#3d3229] rounded-full"></span>
+                      )}
                     </button>
                   )}
                   {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
                     <button
                       onClick={() => setJuanPinTab('pin')}
-                      className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+                      className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
                         juanPinTab === 'pin'
-                          ? 'bg-[#3d3229] text-white shadow-md'
-                          : 'text-[#6a5a4a] hover:bg-[#f0ebe5]'
+                          ? 'bg-white/80 text-[#3d3229]'
+                          : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
                       }`}
                     >
                       分品
+                      {juanPinTab === 'pin' && (
+                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#3d3229] rounded-full"></span>
+                      )}
                     </button>
                   )}
-                  <span className="ml-auto text-xs text-[#a09080] bg-[#f5f2ed] px-2 py-1 rounded-full">
-                    {juanPinTab === 'juan' ? juanCount : fullToc.filter(item => item.type === '品' || item.type === 'pin').length}
-                  </span>
                 </div>
 
-                {/* 分卷内容 */}
-                {juanPinTab === 'juan' && juanCount > 1 && (
-                  <div className="space-y-1 max-h-[320px] overflow-auto pr-1 scrollbar-thin">
-                    {Array.from({ length: juanCount }, (_, i) => i + 1).map((juan) => (
-                      <button
-                        key={juan}
-                        onClick={() => handleJuanChange(juan)}
-                        className={`w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all ${
-                          currentJuan === juan
-                            ? 'bg-[#3d3229] text-white shadow-md font-medium'
-                            : 'text-[#5a4a3a] hover:bg-[#f5f2ed]'
-                        }`}
-                      >
-                        第{juan}卷
-                      </button>
-                    ))}
+                {/* 内容区域 */}
+                <div className="bg-white/60 p-4">
+                  {/* 数量指示 */}
+                  <div className="flex justify-end mb-3">
+                    <span className="text-xs text-[#a09080]">
+                      共 {juanPinTab === 'juan' ? juanCount : fullToc.filter(item => item.type === '品' || item.type === 'pin').length} 项
+                    </span>
                   </div>
-                )}
 
-                {/* 分品内容 */}
-                {juanPinTab === 'pin' && (
-                  <div ref={pinListRef} className="space-y-1 max-h-[320px] overflow-auto pr-1 scrollbar-thin">
-                    {fullToc.length > 0 ? (
-                      fullToc
-                        .filter((item) => item.type === '品' || item.type === 'pin')
-                        .map((item, idx) => {
-                          // 判断是否为当前品（考虑当前卷）
-                          const isCurrentPin = currentPin === item.title ||
-                            (item.juanNumber === currentJuan && currentPin &&
-                              (extractChinesePart(item.title).includes(extractChinesePart(currentPin)) ||
-                               extractChinesePart(currentPin).includes(extractChinesePart(item.title))))
-                          // 判断是否为当前卷的品
-                          const isInCurrentJuan = item.juanNumber === currentJuan
+                  {/* 分卷内容 */}
+                  {juanPinTab === 'juan' && juanCount > 1 && (
+                    <div className="space-y-1 max-h-[300px] overflow-auto pr-1 scrollbar-thin">
+                      {Array.from({ length: juanCount }, (_, i) => i + 1).map((juan) => (
+                        <button
+                          key={juan}
+                          onClick={() => handleJuanChange(juan)}
+                          className={`w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all ${
+                            currentJuan === juan
+                              ? 'bg-[#3d3229] text-white shadow-md font-medium'
+                              : 'text-[#5a4a3a] hover:bg-[#f5f2ed]'
+                          }`}
+                        >
+                          第{juan}卷
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-                          return (
-                            <button
-                              key={idx}
-                              data-pin-title={item.title}
-                              onClick={() => {
-                                const targetJuan = item.juanNumber || 1
-                                const encodedTitle = encodeURIComponent(item.title)
+                  {/* 分品内容 */}
+                  {juanPinTab === 'pin' && (
+                    <div ref={pinListRef} className="space-y-1 max-h-[300px] overflow-auto pr-1 scrollbar-thin">
+                      {fullToc.length > 0 ? (
+                        fullToc
+                          .filter((item) => item.type === '品' || item.type === 'pin')
+                          .map((item, idx) => {
+                            // 判断是否为当前品（考虑当前卷）
+                            const isCurrentPin = currentPin === item.title ||
+                              (item.juanNumber === currentJuan && currentPin &&
+                                (extractChinesePart(item.title).includes(extractChinesePart(currentPin)) ||
+                                 extractChinesePart(currentPin).includes(extractChinesePart(item.title))))
+                            // 判断是否为当前卷的品
+                            const isInCurrentJuan = item.juanNumber === currentJuan
 
-                                // 设置点击标记，阻止滚动事件覆盖选中状态
-                                isUserClickingRef.current = true
+                            return (
+                              <button
+                                key={idx}
+                                data-pin-title={item.title}
+                                onClick={() => {
+                                  const targetJuan = item.juanNumber || 1
+                                  const encodedTitle = encodeURIComponent(item.title)
 
-                                // 立即更新选中状态（先选中）
-                                setCurrentPin(item.title)
+                                  // 设置点击标记，阻止滚动事件覆盖选中状态
+                                  isUserClickingRef.current = true
 
-                                if (targetJuan !== currentJuan) {
-                                  router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
-                                } else {
-                                  // 直接滚动，不更新 URL（后滚动）
-                                  const headingElements = document.querySelectorAll('h3')
-                                  const itemChinese = extractChinesePart(item.title)
-                                  for (let i = 0; i < headingElements.length; i++) {
-                                    const headingText = headingElements[i].textContent?.trim() || ''
-                                    const headingChinese = extractChinesePart(headingText)
-                                    if (itemChinese && headingChinese &&
-                                        (headingChinese === itemChinese ||
-                                         headingChinese.includes(itemChinese) ||
-                                         itemChinese.includes(headingChinese))) {
-                                      headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                      break
+                                  // 立即更新选中状态（先选中）
+                                  setCurrentPin(item.title)
+
+                                  if (targetJuan !== currentJuan) {
+                                    router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
+                                  } else {
+                                    // 直接滚动，不更新 URL（后滚动）
+                                    const headingElements = document.querySelectorAll('h3')
+                                    const itemChinese = extractChinesePart(item.title)
+                                    for (let i = 0; i < headingElements.length; i++) {
+                                      const headingText = headingElements[i].textContent?.trim() || ''
+                                      const headingChinese = extractChinesePart(headingText)
+                                      if (itemChinese && headingChinese &&
+                                          (headingChinese === itemChinese ||
+                                           headingChinese.includes(itemChinese) ||
+                                           itemChinese.includes(headingChinese))) {
+                                        headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                        break
+                                      }
                                     }
                                   }
-                                }
 
-                                // 滚动完成后（约 500ms）恢复滚动监听
-                                setTimeout(() => {
-                                  isUserClickingRef.current = false
-                                }, 500)
-                              }}
-                              className={`w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all truncate ${
-                                isCurrentPin
-                                  ? 'bg-[#3d3229] text-white shadow-md font-medium'
-                                  : isInCurrentJuan
-                                    ? 'text-[#3d3229] hover:bg-[#f5f2ed] font-medium'
-                                    : 'text-[#8a7a6a] hover:bg-[#f5f2ed]'
-                              }`}
-                              title={item.title}
-                            >
-                              {item.title}
-                            </button>
-                          )
-                        })
-                    ) : (
-                      <div className="text-sm text-[#a09080] py-6 text-center">暂无品目</div>
-                    )}
-                  </div>
-                )}
+                                  // 滚动完成后（约 500ms）恢复滚动监听
+                                  setTimeout(() => {
+                                    isUserClickingRef.current = false
+                                  }, 500)
+                                }}
+                                className={`w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all truncate ${
+                                  isCurrentPin
+                                    ? 'bg-[#3d3229] text-white shadow-md font-medium'
+                                    : isInCurrentJuan
+                                      ? 'text-[#3d3229] hover:bg-[#f5f2ed] font-medium'
+                                      : 'text-[#8a7a6a] hover:bg-[#f5f2ed]'
+                                }`}
+                                title={item.title}
+                              >
+                                {item.title}
+                              </button>
+                            )
+                          })
+                      ) : (
+                        <div className="text-sm text-[#a09080] py-6 text-center">暂无品目</div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
             {/* 区块二：相关/人物 */}
-            <div className="bg-white/60 rounded-2xl p-4 shadow-sm border border-[#e8e0d5]/50">
-              {/* Tab 切换 */}
-              <div className="flex items-center gap-1.5 mb-4 pb-3 border-b border-[#e8e0d5]">
+            <div className="rounded-2xl shadow-sm border border-[#e8e0d5]/50 overflow-hidden">
+              {/* Tab 切换 - 融合顶部圆角 */}
+              <div className="flex bg-[#f5f2ed]">
                 <button
                   onClick={() => setRelatedTab('related')}
-                  className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+                  className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
                     relatedTab === 'related'
-                      ? 'bg-[#3d3229] text-white shadow-md'
-                      : 'text-[#6a5a4a] hover:bg-[#f0ebe5]'
+                      ? 'bg-white/80 text-[#3d3229]'
+                      : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
                   }`}
                 >
                   相关
+                  {relatedTab === 'related' && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#3d3229] rounded-full"></span>
+                  )}
                 </button>
                 <button
                   onClick={() => setRelatedTab('persons')}
-                  className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
+                  className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
                     relatedTab === 'persons'
-                      ? 'bg-[#3d3229] text-white shadow-md'
-                      : 'text-[#6a5a4a] hover:bg-[#f0ebe5]'
+                      ? 'bg-white/80 text-[#3d3229]'
+                      : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
                   }`}
                 >
                   人物
+                  {relatedTab === 'persons' && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#3d3229] rounded-full"></span>
+                  )}
                 </button>
               </div>
+
+              {/* 内容区域 */}
+              <div className="bg-white/60 p-4">
 
               {/* 相关内容 */}
               {relatedTab === 'related' && (
@@ -1104,6 +1126,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                   )}
                 </div>
               )}
+              </div>
             </div>
           </div>
         </aside>
