@@ -20,10 +20,39 @@ const extractChinesePart = (title: string): string => {
   return chineseMatches ? chineseMatches.join('') : title
 }
 
+// 辅助函数：提取品的序号（支持阿拉伯数字和中文数字）
+const extractPinNumber = (title: string): number | null => {
+  // 匹配 "1 序品" 格式的阿拉伯数字
+  const arabicMatch = title.match(/^(\d+)\s/)
+  if (arabicMatch) return parseInt(arabicMatch[1], 10)
+
+  // 匹配 "第一" "第二" 等中文数字
+  const chineseNumbers: Record<string, number> = {
+    '一': 1, '二': 2, '三': 3, '四': 4, '五': 5,
+    '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
+    '十一': 11, '十二': 12, '十三': 13, '十四': 14, '十五': 15,
+    '十六': 16, '十七': 17, '十八': 18, '十九': 19, '二十': 20,
+    '二十一': 21, '二十二': 22, '二十三': 23, '二十四': 24, '二十五': 25,
+    '二十六': 26, '二十七': 27, '二十八': 28,
+  }
+  const chineseMatch = title.match(/第([一二三四五六七八九十]+)/)
+  if (chineseMatch) {
+    return chineseNumbers[chineseMatch[1]] || null
+  }
+
+  return null
+}
+
 // 辅助函数：检查两个标题是否匹配（支持部分匹配）
 const isTitleMatch = (headingText: string, tocTitle: string): boolean => {
+  // 空字符串不匹配
+  if (!headingText || !tocTitle) return false
+
   const headingChinese = extractChinesePart(headingText)
   const tocChinese = extractChinesePart(tocTitle)
+
+  // 提取后为空也不匹配
+  if (!headingChinese || !tocChinese) return false
 
   // 直接相等
   if (headingChinese === tocChinese) return true
@@ -40,6 +69,17 @@ const isTitleMatch = (headingText: string, tocTitle: string): boolean => {
   if (headingBase && tocBase) {
     if (tocBase.includes(headingBase)) return true
     if (headingBase.includes(tocBase)) return true
+  }
+
+  // 特殊情况：通过序号匹配（"品第一" 匹配 "1 序品"）
+  // 如果正文标题是 "品第X" 格式，且 toc 标题是 "X 某品" 格式
+  const headingNum = extractPinNumber(headingText)
+  const tocNum = extractPinNumber(tocTitle)
+  if (headingNum !== null && tocNum !== null && headingNum === tocNum) {
+    // 序号相同，检查是否都包含"品"字
+    if (headingText.includes('品') && tocTitle.includes('品')) {
+      return true
+    }
   }
 
   return false
@@ -109,9 +149,13 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   }>({ translations: [], commentaries: [], related: [] })
   const [loadingRelated, setLoadingRelated] = useState(false)
   const [relatedPersons, setRelatedPersons] = useState<Array<{ name: string; role?: string; dynasty?: string }>>([])
+  // 标记相关数据是否已完成首次加载
+  const [relatedDataLoaded, setRelatedDataLoaded] = useState(false)
 
   // 用 ref 跟踪 fullToc 是否已加载，避免切换分卷时重复更新造成闪动
   const fullTocLoadedRef = useRef(false)
+  // 用 ref 跟踪相关数据是否已加载，避免重复请求
+  const relatedLoadedRef = useRef(false)
 
   const loadJuan = useCallback(async (juan: number) => {
     setLoading(true)
@@ -140,6 +184,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
   // 加载相关经书
   useEffect(() => {
+    // 如果已加载过，不再重复加载
+    if (relatedLoadedRef.current) return
+
     const loadRelated = async () => {
       setLoadingRelated(true)
       try {
@@ -191,6 +238,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
           }
 
           setRelatedSutras({ translations, commentaries, related })
+          relatedLoadedRef.current = true
 
           // 加载相关人物
           if (data.relatedPersons && data.relatedPersons.length > 0) {
@@ -226,6 +274,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
         console.error('加载相关经书失败:', err)
       } finally {
         setLoadingRelated(false)
+        setRelatedDataLoaded(true)
       }
     }
     loadRelated()
@@ -436,7 +485,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                   分卷
                 </button>
               )}
-              {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
+              {juanCount > 1 && (
                 <button
                   onClick={() => {
                     setMobileTocTab('pin')
@@ -527,15 +576,11 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                             if (targetJuan !== currentJuan) {
                               router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
                             } else {
+                              // 使用 isTitleMatch 查找匹配的标题
                               const headingElements = document.querySelectorAll('h3')
-                              const itemChinese = extractChinesePart(item.title)
                               for (let i = 0; i < headingElements.length; i++) {
                                 const headingText = headingElements[i].textContent?.trim() || ''
-                                const headingChinese = extractChinesePart(headingText)
-                                if (itemChinese && headingChinese &&
-                                    (headingChinese === itemChinese ||
-                                     headingChinese.includes(itemChinese) ||
-                                     itemChinese.includes(headingChinese))) {
+                                if (isTitleMatch(headingText, item.title)) {
                                   headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
                                   break
                                 }
@@ -637,8 +682,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       </div>
                     )}
 
-                    {/* 无数据提示 */}
-                    {relatedSutras.translations.length === 0 &&
+                    {/* 无数据提示 - 只在数据加载完成后显示 */}
+                    {relatedDataLoaded &&
+                      relatedSutras.translations.length === 0 &&
                       relatedSutras.commentaries.length === 0 &&
                       relatedSutras.related.length === 0 && (
                         <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无相关经书</div>
@@ -674,9 +720,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       )}
                     </Link>
                   ))
-                ) : (
+                ) : relatedDataLoaded ? (
                   <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无相关人物</div>
-                )}
+                ) : null}
               </div>
             )}
             </div>
@@ -759,51 +805,43 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
         {/* 右侧：目录导航 */}
         <aside className="hidden lg:block w-[300px] shrink-0 sticky top-[84px] h-[calc(100vh-108px)] overflow-auto scrollbar-thin">
           <div className="space-y-4">
-            {/* 区块一：分卷/分品 */}
-            {(juanCount > 1 || fullToc.some(item => item.type === '品' || item.type === 'pin')) && (
+            {/* 区块一：分卷/分品 - 只要有多卷就显示此区块 */}
+            {juanCount > 1 && (
               <div className="rounded-2xl shadow-sm border border-[#e8e0d5]/50 overflow-hidden">
                 {/* Tab 切换 - 融合顶部圆角 */}
                 <div className="flex bg-[#f5f2ed]">
-                  {juanCount > 1 && (
-                    <button
-                      onClick={() => setJuanPinTab('juan')}
-                      className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
-                        juanPinTab === 'juan'
-                          ? 'bg-white/80 text-[#3d3229]'
-                          : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
-                      }`}
-                    >
-                      分卷
-                      {juanPinTab === 'juan' && (
-                        <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
-                      )}
-                    </button>
-                  )}
-                  {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
-                    <button
-                      onClick={() => setJuanPinTab('pin')}
-                      className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
-                        juanPinTab === 'pin'
-                          ? 'bg-white/80 text-[#3d3229]'
-                          : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
-                      }`}
-                    >
-                      分品
-                      {juanPinTab === 'pin' && (
-                        <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
-                      )}
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setJuanPinTab('juan')}
+                    className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
+                      juanPinTab === 'juan'
+                        ? 'bg-white/80 text-[#3d3229]'
+                        : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
+                    }`}
+                  >
+                    分卷
+                    <span className="ml-1 text-xs text-[#a09080]">({juanCount})</span>
+                    {juanPinTab === 'juan' && (
+                      <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setJuanPinTab('pin')}
+                    className={`flex-1 px-4 py-3 text-sm font-medium transition-all relative ${
+                      juanPinTab === 'pin'
+                        ? 'bg-white/80 text-[#3d3229]'
+                        : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
+                    }`}
+                  >
+                    分品
+                    <span className="ml-1 text-xs text-[#a09080]">({fullToc.filter(item => item.type === '品' || item.type === 'pin').length})</span>
+                    {juanPinTab === 'pin' && (
+                      <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
+                    )}
+                  </button>
                 </div>
 
                 {/* 内容区域 */}
                 <div className="bg-white/60 p-4">
-                  {/* 数量指示 */}
-                  <div className="flex justify-end mb-3">
-                    <span className="text-xs text-[#a09080]">
-                      共 {juanPinTab === 'juan' ? juanCount : fullToc.filter(item => item.type === '品' || item.type === 'pin').length} 项
-                    </span>
-                  </div>
 
                   {/* 分卷内容 */}
                   {juanPinTab === 'juan' && juanCount > 1 && (
@@ -843,15 +881,11 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                                   if (targetJuan !== currentJuan) {
                                     router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
                                   } else {
+                                    // 使用 isTitleMatch 查找匹配的标题
                                     const headingElements = document.querySelectorAll('h3')
-                                    const itemChinese = extractChinesePart(item.title)
                                     for (let i = 0; i < headingElements.length; i++) {
                                       const headingText = headingElements[i].textContent?.trim() || ''
-                                      const headingChinese = extractChinesePart(headingText)
-                                      if (itemChinese && headingChinese &&
-                                          (headingChinese === itemChinese ||
-                                           headingChinese.includes(itemChinese) ||
-                                           itemChinese.includes(headingChinese))) {
+                                      if (isTitleMatch(headingText, item.title)) {
                                         headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
                                         break
                                       }
@@ -916,10 +950,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               {/* 相关内容 */}
               {relatedTab === 'related' && (
                 <div className="space-y-4 max-h-[400px] overflow-auto pr-1 scrollbar-thin">
-                  {loadingRelated ? (
-                    <div className="text-sm text-[#a09080] py-6 text-center">加载中...</div>
-                  ) : (
-                    <>
+                  <>
                       {/* 同本异译 */}
                       {relatedSutras.translations.length > 0 && (
                         <div>
@@ -994,23 +1025,21 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                         </div>
                       )}
 
-                      {/* 无数据 */}
-                      {relatedSutras.translations.length === 0 &&
+                      {/* 无数据 - 只在数据加载完成后显示 */}
+                      {relatedDataLoaded &&
+                        relatedSutras.translations.length === 0 &&
                         relatedSutras.commentaries.length === 0 &&
                         relatedSutras.related.length === 0 && (
                           <div className="text-sm text-[#a09080] py-6 text-center">暂无相关经书</div>
                         )}
                     </>
-                  )}
                 </div>
               )}
 
               {/* 人物内容 */}
               {relatedTab === 'persons' && (
                 <div className="space-y-1 max-h-[400px] overflow-auto pr-1 scrollbar-thin">
-                  {loadingRelated ? (
-                    <div className="text-sm text-[#a09080] py-6 text-center">加载中...</div>
-                  ) : relatedPersons.length > 0 ? (
+                  {relatedPersons.length > 0 ? (
                     relatedPersons.map((person, idx) => (
                       <Link
                         key={idx}
@@ -1030,9 +1059,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                         )}
                       </Link>
                     ))
-                  ) : (
+                  ) : relatedDataLoaded ? (
                     <div className="text-sm text-[#a09080] py-6 text-center">暂无相关人物</div>
-                  )}
+                  ) : null}
                 </div>
               )}
               </div>
