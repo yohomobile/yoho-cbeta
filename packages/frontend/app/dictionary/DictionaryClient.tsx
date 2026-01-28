@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Header from '../components/Header'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api'
 
@@ -306,29 +306,10 @@ function DictionaryClientInner({
 
   return (
     <div className="relative min-h-screen text-[color:var(--ink)] bg-[radial-gradient(circle_at_top,_rgba(15,118,110,0.18),transparent_45%),radial-gradient(circle_at_85%_15%,_rgba(190,18,60,0.12),transparent_50%),linear-gradient(180deg,_#fbf7f0_0%,_#efe4d2_100%)]">
-      {/* 头部 - 与首页一致 */}
-      <header className="sticky top-0 z-50 border-b border-white/40 bg-[#2a1f16]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3 px-3 py-3 sm:px-4">
-          <Link href="/" className="flex items-center gap-2 text-[#fff4e0]">
-            <span className="shrink-0 text-2xl" role="img" aria-hidden="true">📿</span>
-            <span className="text-sm sm:text-base font-display tracking-wide">佛典数据库</span>
-          </Link>
-          <div className="flex items-center gap-4 text-xs text-[#f6dfbe]">
-            <Link
-              href="/"
-              className="rounded-full border border-white/20 bg-white/10 px-3 py-1 hover:bg-white/20 transition-colors"
-            >
-              经文
-            </Link>
-            <span className="rounded-full border border-amber-400/40 bg-amber-400/20 px-3 py-1">
-              词典
-            </span>
-            <div className="hidden sm:block rounded-full border border-white/20 bg-white/10 px-3 py-1">
-              收录 {totalCount.toLocaleString()} 条
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header
+        activeNav="dictionary"
+        stats={{ label: '收录', count: totalCount }}
+      />
 
       <div className="max-w-[1200px] mx-auto flex min-h-[calc(100vh-48px)]">
         {/* 左侧面板 */}
@@ -622,11 +603,7 @@ export default function DictionaryClient(props: DictionaryClientProps) {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-[linear-gradient(180deg,_#fbf7f0_0%,_#efe4d2_100%)]">
-        <header className="sticky top-0 z-50 border-b border-white/40 bg-[#2a1f16]/90 backdrop-blur-md">
-          <div className="max-w-[1600px] mx-auto px-4 h-12 flex items-center">
-            <span className="text-lg font-serif text-white/90">佛典数据库</span>
-          </div>
-        </header>
+        <Header activeNav="dictionary" showNav={false} />
         <div className="flex items-center justify-center h-[calc(100vh-48px)]">
           <div className="w-8 h-8 border-3 border-[#0f766e] border-t-transparent rounded-full animate-spin" />
         </div>

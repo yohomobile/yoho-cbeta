@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import type { PersonDetail } from '../../data/types'
+import Header from '../../components/Header'
 
 // 角色类型显示名称
 const roleTypeLabels: Record<string, string> = {
@@ -160,20 +161,12 @@ export default function PersonClient({ person }: Props) {
   return (
     <div className="relative min-h-screen text-[color:var(--ink)] bg-[radial-gradient(circle_at_top,_rgba(15,118,110,0.18),transparent_45%),radial-gradient(circle_at_80%_20%,_rgba(190,18,60,0.12),transparent_50%),linear-gradient(180deg,_#fbf7f0_0%,_#efe4d2_100%)]">
       <div className="relative">
-        <header className="sticky top-0 z-50 border-b border-white/40 bg-[#2a1f16]/90 backdrop-blur-md">
-          <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3 px-4 py-3">
-            <Link
-              href="/"
-              className="rounded-full border border-white/30 bg-white/10 px-3 py-2 text-xs text-[#fff4e0] transition hover:bg-white/20"
-            >
-              首页
-            </Link>
-            <h1 className="text-sm sm:text-base font-display tracking-wide text-[#fff4e0]">
-              {person.name}
-            </h1>
-            <div className="w-[52px]" />
-          </div>
-        </header>
+        <Header
+          activeNav="person"
+          mobileCenterContent={
+            <span className="text-sm font-display tracking-wide truncate">{person.name}</span>
+          }
+        />
 
         <main className="relative mx-auto max-w-[1200px] px-4 py-6 sm:py-8">
           {/* 人物头像和名字 */}

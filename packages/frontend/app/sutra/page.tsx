@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Header from '../components/Header'
 
 const API_BASE = process.env.API_BASE || 'http://localhost:3001'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://cbeta.yohomobile.dev'
@@ -92,33 +93,7 @@ export default async function SutraPage({ searchParams }: PageProps) {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(205,186,156,0.45),transparent_55%),radial-gradient(circle_at_85%_18%,_rgba(156,130,98,0.22),transparent_50%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(90deg,_rgba(120,102,77,0.08)_1px,_transparent_1px),linear-gradient(180deg,_rgba(120,102,77,0.08)_1px,_transparent_1px)] bg-[length:48px_48px]" />
 
-      <header className="sticky top-0 z-50 border-b border-white/40 bg-[#2a1f16]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3 px-3 py-3 sm:px-4">
-          <Link href="/" className="flex items-center gap-2 text-[#fff4e0] hover:opacity-80 transition">
-            <span className="shrink-0 text-2xl" role="img" aria-hidden="true">📿</span>
-            <span className="text-sm sm:text-base font-display tracking-wide">佛典数据库</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-4 text-xs text-[#f6dfbe]">
-            <span className="rounded-full border border-amber-400/40 bg-amber-400/20 px-3 py-1">
-              经文
-            </span>
-            <Link
-              href="/dictionary"
-              className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[#fff4e0] transition hover:bg-white/20"
-            >
-              词典
-            </Link>
-          </div>
-          <div className="flex items-center md:hidden">
-            <Link
-              href="/dictionary"
-              className="rounded-full border border-white/30 bg-white/10 px-3 py-2 text-xs text-[#fff4e0] transition hover:bg-white/20"
-            >
-              词典
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header activeNav="sutra" />
 
       <main className="relative mx-auto max-w-[1200px] px-4 pb-16 pt-12">
         <section className="rounded-[28px] border border-[#e6d7c1] bg-white/85 px-6 py-8 shadow-[0_25px_70px_-50px_rgba(118,92,61,0.6)] backdrop-blur-md sm:px-10">

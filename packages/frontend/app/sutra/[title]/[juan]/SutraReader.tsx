@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import type { SutraMeta, Chapter, Block, InlineNode } from '../../../data/types'
 import { parseJuanContent } from '../../../data/cbetaParser'
+import Header from '../../../components/Header'
 
 type SutraReaderProps = {
   sutra: SutraMeta
@@ -549,35 +550,29 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   return (
     <div className="min-h-screen bg-[#f8f5f0]">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-white/40 bg-[#2a1f16]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-3 px-3 py-3 sm:px-4">
-          {/* Logo 和 佛典数据库 */}
-          <Link href="/" className="flex items-center gap-2 text-[#fff4e0] shrink-0">
-            <span className="shrink-0 text-2xl" role="img" aria-hidden="true">📿</span>
-            <span className="text-sm font-display tracking-wide">佛典数据库</span>
-          </Link>
-          {/* 移动端：显示标题和卷号 */}
-          <div className="lg:hidden flex flex-col justify-center items-center text-[#fff4e0] min-w-0 absolute left-1/2 -translate-x-1/2">
+      <Header
+        activeNav="sutra"
+        showNav={false}
+        mobileCenterContent={
+          <>
             <span className="text-sm font-display tracking-wide truncate leading-tight">{sutra.title}</span>
             {juanCount > 1 && (
               <span className="text-[10px] text-[#d4c4a8]">第 {currentJuan} / {juanCount} 卷</span>
             )}
-          </div>
-          {/* 目录按钮 */}
-          <div className="flex items-center gap-2 text-xs text-[#f6dfbe] shrink-0">
-            {/* 移动端目录按钮 */}
-            <button
-              onClick={() => setShowToc(!showToc)}
-              className="lg:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
-              title="目录"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </header>
+          </>
+        }
+        rightContent={
+          <button
+            onClick={() => setShowToc(!showToc)}
+            className="lg:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
+            title="目录"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        }
+      />
 
       {/* 移动端目录面板 - 仅在移动端显示 */}
       {showToc && (
