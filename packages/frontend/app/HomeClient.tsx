@@ -17,16 +17,6 @@ const popularDictionary = [
   { term: '菩萨', description: '觉有情' },
 ]
 
-const dynastyLinks = [
-  { name: '东汉', query: '东汉' },
-  { name: '三国', query: '三国' },
-  { name: '西晋', query: '西晋' },
-  { name: '东晋', query: '东晋' },
-  { name: '南北朝', query: '南北朝' },
-  { name: '隋', query: '隋' },
-  { name: '唐', query: '唐' },
-  { name: '宋', query: '宋' },
-]
 
 type SearchResults = {
   query: string
@@ -308,14 +298,14 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     查看全部 →
                   </Link>
                 </header>
-                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-2 sm:grid-cols-2">
                   {popularTexts.map((item) => (
                     <article key={item.id}>
                       <Link
                         href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                        className="group flex items-baseline justify-between gap-2 rounded-lg border border-[#e8e0d5] bg-white px-3 py-2 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa]"
+                        className="group flex h-10 items-center justify-between gap-3 rounded-lg border border-[#e8e0d5] bg-white px-3 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa]"
                       >
-                        <h3 className="text-[15px] text-[#3d3229] group-hover:text-[#2a1f16]">
+                        <h3 className="truncate text-[15px] text-[#3d3229] group-hover:text-[#2a1f16]">
                           {item.alias || item.title}
                         </h3>
                         {item.author && (
@@ -327,9 +317,8 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                 </div>
               </section>
 
-              {/* 右侧：热门词条 + 朝代浏览 */}
-              <aside className="space-y-8 lg:col-span-2">
-                {/* 热门词条 */}
+              {/* 右侧：热门词条 */}
+              <aside className="lg:col-span-2">
                 <section aria-labelledby="popular-terms">
                   <header className="mb-4 flex items-center justify-between">
                     <h2 id="popular-terms" className="text-base font-medium text-[#3d3229]">
@@ -354,41 +343,6 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                       </Link>
                     ))}
                   </div>
-                </section>
-
-                {/* 按朝代浏览 */}
-                <section aria-labelledby="browse-dynasty">
-                  <header className="mb-4">
-                    <h2 id="browse-dynasty" className="text-base font-medium text-[#3d3229]">
-                      按朝代浏览
-                    </h2>
-                  </header>
-                  <div className="flex flex-wrap gap-2">
-                    {dynastyLinks.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={`/?q=${encodeURIComponent(item.query)}`}
-                        className="rounded-full border border-[#e0d8cd] bg-[#faf8f5] px-3 py-1.5 text-xs text-[#6a5a4a] transition hover:border-[#d0c8bd] hover:bg-white"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                </section>
-
-                {/* 数据统计 */}
-                <section className="rounded-xl border border-[#e8e0d5] bg-gradient-to-br from-white to-[#faf8f5] p-4">
-                  <h2 className="mb-3 text-sm font-medium text-[#5a4a3a]">数据概览</h2>
-                  <dl className="grid grid-cols-2 gap-3 text-center">
-                    <div className="rounded-lg bg-white/80 p-3">
-                      <dt className="text-[10px] text-[#9a8a7a]">经典总数</dt>
-                      <dd className="mt-1 text-lg font-semibold text-[#3d3229]">{initialTotal.toLocaleString()}</dd>
-                    </div>
-                    <div className="rounded-lg bg-white/80 p-3">
-                      <dt className="text-[10px] text-[#9a8a7a]">数据来源</dt>
-                      <dd className="mt-1 text-sm font-medium text-[#5a4a3a]">CBETA</dd>
-                    </div>
-                  </dl>
                 </section>
               </aside>
             </div>
