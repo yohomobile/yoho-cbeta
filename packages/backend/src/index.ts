@@ -8,6 +8,7 @@ import { db } from './db/index.js'
 import { sql, eq, like, or, and, count, asc, desc } from 'drizzle-orm'
 import { dictionaryEntries } from './db/schema.js'
 import { toSimplified } from './zhconv.js'
+import { createSingleEmbedding, vectorToString } from './embedding/openai-service.js'
 
 const app = new Hono()
 
@@ -1178,6 +1179,149 @@ app.get('/search/content', async (c) => {
     })
   } catch (error) {
     console.error('经文正文搜索失败:', error)
+    return c.json({ error: '服务器错误' }, 500)
+  }
+})
+
+// ============ 语义搜索 API ============
+
+/**
+ * 语义搜索
+ * GET /semantic-search?q=问题&limit=10
+ * 使用 OpenAI embedding + pgvector 进行语义相似度搜索
+ */
+app.get('/semantic-search', async (c) => {
+  const query = c.req.query('q') || ''
+  const limit = Math.min(Number(c.req.query('limit')) || 10, 50)
+
+  if (!query.trim()) {
+    return c.json({ error: '请输入搜索内容' }, 400)
+  }
+
+  try {
+    // 检查是否有嵌入数据
+    const countResult = await db.execute(sql`SELECT COUNT(*) as cnt FROM text_chunks`)
+    const chunkCount = Number((countResult as unknown as { cnt: string }[])[0]?.cnt) || 0
+
+    if (chunkCount === 0) {
+      return c.json({ error: '暂无语义搜索数据' }, 503)
+    }
+
+    // 生成查询向量
+    const { embedding } = await createSingleEmbedding(query)
+    const vectorStr = vectorToString(embedding)
+
+    // 向量相似度搜索
+    const results = await db.execute(sql.raw(`
+      SELECT
+        tc.text_id,
+        tc.juan,
+        tc.chunk_index,
+        tc.content,
+        t.title,
+        t.author_raw,
+        t.translation_dynasty,
+        t.juan_count,
+        1 - (tc.embedding <=> '${vectorStr}'::vector) as similarity
+      FROM text_chunks tc
+      JOIN texts t ON t.id = tc.text_id
+      ORDER BY tc.embedding <=> '${vectorStr}'::vector
+      LIMIT ${limit}
+    `))
+
+    return c.json({
+      query,
+      results: (results as unknown as Array<{
+        text_id: string
+        juan: number
+        chunk_index: number
+        content: string
+        title: string
+        author_raw: string
+        translation_dynasty: string
+        juan_count: number
+        similarity: number
+      }>).map(r => ({
+        textId: r.text_id,
+        juan: r.juan,
+        title: r.title,
+        authorRaw: r.author_raw,
+        translationDynasty: r.translation_dynasty,
+        juanCount: r.juan_count,
+        content: r.content,
+        similarity: r.similarity,
+      })),
+    })
+  } catch (error) {
+    console.error('语义搜索失败:', error)
+    return c.json({ error: '服务器错误' }, 500)
+  }
+})
+
+/**
+ * 相似经文推荐
+ * GET /texts/:id/similar?limit=5
+ */
+app.get('/texts/:id/similar', async (c) => {
+  const textId = c.req.param('id')
+  const limit = Math.min(Number(c.req.query('limit')) || 5, 20)
+
+  try {
+    // 检查该经文是否有嵌入数据
+    const checkResult = await db.execute(sql`
+      SELECT COUNT(*) as cnt FROM text_chunks WHERE text_id = ${textId}
+    `)
+    const hasEmbedding = Number((checkResult as unknown as { cnt: string }[])[0]?.cnt) > 0
+
+    if (!hasEmbedding) {
+      return c.json({ error: '该经文暂无向量数据' }, 404)
+    }
+
+    // 计算该经文所有块的平均向量，然后找相似经文
+    const results = await db.execute(sql.raw(`
+      WITH avg_vec AS (
+        SELECT AVG(embedding) as embedding
+        FROM text_chunks
+        WHERE text_id = '${textId}'
+      )
+      SELECT DISTINCT ON (tc.text_id)
+        tc.text_id,
+        t.title,
+        t.author_raw,
+        t.translation_dynasty,
+        t.juan_count,
+        1 - (tc.embedding <=> (SELECT embedding FROM avg_vec)) as similarity
+      FROM text_chunks tc
+      JOIN texts t ON t.id = tc.text_id
+      WHERE tc.text_id != '${textId}'
+      ORDER BY tc.text_id, tc.embedding <=> (SELECT embedding FROM avg_vec)
+    `))
+
+    // 按相似度排序取 top N
+    const sorted = (results as unknown as Array<{
+      text_id: string
+      title: string
+      author_raw: string
+      translation_dynasty: string
+      juan_count: number
+      similarity: number
+    }>)
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, limit)
+
+    return c.json({
+      textId,
+      similar: sorted.map(r => ({
+        textId: r.text_id,
+        title: r.title,
+        authorRaw: r.author_raw,
+        translationDynasty: r.translation_dynasty,
+        juanCount: r.juan_count,
+        similarity: r.similarity,
+      })),
+    })
+  } catch (error) {
+    console.error('获取相似经文失败:', error)
     return c.json({ error: '服务器错误' }, 500)
   }
 })
