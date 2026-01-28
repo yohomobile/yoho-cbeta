@@ -136,9 +136,13 @@ export const parseJuanContent = (
       if (muluType === '卷') {
         return
       }
-      // 提取 mulu 的文本内容作为标题，去掉开头的数字序号（如 "1 本地分" -> "本地分"）
+      // 提取 mulu 的文本内容作为标题，去掉开头的数字序号
+      // 如 "1 本地分" -> "本地分", "1章 十七地总说" -> "十七地总说"
       let text = normalizeText(extractPlainText(node))
-      text = text.replace(/^\d+\s*/, '').replace(/^\d+(?:章|节|项|目)\s*/, '')
+      // 先去掉 "1章 " "2节 " 等格式
+      text = text.replace(/^\d+(?:章|节|项|目)\s*/, '')
+      // 再去掉纯数字前缀 "1 " "2 "
+      text = text.replace(/^\d+\s*/, '')
       if (text) {
         pushBlock({
           type: 'heading',
@@ -150,16 +154,9 @@ export const parseJuanContent = (
       return
     }
 
+    // head/jhead/title 标签不再生成 heading，因为 mulu 标签已经提供了结构化的目录
+    // 这样避免同一内容重复显示（如 mulu "本地分" 和 head "本地分中五识身相应地第一"）
     if (tag === 'head' || tag === 'jhead' || tag === 'title') {
-      const text = normalizeText(extractPlainText(node))
-      if (text) {
-        pushBlock({
-          type: 'heading',
-          text,
-          level: node.attrs?.level,
-          kind: node.attrs?.type,
-        })
-      }
       return
     }
 
