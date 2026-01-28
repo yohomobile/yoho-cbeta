@@ -111,6 +111,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   const [relatedPersons, setRelatedPersons] = useState<Array<{ name: string; role?: string; dynasty?: string }>>([])
   // 当前滚动到的品（用于高亮）
   const [currentPin, setCurrentPin] = useState<string | null>(null)
+  // 分品列表容器 ref（用于点击后自动滚动到选中项）
+  const pinListRef = useRef<HTMLDivElement>(null)
 
   const loadJuan = useCallback(async (juan: number) => {
     setLoading(true)
@@ -864,7 +866,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
                 {/* 分品内容 */}
                 {juanPinTab === 'pin' && (
-                  <div className="space-y-0.5 max-h-[240px] overflow-auto pr-1">
+                  <div ref={pinListRef} className="space-y-0.5 max-h-[240px] overflow-auto pr-1">
                     {fullToc.length > 0 ? (
                       fullToc
                         .filter((item) => item.type === '品' || item.type === 'pin')
@@ -880,9 +882,20 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                           return (
                             <button
                               key={idx}
-                              onClick={() => {
+                              data-pin-title={item.title}
+                              onClick={(e) => {
                                 const targetJuan = item.juanNumber || 1
                                 const encodedTitle = encodeURIComponent(item.title)
+
+                                // 立即更新选中状态，避免等待滚动事件
+                                setCurrentPin(item.title)
+
+                                // 让点击的按钮在侧边栏列表中滚动到可见位置
+                                const button = e.currentTarget
+                                requestAnimationFrame(() => {
+                                  button.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+                                })
+
                                 if (targetJuan !== currentJuan) {
                                   router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
                                 } else {
