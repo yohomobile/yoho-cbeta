@@ -33,8 +33,8 @@ const POPULAR_TEXT_SEEDS = [
   { id: 'T25n1509', tag: '论', fallbackTitle: '大智度论' },
   { id: 'T30n1579', tag: '论', fallbackTitle: '瑜伽师地论' },
   { id: 'T31n1585', tag: '论', fallbackTitle: '成唯识论' },
-  { id: 'T32n1666', tag: '论', fallbackTitle: '中论' },
-  { id: 'T32n1564', tag: '论', fallbackTitle: '大乘起信论' },
+  { id: 'T30n1564', tag: '论', fallbackTitle: '中论' },
+  { id: 'T32n1666', tag: '论', fallbackTitle: '大乘起信论' },
   { id: 'T29n1558', tag: '论', fallbackTitle: '阿毘达磨俱舍论' },
 ] as const
 
