@@ -116,6 +116,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   // 用户点击标记：点击后短暂忽略滚动事件的更新
   const isUserClickingRef = useRef(false)
 
+  // 用 ref 跟踪 fullToc 是否已加载，避免切换分卷时重复更新造成闪动
+  const fullTocLoadedRef = useRef(false)
+
   const loadJuan = useCallback(async (juan: number) => {
     setLoading(true)
     setError(null)
@@ -125,9 +128,10 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       const data = await res.json()
       const parsed = parseJuanContent(data.content, `第${juan}卷`)
       setChapter(parsed)
-      // 保存完整目录数据
-      if (data.fullToc) {
+      // 只在首次加载时更新 fullToc，避免切换分卷时右侧闪动
+      if (data.fullToc && !fullTocLoadedRef.current) {
         setFullToc(data.fullToc)
+        fullTocLoadedRef.current = true
       }
     } catch (err) {
       setError('加载经文内容失败')
@@ -845,7 +849,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                     >
                       分卷
                       {juanPinTab === 'juan' && (
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#3d3229] rounded-full"></span>
+                        <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
                       )}
                     </button>
                   )}
@@ -860,7 +864,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                     >
                       分品
                       {juanPinTab === 'pin' && (
-                        <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#3d3229] rounded-full"></span>
+                        <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
                       )}
                     </button>
                   )}
@@ -983,7 +987,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                 >
                   相关
                   {relatedTab === 'related' && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#3d3229] rounded-full"></span>
+                    <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
                   )}
                 </button>
                 <button
@@ -996,7 +1000,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                 >
                   人物
                   {relatedTab === 'persons' && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#3d3229] rounded-full"></span>
+                    <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
                   )}
                 </button>
               </div>
