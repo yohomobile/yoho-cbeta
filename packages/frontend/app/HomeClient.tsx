@@ -202,7 +202,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
       <div className="relative">
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[#e8e0d5] bg-[#f8f5f0]/95 backdrop-blur-sm">
-          <div className="mx-auto flex h-14 max-w-[1100px] items-center justify-between px-4">
+          <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-4">
             <Link href="/" className="flex items-center gap-2 text-[#5a4a3a] transition hover:opacity-70">
               <span className="shrink-0 text-xl" role="img" aria-hidden="true">📿</span>
               <span className="text-sm font-medium tracking-wide">佛典数据库</span>

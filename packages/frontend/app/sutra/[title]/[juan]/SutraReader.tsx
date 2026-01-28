@@ -686,7 +686,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       )}
 
       {/* Main Content - 左右结构 */}
-      <div className="max-w-[1400px] mx-auto flex">
+      <div className="max-w-[1200px] mx-auto flex">
         {/* 左侧：经文内容 */}
         <main className="flex-1 min-w-0 px-6 py-8">
           {/* Content */}
