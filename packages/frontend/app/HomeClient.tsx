@@ -303,7 +303,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     <article key={item.id}>
                       <Link
                         href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                        className="group flex h-10 items-center justify-between gap-3 rounded-lg border border-[#e8e0d5] bg-white px-3 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa]"
+                        className="group flex h-11 items-center justify-between gap-3 rounded-lg border border-[#e8e0d5] bg-white px-4 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa]"
                       >
                         <h3 className="truncate text-[15px] text-[#3d3229] group-hover:text-[#2a1f16]">
                           {item.alias || item.title}
