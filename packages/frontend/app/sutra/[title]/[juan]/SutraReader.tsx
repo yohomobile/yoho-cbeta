@@ -756,76 +756,79 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       )}
 
       {/* Main Content - 左右结构 */}
-      <div className="max-w-[1200px] mx-auto flex">
+      <div className="max-w-[1200px] mx-auto flex gap-6 px-4 lg:px-6 py-6">
         {/* 左侧：经文内容 */}
-        <main className="flex-1 min-w-0 px-4 sm:px-8 lg:px-12 py-8 lg:py-12">
-          {/* PC端：标题区域 - 精致设计 */}
-          <div className="hidden lg:block mb-12 text-center">
-            {/* 装饰线 */}
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#d4c4a8]" />
-              <span className="text-[#c4a46a] text-xs">◈</span>
-              <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#d4c4a8]" />
-            </div>
-            {/* 经题 */}
-            <h1 className="text-3xl font-display text-[#2d2419] mb-4 tracking-wider">{sutra.title}</h1>
-            {/* 译者信息 */}
-            {sutra.author_raw && (
-              <p className="text-sm text-[#7a6a5a] tracking-wide">
-                {sutra.translation_dynasty && <span className="text-[#9a8a7a]">{sutra.translation_dynasty} · </span>}
-                {sutra.author_raw}{sutra.author_raw.endsWith('译') ? '' : ' 译'}
-              </p>
-            )}
-            {/* 卷数指示 */}
-            {juanCount > 1 && (
-              <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-[#f0ebe3] rounded-full">
-                <span className="text-xs text-[#8a7a6a]">卷</span>
-                <span className="text-sm font-medium text-[#5a4a3a]">{currentJuan}</span>
-                <span className="text-xs text-[#a09080]">/ {juanCount}</span>
+        <main className="flex-1 min-w-0">
+          {/* 经文卡片容器 */}
+          <div className="bg-white/70 rounded-3xl shadow-sm border border-[#e8e0d5]/50 px-6 sm:px-10 lg:px-14 py-10 lg:py-14">
+            {/* PC端：标题区域 - 精致设计 */}
+            <div className="hidden lg:block mb-12 text-center">
+              {/* 装饰线 */}
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#d4c4a8]" />
+                <span className="text-[#c4a46a] text-xs">◈</span>
+                <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#d4c4a8]" />
               </div>
-            )}
-            {/* 底部装饰 */}
-            <div className="mt-8 flex items-center justify-center">
-              <div className="h-px w-32 bg-gradient-to-r from-transparent via-[#d4c4a8] to-transparent" />
-            </div>
-          </div>
-
-          {/* Content */}
-          {loading ? (
-            <div className="space-y-6 py-4 max-w-[680px] mx-auto">
-              {/* 标题骨架 */}
-              <div className="mx-auto h-8 w-56 animate-pulse rounded bg-[#e8e0d5]" />
-              {/* 作者信息骨架 */}
-              <div className="mx-auto h-4 w-40 animate-pulse rounded bg-[#e8e0d5]" />
-              <div className="h-6" />
-              {/* 段落骨架 */}
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="space-y-3">
-                  <div className="h-[18px] w-full animate-pulse rounded bg-[#ebe5db]" />
-                  <div className="h-[18px] w-[96%] animate-pulse rounded bg-[#ebe5db]" />
-                  <div className="h-[18px] w-[92%] animate-pulse rounded bg-[#ebe5db]" />
-                  <div className="h-4" />
+              {/* 经题 */}
+              <h1 className="text-3xl font-display text-[#2d2419] mb-4 tracking-wider">{sutra.title}</h1>
+              {/* 译者信息 */}
+              {sutra.author_raw && (
+                <p className="text-sm text-[#7a6a5a] tracking-wide">
+                  {sutra.translation_dynasty && <span className="text-[#9a8a7a]">{sutra.translation_dynasty} · </span>}
+                  {sutra.author_raw}{sutra.author_raw.endsWith('译') ? '' : ' 译'}
+                </p>
+              )}
+              {/* 卷数指示 */}
+              {juanCount > 1 && (
+                <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-[#f5f2ed] rounded-full">
+                  <span className="text-xs text-[#8a7a6a]">卷</span>
+                  <span className="text-sm font-medium text-[#5a4a3a]">{currentJuan}</span>
+                  <span className="text-xs text-[#a09080]">/ {juanCount}</span>
                 </div>
-              ))}
-            </div>
-          ) : error ? (
-            <div className="py-16 text-center text-sm text-[#9a8a7a]">{error}</div>
-          ) : chapter ? (
-            <article className="max-w-[680px] mx-auto text-[17px] leading-[2] text-[#2d2419]">
-              {chapter.blocks.map((block, index) => renderParagraph(block, index))}
-              {/* 文末装饰 */}
-              <div className="mt-16 mb-8 flex items-center justify-center gap-3">
-                <div className="h-px w-12 bg-[#d4c4a8]" />
-                <span className="text-[#c4a46a] text-sm">◇</span>
-                <div className="h-px w-12 bg-[#d4c4a8]" />
+              )}
+              {/* 底部装饰 */}
+              <div className="mt-8 flex items-center justify-center">
+                <div className="h-px w-32 bg-gradient-to-r from-transparent via-[#d4c4a8] to-transparent" />
               </div>
-            </article>
-          ) : null}
+            </div>
+
+            {/* Content */}
+            {loading ? (
+              <div className="space-y-6 py-4 max-w-[680px] mx-auto">
+                {/* 标题骨架 */}
+                <div className="mx-auto h-8 w-56 animate-pulse rounded bg-[#e8e0d5]" />
+                {/* 作者信息骨架 */}
+                <div className="mx-auto h-4 w-40 animate-pulse rounded bg-[#e8e0d5]" />
+                <div className="h-6" />
+                {/* 段落骨架 */}
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="space-y-3">
+                    <div className="h-[18px] w-full animate-pulse rounded bg-[#ebe5db]" />
+                    <div className="h-[18px] w-[96%] animate-pulse rounded bg-[#ebe5db]" />
+                    <div className="h-[18px] w-[92%] animate-pulse rounded bg-[#ebe5db]" />
+                    <div className="h-4" />
+                  </div>
+                ))}
+              </div>
+            ) : error ? (
+              <div className="py-16 text-center text-sm text-[#9a8a7a]">{error}</div>
+            ) : chapter ? (
+              <article className="max-w-[680px] mx-auto text-[17px] leading-[2] text-[#2d2419]">
+                {chapter.blocks.map((block, index) => renderParagraph(block, index))}
+                {/* 文末装饰 */}
+                <div className="mt-16 mb-4 flex items-center justify-center gap-3">
+                  <div className="h-px w-12 bg-[#d4c4a8]" />
+                  <span className="text-[#c4a46a] text-sm">◇</span>
+                  <div className="h-px w-12 bg-[#d4c4a8]" />
+                </div>
+              </article>
+            ) : null}
+          </div>
         </main>
 
         {/* 右侧：目录导航 */}
-        <aside className="hidden lg:block w-[300px] shrink-0 overflow-auto sticky top-[60px] h-[calc(100vh-60px)]">
-          <div className="p-6 space-y-5">
+        <aside className="hidden lg:block w-[300px] shrink-0 sticky top-[84px] h-[calc(100vh-108px)] overflow-auto scrollbar-thin">
+          <div className="space-y-4">
             {/* 区块一：分卷/分品 */}
             {(juanCount > 1 || fullToc.some(item => item.type === '品' || item.type === 'pin')) && (
               <div className="bg-white/60 rounded-2xl p-4 shadow-sm border border-[#e8e0d5]/50">
