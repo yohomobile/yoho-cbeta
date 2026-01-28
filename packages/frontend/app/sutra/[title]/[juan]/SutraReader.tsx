@@ -376,35 +376,19 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             <span className="shrink-0 text-2xl" role="img" aria-hidden="true">📿</span>
             <span className="text-sm font-display tracking-wide">佛典数据库</span>
           </Link>
-          {/* 经文标题和译者 - 居中 */}
-          <div
-            className="flex flex-col justify-center items-center text-[#fff4e0] min-w-0 absolute left-1/2 -translate-x-1/2 cursor-pointer select-none"
-            onDoubleClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            title="双击滚动到顶部"
-          >
-            <span className="text-sm sm:text-base font-display tracking-wide truncate leading-tight">{sutra.title}</span>
-            {sutra.author_raw && (
-              <span className="text-[10px] text-[#d4c4a8] truncate leading-tight">
-                {sutra.author_raw}{sutra.author_raw.endsWith('译') ? '' : '译'}
-              </span>
+          {/* 移动端：显示标题和卷号 */}
+          <div className="lg:hidden flex flex-col justify-center items-center text-[#fff4e0] min-w-0 absolute left-1/2 -translate-x-1/2">
+            <span className="text-sm font-display tracking-wide truncate leading-tight">{sutra.title}</span>
+            {juanCount > 1 && (
+              <span className="text-[10px] text-[#d4c4a8]">第 {currentJuan} / {juanCount} 卷</span>
             )}
           </div>
           {/* 目录按钮 */}
           <div className="flex items-center gap-2 text-xs text-[#f6dfbe] shrink-0">
-            {/* 卷号显示 - 点击打开目录 */}
-            {juanCount > 1 && (
-              <button
-                onClick={() => setShowToc(!showToc)}
-                className="text-xs text-[#d4c4a8] hover:text-[#f6dfbe] transition-colors"
-                title="打开目录"
-              >
-                第 {currentJuan} / {juanCount} 卷
-              </button>
-            )}
-            {/* 目录按钮 */}
+            {/* 移动端目录按钮 */}
             <button
               onClick={() => setShowToc(!showToc)}
-              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              className="lg:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
               title="目录"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -689,7 +673,19 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       <div className="max-w-[1200px] mx-auto flex">
         {/* 左侧：经文内容 */}
         <main className="flex-1 min-w-0 px-6 py-8">
-          {/* Content */}
+          {/* PC端：标题和译者信息 */}
+          <div className="hidden lg:block mb-8 text-center">
+            <h1 className="text-2xl font-display text-[#3d3229] mb-2">{sutra.title}</h1>
+            {sutra.author_raw && (
+              <p className="text-sm text-[#8a7a6a]">
+                {sutra.author_raw}{sutra.author_raw.endsWith('译') ? '' : '译'}
+                {sutra.translation_dynasty && ` · ${sutra.translation_dynasty}`}
+              </p>
+            )}
+            {juanCount > 1 && (
+              <p className="text-xs text-[#a09080] mt-1">第 {currentJuan} / {juanCount} 卷</p>
+            )}
+          </div>
 
           {/* Content */}
           {loading ? (
@@ -712,255 +708,250 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
           ) : chapter ? (
             <article className="text-[17px] leading-loose">
               {chapter.blocks.map((block, index) => renderParagraph(block, index))}
-
             </article>
           ) : null}
-
         </main>
 
-        {/* 右侧：分卷/分品/相关/人物导航 */}
+        {/* 右侧：分卷/分品区块 + 相关/人物区块 */}
         <aside className="hidden lg:block w-[320px] border-l border-[#e8e0d5] bg-white/50 overflow-auto sticky top-[60px] h-[calc(100vh-60px)]">
-          {/* Tab 切换 - 固定顶部 */}
-          <div className="flex border-b border-[#e8e0d5] px-4 pt-4 pb-0 shrink-0 sticky top-0 bg-white/50 z-10">
-            {juanCount > 1 && (
-              <button
-                onClick={() => setTocTab('juan')}
-                className={`flex-1 py-2 text-xs font-medium transition ${
-                  tocTab === 'juan'
-                    ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
-                    : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
-                }`}
-              >
-                分卷
-              </button>
-            )}
-            {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
-              <button
-                onClick={() => setTocTab('pin')}
-                className={`flex-1 py-2 text-xs font-medium transition ${
-                  tocTab === 'pin'
-                    ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
-                    : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
-                }`}
-              >
-                分品
-              </button>
-            )}
-            <button
-              onClick={() => setTocTab('related')}
-              className={`flex-1 py-2 text-xs font-medium transition ${
-                tocTab === 'related'
-                  ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
-                  : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
-              }`}
-            >
-              相关
-            </button>
-            <button
-              onClick={() => setTocTab('persons')}
-              className={`flex-1 py-2 text-xs font-medium transition ${
-                tocTab === 'persons'
-                  ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
-                  : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
-              }`}
-            >
-              人物
-            </button>
-          </div>
-
-          {/* 内容区域 */}
-          <div className="p-4">
-            {/* 分卷内容 */}
-            {tocTab === 'juan' && juanCount > 1 && (
-              <div className="space-y-1">
-                <div className="grid grid-cols-5 gap-1">
-                  {Array.from({ length: juanCount }, (_, i) => i + 1).map((juan) => (
+          <div className="p-4 space-y-6">
+            {/* 区块一：分卷/分品 */}
+            {(juanCount > 1 || fullToc.some(item => item.type === '品' || item.type === 'pin')) && (
+              <div>
+                {/* 分卷/分品 Tab 切换 */}
+                <div className="flex border-b border-[#e8e0d5] mb-3">
+                  {juanCount > 1 && (
                     <button
-                      key={juan}
-                      onClick={() => handleJuanChange(juan)}
-                      className={`py-2 text-xs rounded transition ${
-                        currentJuan === juan
-                          ? 'bg-[#6b5b4b] text-white font-medium'
-                          : 'bg-[#f5f2ee] text-[#5a4a3a] hover:bg-[#e8e0d5]'
+                      onClick={() => setTocTab('juan')}
+                      className={`flex-1 py-2 text-xs font-medium transition ${
+                        tocTab === 'juan'
+                          ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
+                          : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                       }`}
                     >
-                      {juan}
+                      分卷
                     </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 分品内容 */}
-            {tocTab === 'pin' && (
-              <div className="space-y-1">
-                {fullToc.length > 0 ? (
-                  fullToc
-                    .filter((item) => item.type === '品' || item.type === 'pin')
-                    .map((item, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          const targetJuan = item.juanNumber || 1
-                          const encodedTitle = encodeURIComponent(item.title)
-                          if (targetJuan !== currentJuan) {
-                            router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
-                          } else {
-                            const headingElements = document.querySelectorAll('h3')
-                            const itemChinese = extractChinesePart(item.title)
-                            for (let i = 0; i < headingElements.length; i++) {
-                              const headingText = headingElements[i].textContent?.trim() || ''
-                              const headingChinese = extractChinesePart(headingText)
-                              if (itemChinese && headingChinese &&
-                                  (headingChinese === itemChinese ||
-                                   headingChinese.includes(itemChinese) ||
-                                   itemChinese.includes(headingChinese))) {
-                                headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                break
-                              }
-                            }
-                          }
-                        }}
-                        className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] truncate"
-                        title={item.title}
-                      >
-                        {item.title}
-                      </button>
-                    ))
-                ) : (
-                  <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无品目数据</div>
-                )}
-              </div>
-            )}
-
-            {/* 相关内容 */}
-            {tocTab === 'related' && (
-              <div className="space-y-4">
-                {loadingRelated ? (
-                  <div className="text-sm text-[#8a7a6a] px-3 py-2">加载中...</div>
-                ) : (
-                  <>
-                    {/* 同本异译 */}
-                    {relatedSutras.translations.length > 0 && (
-                      <div className="space-y-1">
-                        <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">同本异译</div>
-                        {relatedSutras.translations.map((item, idx) => (
-                          <Link
-                            key={`trans-${idx}`}
-                            href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                            className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="truncate">{item.title}</span>
-                              <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#e8e0d5] text-[#6b5b4b] rounded">异译</span>
-                            </div>
-                            {(item.author || item.dynasty) && (
-                              <span className="text-xs text-[#8a7a6a]">
-                                {item.dynasty} {item.author}
-                              </span>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* 注疏 */}
-                    {relatedSutras.commentaries.length > 0 && (
-                      <div className="space-y-1">
-                        <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">注疏</div>
-                        {relatedSutras.commentaries.map((item, idx) => (
-                          <Link
-                            key={`comm-${idx}`}
-                            href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                            className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="truncate">{item.title}</span>
-                              <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#d4e8d4] text-[#4a6b4a] rounded">注疏</span>
-                            </div>
-                            {item.author && (
-                              <span className="text-xs text-[#8a7a6a]">{item.author}</span>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* 其他相关 */}
-                    {relatedSutras.related.length > 0 && (
-                      <div className="space-y-1">
-                        <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">相关</div>
-                        {relatedSutras.related.map((item, idx) => (
-                          <Link
-                            key={`rel-${idx}`}
-                            href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                            className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="truncate">{item.title}</span>
-                              <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#e5e0f0] text-[#5a4a7a] rounded">相关</span>
-                            </div>
-                            {item.author && (
-                              <span className="text-xs text-[#8a7a6a]">{item.author}</span>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* 译者链接 */}
-                    {sutra.author_raw && (
-                      <div className="pt-4 border-t border-[#e8e0d5]">
-                        <Link
-                          href={`/person/${encodeURIComponent(sutra.author_raw)}`}
-                          className="block px-3 py-2 text-xs text-[#6b5b4b] bg-[#f0ebe5] rounded hover:bg-[#e8e0d5] transition text-center"
-                        >
-                          查看译者 {sutra.author_raw} 详情 →
-                        </Link>
-                      </div>
-                    )}
-
-                    {/* 无数据提示 */}
-                    {relatedSutras.translations.length === 0 &&
-                      relatedSutras.commentaries.length === 0 &&
-                      relatedSutras.related.length === 0 && (
-                        <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无相关经书</div>
-                      )}
-                  </>
-                )}
-              </div>
-            )}
-
-            {/* 人物内容 */}
-            {tocTab === 'persons' && (
-              <div className="space-y-1">
-                {loadingRelated ? (
-                  <div className="text-sm text-[#8a7a6a] px-3 py-2">加载中...</div>
-                ) : relatedPersons.length > 0 ? (
-                  relatedPersons.map((person, idx) => (
-                    <Link
-                      key={idx}
-                      href={`/person/${encodeURIComponent(person.name)}`}
-                      className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                  )}
+                  {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
+                    <button
+                      onClick={() => setTocTab('pin')}
+                      className={`flex-1 py-2 text-xs font-medium transition ${
+                        tocTab === 'pin'
+                          ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
+                          : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
+                      }`}
                     >
-                      <div className="flex items-center gap-2">
-                        <span className="truncate">{person.name}</span>
-                        {person.role && (
-                          <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#f0e5d4] text-[#7a6b4a] rounded">
-                            {person.role}
-                          </span>
-                        )}
-                      </div>
-                      {person.dynasty && (
-                        <span className="text-xs text-[#8a7a6a]">{person.dynasty}</span>
-                      )}
-                    </Link>
-                  ))
-                ) : (
-                  <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无相关人物</div>
+                      分品
+                    </button>
+                  )}
+                </div>
+
+                {/* 分卷内容 */}
+                {tocTab === 'juan' && juanCount > 1 && (
+                  <div className="grid grid-cols-5 gap-1">
+                    {Array.from({ length: juanCount }, (_, i) => i + 1).map((juan) => (
+                      <button
+                        key={juan}
+                        onClick={() => handleJuanChange(juan)}
+                        className={`py-2 text-xs rounded transition ${
+                          currentJuan === juan
+                            ? 'bg-[#6b5b4b] text-white font-medium'
+                            : 'bg-[#f5f2ee] text-[#5a4a3a] hover:bg-[#e8e0d5]'
+                        }`}
+                      >
+                        {juan}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* 分品内容 */}
+                {tocTab === 'pin' && (
+                  <div className="space-y-1 max-h-[300px] overflow-auto">
+                    {fullToc.length > 0 ? (
+                      fullToc
+                        .filter((item) => item.type === '品' || item.type === 'pin')
+                        .map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              const targetJuan = item.juanNumber || 1
+                              const encodedTitle = encodeURIComponent(item.title)
+                              if (targetJuan !== currentJuan) {
+                                router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
+                              } else {
+                                const headingElements = document.querySelectorAll('h3')
+                                const itemChinese = extractChinesePart(item.title)
+                                for (let i = 0; i < headingElements.length; i++) {
+                                  const headingText = headingElements[i].textContent?.trim() || ''
+                                  const headingChinese = extractChinesePart(headingText)
+                                  if (itemChinese && headingChinese &&
+                                      (headingChinese === itemChinese ||
+                                       headingChinese.includes(itemChinese) ||
+                                       itemChinese.includes(headingChinese))) {
+                                    headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                    break
+                                  }
+                                }
+                              }
+                            }}
+                            className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] truncate"
+                            title={item.title}
+                          >
+                            {item.title}
+                          </button>
+                        ))
+                    ) : (
+                      <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无品目数据</div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
+
+            {/* 区块二：相关/人物 */}
+            <div>
+              {/* 相关/人物 Tab 切换 */}
+              <div className="flex border-b border-[#e8e0d5] mb-3">
+                <button
+                  onClick={() => setTocTab('related')}
+                  className={`flex-1 py-2 text-xs font-medium transition ${
+                    tocTab === 'related'
+                      ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
+                      : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
+                  }`}
+                >
+                  相关
+                </button>
+                <button
+                  onClick={() => setTocTab('persons')}
+                  className={`flex-1 py-2 text-xs font-medium transition ${
+                    tocTab === 'persons'
+                      ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
+                      : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
+                  }`}
+                >
+                  人物
+                </button>
+              </div>
+
+              {/* 相关内容 */}
+              {tocTab === 'related' && (
+                <div className="space-y-4 max-h-[400px] overflow-auto">
+                  {loadingRelated ? (
+                    <div className="text-sm text-[#8a7a6a] px-3 py-2">加载中...</div>
+                  ) : (
+                    <>
+                      {/* 同本异译 */}
+                      {relatedSutras.translations.length > 0 && (
+                        <div className="space-y-1">
+                          <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">同本异译</div>
+                          {relatedSutras.translations.map((item, idx) => (
+                            <Link
+                              key={`trans-${idx}`}
+                              href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                              className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="truncate">{item.title}</span>
+                                <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#e8e0d5] text-[#6b5b4b] rounded">异译</span>
+                              </div>
+                              {(item.author || item.dynasty) && (
+                                <span className="text-xs text-[#8a7a6a]">
+                                  {item.dynasty} {item.author}
+                                </span>
+                              )}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 注疏 */}
+                      {relatedSutras.commentaries.length > 0 && (
+                        <div className="space-y-1">
+                          <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">注疏</div>
+                          {relatedSutras.commentaries.map((item, idx) => (
+                            <Link
+                              key={`comm-${idx}`}
+                              href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                              className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="truncate">{item.title}</span>
+                                <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#d4e8d4] text-[#4a6b4a] rounded">注疏</span>
+                              </div>
+                              {item.author && (
+                                <span className="text-xs text-[#8a7a6a]">{item.author}</span>
+                              )}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 其他相关 */}
+                      {relatedSutras.related.length > 0 && (
+                        <div className="space-y-1">
+                          <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">相关</div>
+                          {relatedSutras.related.map((item, idx) => (
+                            <Link
+                              key={`rel-${idx}`}
+                              href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                              className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="truncate">{item.title}</span>
+                                <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#e5e0f0] text-[#5a4a7a] rounded">相关</span>
+                              </div>
+                              {item.author && (
+                                <span className="text-xs text-[#8a7a6a]">{item.author}</span>
+                              )}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 无数据提示 */}
+                      {relatedSutras.translations.length === 0 &&
+                        relatedSutras.commentaries.length === 0 &&
+                        relatedSutras.related.length === 0 && (
+                          <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无相关经书</div>
+                        )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* 人物内容 */}
+              {tocTab === 'persons' && (
+                <div className="space-y-1 max-h-[400px] overflow-auto">
+                  {loadingRelated ? (
+                    <div className="text-sm text-[#8a7a6a] px-3 py-2">加载中...</div>
+                  ) : relatedPersons.length > 0 ? (
+                    relatedPersons.map((person, idx) => (
+                      <Link
+                        key={idx}
+                        href={`/person/${encodeURIComponent(person.name)}`}
+                        className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="truncate">{person.name}</span>
+                          {person.role && (
+                            <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#f0e5d4] text-[#7a6b4a] rounded">
+                              {person.role}
+                            </span>
+                          )}
+                        </div>
+                        {person.dynasty && (
+                          <span className="text-xs text-[#8a7a6a]">{person.dynasty}</span>
+                        )}
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无相关人物</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </aside>
       </div>
