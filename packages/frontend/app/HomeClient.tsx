@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api'
 
@@ -314,24 +316,22 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     查看全部 →
                   </Link>
                 </header>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-2 sm:grid-cols-2">
                   {popularTexts.map((item) => (
                     <article key={item.id}>
                       <Link
                         href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                        className="group flex items-center gap-3 rounded-xl border border-[#e8e0d5] bg-white p-4 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
+                        className="group flex items-center gap-2.5 rounded-lg border border-[#e8e0d5] bg-white px-3 py-2.5 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
                       >
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-lg text-[#8a7a6a] group-hover:bg-[#ebe6df] group-hover:text-[#6a5a4a]">
-                          📖
-                        </span>
+                        <FontAwesomeIcon icon={faBookOpen} className="h-3.5 w-3.5 shrink-0 text-[#a09080] group-hover:text-[#8a7a6a]" />
                         <div className="min-w-0 flex-1">
-                          <h3 className="truncate text-[15px] font-medium text-[#3d3229] group-hover:text-[#2a1f16]">
+                          <h3 className="truncate text-[14px] font-medium text-[#3d3229] group-hover:text-[#2a1f16]">
                             {item.alias || item.title}
                           </h3>
-                          {item.author && (
-                            <p className="mt-0.5 truncate text-[12px] text-[#a09080]">{item.author}</p>
-                          )}
                         </div>
+                        {item.author && (
+                          <span className="shrink-0 text-[11px] text-[#a09080]">{item.author}</span>
+                        )}
                       </Link>
                     </article>
                   ))}
