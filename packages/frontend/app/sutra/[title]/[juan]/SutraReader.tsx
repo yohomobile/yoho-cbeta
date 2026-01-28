@@ -443,6 +443,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       )
     }
     if (block.type === 'byline') {
+      // 译者信息只在第一卷显示
+      if (currentJuan !== 1) return null
       return (
         <p key={index} className="my-3 text-right text-sm text-[#8a7a6a] italic">
           —— {block.text}
@@ -459,7 +461,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       )
     }
     return null
-  }, [fullToc])
+  }, [fullToc, currentJuan])
 
   return (
     <div className="min-h-screen bg-[#f8f5f0]">
