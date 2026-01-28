@@ -850,7 +850,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
         {/* 左侧：经文内容 */}
         <main className="flex-1 min-w-0">
           {/* 经文卡片容器 */}
-          <div className="bg-white rounded-xl shadow-sm border border-[#e8e0d5] px-6 sm:px-10 lg:px-14 py-10 lg:py-14">
+          <div className="bg-white rounded-lg border border-[#e8e0d5] px-6 sm:px-10 lg:px-14 py-10 lg:py-14">
             {/* PC端：标题区域 - 精致设计，只在第一卷显示 */}
             {currentJuan === 1 && (
               <div className="hidden lg:block mb-12 text-center">
@@ -907,7 +907,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
         <aside className="hidden lg:block w-[300px] shrink-0 sticky top-[84px] h-[calc(100vh-108px)] overflow-auto scrollbar-thin">
           <div className="space-y-4">
             {/* 经题与译者信息 */}
-            <div className="bg-white rounded-xl shadow-sm border border-[#e8e0d5] p-4">
+            <div className="bg-white rounded-lg border border-[#e8e0d5] p-4">
               <h2 className="text-base font-medium text-[#2d2419] mb-2">{sutra.title}</h2>
               {sutra.author_raw && (
                 <p className="text-sm text-[#8a7a6a]">{sutra.author_raw}</p>
@@ -916,7 +916,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
             {/* 区块一：分卷/目录 - 只要有多卷就显示此区块 */}
             {juanCount > 1 && (
-              <div className="rounded-xl shadow-sm border border-[#e8e0d5] overflow-hidden">
+              <div className="rounded-lg border border-[#e8e0d5] overflow-hidden">
                 {/* Tab 切换 - 融合顶部圆角 */}
                 <div className="flex bg-[#f5f2ed]">
                   <button
@@ -1026,7 +1026,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             )}
 
             {/* 区块二：相关/人物 */}
-            <div className="rounded-xl shadow-sm border border-[#e8e0d5] overflow-hidden">
+            <div className="rounded-lg border border-[#e8e0d5] overflow-hidden">
               {/* Tab 切换 - 融合顶部圆角 */}
               <div className="flex bg-[#f5f2ed]">
                 <button
