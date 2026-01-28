@@ -132,7 +132,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showToc, setShowToc] = useState(false)
-  // 分卷/分品 Tab 状态
+  // 分卷/目录 Tab 状态
   const [juanPinTab, setJuanPinTab] = useState<'juan' | 'pin'>('juan')
   // 相关/人物 Tab 状态
   const [relatedTab, setRelatedTab] = useState<'related' | 'persons'>('related')
@@ -153,7 +153,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       setMobileTocTab('persons')
     }
   }, [searchParams])
-  const [fullToc, setFullToc] = useState<Array<{ title: string; juanNumber?: number; type?: string }>>([])
+  const [fullToc, setFullToc] = useState<Array<{ title: string; juanNumber?: number; type?: string; level?: number }>>([])
   const [relatedSutras, setRelatedSutras] = useState<{
     translations: Array<{ title: string; author?: string; dynasty?: string }>
     commentaries: Array<{ title: string; author?: string; dynasty?: string }>
@@ -368,21 +368,13 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
   const juanCount = sutra.juan_count || 1
 
-  // 获取分品列表 - 优先显示"品"，如果没有则显示"经"，再没有则显示"分"
-  const getPinItems = useCallback(() => {
-    const pins = fullToc.filter(item => item.type === '品' || item.type === 'pin')
-    if (pins.length > 0) return { items: pins, label: '分品' }
-
-    const jings = fullToc.filter(item => item.type === '经')
-    if (jings.length > 0) return { items: jings, label: '分经' }
-
-    const fens = fullToc.filter(item => item.type === '分')
-    if (fens.length > 0) return { items: fens, label: '分节' }
-
-    return { items: [], label: '分品' }
+  // 获取目录列表 - 排除"卷"类型，保留所有其他类型（序、分、经、品等）
+  const getTocItems = useCallback(() => {
+    const items = fullToc.filter(item => item.type !== '卷' && item.type !== '')
+    return items
   }, [fullToc])
 
-  const pinData = getPinItems()
+  const tocItems = getTocItems()
 
   // 切换卷并更新 URL
   const handleJuanChange = useCallback((newJuan: number) => {
@@ -573,7 +565,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                   }`}
                 >
-                  分品
+                  目录
                 </button>
               )}
               <button
@@ -632,12 +624,15 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               </div>
             )}
 
-            {/* 分品内容 */}
+            {/* 目录内容 */}
             {mobileTocTab === 'pin' && (
-              <div className="space-y-1">
-                {pinData.items.length > 0 ? (
-                  pinData.items.map((item, idx) => {
+              <div className="space-y-0.5">
+                {tocItems.length > 0 ? (
+                  tocItems.map((item, idx) => {
                       const isInCurrentJuan = item.juanNumber === currentJuan
+                      // 根据 level 计算缩进
+                      const level = item.level || 1
+                      const paddingLeft = level === 1 ? 'pl-3' : level === 2 ? 'pl-6' : 'pl-9'
 
                       return (
                         <button
@@ -660,7 +655,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                             }
                             setShowToc(false)
                           }}
-                          className={`w-full text-left px-3 py-2 text-sm rounded transition ${
+                          className={`w-full text-left ${paddingLeft} pr-3 py-2 text-sm rounded transition ${
                             isInCurrentJuan
                               ? 'text-[#3d3229] hover:bg-[#f8f5f0] font-medium'
                               : 'text-[#8a7a6a] hover:bg-[#f8f5f0]'
@@ -671,7 +666,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       )
                     })
                 ) : (
-                  <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无品目数据</div>
+                  <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无目录数据</div>
                 )}
               </div>
             )}
@@ -872,7 +867,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               )}
             </div>
 
-            {/* 区块一：分卷/分品 - 只要有多卷就显示此区块 */}
+            {/* 区块一：分卷/目录 - 只要有多卷就显示此区块 */}
             {juanCount > 1 && (
               <div className="rounded-2xl shadow-sm border border-[#e8e0d5]/50 overflow-hidden">
                 {/* Tab 切换 - 融合顶部圆角 */}
@@ -899,8 +894,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                         : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
                     }`}
                   >
-                    {pinData.label}
-                    <span className="ml-1 text-xs text-[#a09080]">({pinData.items.length})</span>
+                    目录
+                    <span className="ml-1 text-xs text-[#a09080]">({tocItems.length})</span>
                     {juanPinTab === 'pin' && (
                       <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
                     )}
@@ -929,9 +924,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                     </div>
                   )}
 
-                  {/* 分品内容 */}
+                  {/* 目录内容 */}
                   {juanPinTab === 'pin' && (
-                    <div className="space-y-1 max-h-[300px] overflow-auto pr-1 scrollbar-thin">
+                    <div className="space-y-0.5 max-h-[300px] overflow-auto pr-1 scrollbar-thin">
                       {/* 骨架加载 */}
                       {loading && fullToc.length === 0 ? (
                         <div className="space-y-2">
@@ -939,36 +934,42 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                             <div key={i} className="h-10 w-full animate-pulse rounded-xl bg-[#e8e0d5]" />
                           ))}
                         </div>
-                      ) : pinData.items.length > 0 ? (
-                        pinData.items.map((item, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => {
-                                  const targetJuan = item.juanNumber || 1
-                                  const encodedTitle = encodeURIComponent(item.title)
+                      ) : tocItems.length > 0 ? (
+                        tocItems.map((item, idx) => {
+                          // 根据 level 计算缩进
+                          const level = item.level || 1
+                          const paddingLeft = level === 1 ? 'pl-3' : level === 2 ? 'pl-6' : 'pl-9'
 
-                                  if (targetJuan !== currentJuan) {
-                                    router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
-                                  } else {
-                                    // 使用 isTitleMatch 查找匹配的标题
-                                    const headingElements = document.querySelectorAll('h3')
-                                    for (let i = 0; i < headingElements.length; i++) {
-                                      const headingText = headingElements[i].textContent?.trim() || ''
-                                      if (isTitleMatch(headingText, item.title)) {
-                                        headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                        break
-                                      }
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                const targetJuan = item.juanNumber || 1
+                                const encodedTitle = encodeURIComponent(item.title)
+
+                                if (targetJuan !== currentJuan) {
+                                  router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
+                                } else {
+                                  // 使用 isTitleMatch 查找匹配的标题
+                                  const headingElements = document.querySelectorAll('h3')
+                                  for (let i = 0; i < headingElements.length; i++) {
+                                    const headingText = headingElements[i].textContent?.trim() || ''
+                                    if (isTitleMatch(headingText, item.title)) {
+                                      headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                      break
                                     }
                                   }
-                                }}
-                                className="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all truncate text-[#5a4a3a] hover:bg-[#f5f2ed]"
-                                title={item.title}
-                              >
-                                {item.title}
-                              </button>
-                            ))
+                                }
+                              }}
+                              className={`w-full text-left ${paddingLeft} pr-3 py-2 text-sm rounded-lg transition-all truncate text-[#5a4a3a] hover:bg-[#f5f2ed]`}
+                              title={item.title}
+                            >
+                              {item.title}
+                            </button>
+                          )
+                        })
                       ) : (
-                        <div className="text-sm text-[#a09080] py-6 text-center">暂无品目</div>
+                        <div className="text-sm text-[#a09080] py-6 text-center">暂无目录</div>
                       )}
                     </div>
                   )}
