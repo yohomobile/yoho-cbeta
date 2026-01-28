@@ -313,11 +313,14 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     <article key={item.id}>
                       <Link
                         href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                        className="group block rounded-lg border border-[#e8e0d5] bg-white px-3 py-2 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa]"
+                        className="group flex items-baseline justify-between gap-2 rounded-lg border border-[#e8e0d5] bg-white px-3 py-2 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa]"
                       >
                         <h3 className="text-[15px] text-[#3d3229] group-hover:text-[#2a1f16]">
-                          {item.title}
+                          {item.alias || item.title}
                         </h3>
+                        {item.author && (
+                          <span className="shrink-0 text-xs text-[#a09080]">{item.author}</span>
+                        )}
                       </Link>
                     </article>
                   ))}
