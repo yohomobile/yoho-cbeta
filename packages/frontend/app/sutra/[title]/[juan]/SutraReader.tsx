@@ -465,13 +465,70 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       // 从 fullToc 中查找匹配的完整标题
       const matchedItem = fullToc.find(item => isTitleMatch(block.text, item.title))
       const fullTitle = matchedItem?.title || block.text
+      const level = matchedItem?.level || 1
 
+      // 根据层级使用不同样式
+      // level 1: 分（最大标题，如"本地分"）
+      // level 2: 地（如"意地"）
+      // level 3: 章
+      // level 4: 节
+      // level 5+: 项、目等更细层级
+      if (level === 1) {
+        // 分 - 最大的标题，居中显示，上下装饰线
+        return (
+          <div key={index} id={`heading-${index}`} className="mt-16 mb-10 scroll-mt-20">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#c4a46a]" />
+              <span className="text-[#c4a46a] text-sm">◆</span>
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#c4a46a]" />
+            </div>
+            <h2 className="text-center text-xl font-bold text-[#2d2419] tracking-wider">
+              {fullTitle}
+            </h2>
+            <div className="mt-4 flex items-center justify-center">
+              <div className="h-px w-24 bg-gradient-to-r from-transparent via-[#d4c4a8] to-transparent" />
+            </div>
+          </div>
+        )
+      }
+      if (level === 2) {
+        // 地 - 较大标题，居中显示
+        return (
+          <h3 key={index} id={`heading-${index}`} className="mt-14 mb-8 text-center scroll-mt-20">
+            <span className="inline-block px-6 py-2 text-lg font-semibold text-[#3d3229] border-b-2 border-[#c4a46a]">
+              {fullTitle}
+            </span>
+          </h3>
+        )
+      }
+      if (level === 3) {
+        // 章 - 中等标题
+        return (
+          <h4 key={index} id={`heading-${index}`} className="mt-10 mb-6 text-center scroll-mt-20">
+            <span className="inline-block px-5 py-1.5 text-base font-medium text-[#4a3a2a] border-b border-[#d4c4a8]">
+              {fullTitle}
+            </span>
+          </h4>
+        )
+      }
+      if (level === 4) {
+        // 节 - 较小标题，左对齐
+        return (
+          <h5 key={index} id={`heading-${index}`} className="mt-8 mb-4 scroll-mt-20">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium text-[#5a4a3a]">
+              <span className="w-1 h-4 bg-[#c4a46a] rounded-full" />
+              {fullTitle}
+            </span>
+          </h5>
+        )
+      }
+      // level 5+ - 更细的层级，小标题
       return (
-        <h3 key={index} id={`heading-${index}`} className="mt-12 mb-6 text-center scroll-mt-20">
-          <span className="inline-block px-6 py-2 text-lg font-medium text-[#3d3229] border-b-2 border-[#d4c4a8]">
+        <h6 key={index} id={`heading-${index}`} className="mt-6 mb-3 scroll-mt-20">
+          <span className="text-sm font-medium text-[#6a5a4a]">
             {fullTitle}
           </span>
-        </h3>
+        </h6>
       )
     }
     if (block.type === 'byline') {
