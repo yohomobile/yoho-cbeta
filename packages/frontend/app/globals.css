@@ -111,4 +111,23 @@ html {
     content: '◆';
     @apply mx-4 text-xs text-[#caa46a];
   }
+
+  /* 精致滚动条 */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #d4c4a8 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #d4c4a8;
+    border-radius: 2px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #c4b498;
+  }
 }

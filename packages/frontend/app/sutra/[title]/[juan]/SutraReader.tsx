@@ -824,20 +824,20 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
         </main>
 
         {/* 右侧：目录导航 */}
-        <aside className="hidden lg:block w-[280px] shrink-0 border-l border-[#e8e0d5] overflow-auto sticky top-[60px] h-[calc(100vh-60px)]">
-          <div className="p-5">
+        <aside className="hidden lg:block w-[300px] shrink-0 overflow-auto sticky top-[60px] h-[calc(100vh-60px)]">
+          <div className="p-6 space-y-5">
             {/* 区块一：分卷/分品 */}
             {(juanCount > 1 || fullToc.some(item => item.type === '品' || item.type === 'pin')) && (
-              <div className="mb-6">
+              <div className="bg-white/60 rounded-2xl p-4 shadow-sm border border-[#e8e0d5]/50">
                 {/* Tab 切换 */}
-                <div className="flex items-center gap-1 mb-4">
+                <div className="flex items-center gap-1.5 mb-4 pb-3 border-b border-[#e8e0d5]">
                   {juanCount > 1 && (
                     <button
                       onClick={() => setJuanPinTab('juan')}
-                      className={`px-3 py-1.5 text-xs rounded-full transition ${
+                      className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
                         juanPinTab === 'juan'
-                          ? 'bg-[#3d3229] text-white'
-                          : 'text-[#8a7a6a] hover:bg-[#f0ebe5]'
+                          ? 'bg-[#3d3229] text-white shadow-md'
+                          : 'text-[#6a5a4a] hover:bg-[#f0ebe5]'
                       }`}
                     >
                       分卷
@@ -846,30 +846,30 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                   {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
                     <button
                       onClick={() => setJuanPinTab('pin')}
-                      className={`px-3 py-1.5 text-xs rounded-full transition ${
+                      className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
                         juanPinTab === 'pin'
-                          ? 'bg-[#3d3229] text-white'
-                          : 'text-[#8a7a6a] hover:bg-[#f0ebe5]'
+                          ? 'bg-[#3d3229] text-white shadow-md'
+                          : 'text-[#6a5a4a] hover:bg-[#f0ebe5]'
                       }`}
                     >
                       分品
                     </button>
                   )}
-                  <span className="ml-auto text-[10px] text-[#a09080]">
-                    {juanPinTab === 'juan' ? juanCount : fullToc.filter(item => item.type === '品' || item.type === 'pin').length} 项
+                  <span className="ml-auto text-xs text-[#a09080] bg-[#f5f2ed] px-2 py-1 rounded-full">
+                    {juanPinTab === 'juan' ? juanCount : fullToc.filter(item => item.type === '品' || item.type === 'pin').length}
                   </span>
                 </div>
 
                 {/* 分卷内容 */}
                 {juanPinTab === 'juan' && juanCount > 1 && (
-                  <div className="space-y-0.5 max-h-[240px] overflow-auto pr-1">
+                  <div className="space-y-1 max-h-[320px] overflow-auto pr-1 scrollbar-thin">
                     {Array.from({ length: juanCount }, (_, i) => i + 1).map((juan) => (
                       <button
                         key={juan}
                         onClick={() => handleJuanChange(juan)}
-                        className={`w-full text-left px-3 py-2 text-sm rounded-lg transition ${
+                        className={`w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all ${
                           currentJuan === juan
-                            ? 'bg-[#3d3229] text-white'
+                            ? 'bg-[#3d3229] text-white shadow-md font-medium'
                             : 'text-[#5a4a3a] hover:bg-[#f5f2ed]'
                         }`}
                       >
@@ -881,7 +881,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
                 {/* 分品内容 */}
                 {juanPinTab === 'pin' && (
-                  <div ref={pinListRef} className="space-y-0.5 max-h-[240px] overflow-auto pr-1">
+                  <div ref={pinListRef} className="space-y-1 max-h-[320px] overflow-auto pr-1 scrollbar-thin">
                     {fullToc.length > 0 ? (
                       fullToc
                         .filter((item) => item.type === '品' || item.type === 'pin')
@@ -932,11 +932,11 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                                   isUserClickingRef.current = false
                                 }, 500)
                               }}
-                              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition truncate ${
+                              className={`w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all truncate ${
                                 isCurrentPin
-                                  ? 'bg-[#3d3229] text-white'
+                                  ? 'bg-[#3d3229] text-white shadow-md font-medium'
                                   : isInCurrentJuan
-                                    ? 'text-[#3d3229] hover:bg-[#f5f2ed]'
+                                    ? 'text-[#3d3229] hover:bg-[#f5f2ed] font-medium'
                                     : 'text-[#8a7a6a] hover:bg-[#f5f2ed]'
                               }`}
                               title={item.title}
@@ -946,38 +946,33 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                           )
                         })
                     ) : (
-                      <div className="text-sm text-[#a09080] py-4 text-center">暂无品目</div>
+                      <div className="text-sm text-[#a09080] py-6 text-center">暂无品目</div>
                     )}
                   </div>
                 )}
               </div>
             )}
 
-            {/* 分隔线 */}
-            {(juanCount > 1 || fullToc.some(item => item.type === '品' || item.type === 'pin')) && (
-              <div className="h-px bg-[#e8e0d5] mb-6" />
-            )}
-
             {/* 区块二：相关/人物 */}
-            <div>
+            <div className="bg-white/60 rounded-2xl p-4 shadow-sm border border-[#e8e0d5]/50">
               {/* Tab 切换 */}
-              <div className="flex items-center gap-1 mb-4">
+              <div className="flex items-center gap-1.5 mb-4 pb-3 border-b border-[#e8e0d5]">
                 <button
                   onClick={() => setRelatedTab('related')}
-                  className={`px-3 py-1.5 text-xs rounded-full transition ${
+                  className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
                     relatedTab === 'related'
-                      ? 'bg-[#3d3229] text-white'
-                      : 'text-[#8a7a6a] hover:bg-[#f0ebe5]'
+                      ? 'bg-[#3d3229] text-white shadow-md'
+                      : 'text-[#6a5a4a] hover:bg-[#f0ebe5]'
                   }`}
                 >
                   相关
                 </button>
                 <button
                   onClick={() => setRelatedTab('persons')}
-                  className={`px-3 py-1.5 text-xs rounded-full transition ${
+                  className={`px-4 py-2 text-sm font-medium rounded-xl transition-all ${
                     relatedTab === 'persons'
-                      ? 'bg-[#3d3229] text-white'
-                      : 'text-[#8a7a6a] hover:bg-[#f0ebe5]'
+                      ? 'bg-[#3d3229] text-white shadow-md'
+                      : 'text-[#6a5a4a] hover:bg-[#f0ebe5]'
                   }`}
                 >
                   人物
@@ -986,25 +981,28 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
               {/* 相关内容 */}
               {relatedTab === 'related' && (
-                <div className="space-y-4 max-h-[360px] overflow-auto pr-1">
+                <div className="space-y-4 max-h-[400px] overflow-auto pr-1 scrollbar-thin">
                   {loadingRelated ? (
-                    <div className="text-sm text-[#a09080] py-4 text-center">加载中...</div>
+                    <div className="text-sm text-[#a09080] py-6 text-center">加载中...</div>
                   ) : (
                     <>
                       {/* 同本异译 */}
                       {relatedSutras.translations.length > 0 && (
                         <div>
-                          <div className="text-[11px] text-[#9a8a7a] uppercase tracking-wider mb-2 px-1">同本异译</div>
+                          <div className="text-xs text-[#9a8a7a] font-medium tracking-wider mb-2 px-1 flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-[#b45309]"></span>
+                            同本异译
+                          </div>
                           <div className="space-y-1">
                             {relatedSutras.translations.map((item, idx) => (
                               <Link
                                 key={`trans-${idx}`}
                                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                                className="block px-3 py-2.5 rounded-lg transition hover:bg-[#f5f2ed] group"
+                                className="block px-3 py-2.5 rounded-xl transition-all hover:bg-[#f5f2ed] group"
                               >
                                 <div className="text-sm text-[#3d3229] group-hover:text-[#2d2419] truncate">{item.title}</div>
                                 {(item.author || item.dynasty) && (
-                                  <div className="text-xs text-[#9a8a7a] mt-0.5">
+                                  <div className="text-xs text-[#9a8a7a] mt-1">
                                     {item.dynasty}{item.dynasty && item.author && ' · '}{item.author}
                                   </div>
                                 )}
@@ -1017,17 +1015,20 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       {/* 注疏 */}
                       {relatedSutras.commentaries.length > 0 && (
                         <div>
-                          <div className="text-[11px] text-[#9a8a7a] uppercase tracking-wider mb-2 px-1">注疏</div>
+                          <div className="text-xs text-[#9a8a7a] font-medium tracking-wider mb-2 px-1 flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-[#0f766e]"></span>
+                            注疏
+                          </div>
                           <div className="space-y-1">
                             {relatedSutras.commentaries.map((item, idx) => (
                               <Link
                                 key={`comm-${idx}`}
                                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                                className="block px-3 py-2.5 rounded-lg transition hover:bg-[#f5f2ed] group"
+                                className="block px-3 py-2.5 rounded-xl transition-all hover:bg-[#f5f2ed] group"
                               >
                                 <div className="text-sm text-[#3d3229] group-hover:text-[#2d2419] truncate">{item.title}</div>
                                 {item.author && (
-                                  <div className="text-xs text-[#9a8a7a] mt-0.5">{item.author}</div>
+                                  <div className="text-xs text-[#9a8a7a] mt-1">{item.author}</div>
                                 )}
                               </Link>
                             ))}
@@ -1038,17 +1039,20 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       {/* 其他相关 */}
                       {relatedSutras.related.length > 0 && (
                         <div>
-                          <div className="text-[11px] text-[#9a8a7a] uppercase tracking-wider mb-2 px-1">相关经典</div>
+                          <div className="text-xs text-[#9a8a7a] font-medium tracking-wider mb-2 px-1 flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-[#6366f1]"></span>
+                            相关经典
+                          </div>
                           <div className="space-y-1">
                             {relatedSutras.related.map((item, idx) => (
                               <Link
                                 key={`rel-${idx}`}
                                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                                className="block px-3 py-2.5 rounded-lg transition hover:bg-[#f5f2ed] group"
+                                className="block px-3 py-2.5 rounded-xl transition-all hover:bg-[#f5f2ed] group"
                               >
                                 <div className="text-sm text-[#3d3229] group-hover:text-[#2d2419] truncate">{item.title}</div>
                                 {item.author && (
-                                  <div className="text-xs text-[#9a8a7a] mt-0.5">{item.author}</div>
+                                  <div className="text-xs text-[#9a8a7a] mt-1">{item.author}</div>
                                 )}
                               </Link>
                             ))}
@@ -1060,7 +1064,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       {relatedSutras.translations.length === 0 &&
                         relatedSutras.commentaries.length === 0 &&
                         relatedSutras.related.length === 0 && (
-                          <div className="text-sm text-[#a09080] py-4 text-center">暂无相关经书</div>
+                          <div className="text-sm text-[#a09080] py-6 text-center">暂无相关经书</div>
                         )}
                     </>
                   )}
@@ -1069,31 +1073,31 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
               {/* 人物内容 */}
               {relatedTab === 'persons' && (
-                <div className="space-y-1 max-h-[360px] overflow-auto pr-1">
+                <div className="space-y-1 max-h-[400px] overflow-auto pr-1 scrollbar-thin">
                   {loadingRelated ? (
-                    <div className="text-sm text-[#a09080] py-4 text-center">加载中...</div>
+                    <div className="text-sm text-[#a09080] py-6 text-center">加载中...</div>
                   ) : relatedPersons.length > 0 ? (
                     relatedPersons.map((person, idx) => (
                       <Link
                         key={idx}
                         href={`/person/${encodeURIComponent(person.name)}`}
-                        className="flex items-center justify-between px-3 py-2.5 rounded-lg transition hover:bg-[#f5f2ed] group"
+                        className="flex items-center justify-between px-3 py-3 rounded-xl transition-all hover:bg-[#f5f2ed] group"
                       >
                         <div>
-                          <div className="text-sm text-[#3d3229] group-hover:text-[#2d2419]">{person.name}</div>
+                          <div className="text-sm text-[#3d3229] group-hover:text-[#2d2419] font-medium">{person.name}</div>
                           {person.dynasty && (
-                            <div className="text-xs text-[#9a8a7a] mt-0.5">{person.dynasty}</div>
+                            <div className="text-xs text-[#9a8a7a] mt-1">{person.dynasty}</div>
                           )}
                         </div>
                         {person.role && (
-                          <span className="text-[10px] px-2 py-0.5 bg-[#f0ebe5] text-[#7a6a5a] rounded-full">
+                          <span className="text-xs px-2.5 py-1 bg-[#f0ebe5] text-[#6a5a4a] rounded-lg font-medium">
                             {person.role}
                           </span>
                         )}
                       </Link>
                     ))
                   ) : (
-                    <div className="text-sm text-[#a09080] py-4 text-center">暂无相关人物</div>
+                    <div className="text-sm text-[#a09080] py-6 text-center">暂无相关人物</div>
                   )}
                 </div>
               )}
