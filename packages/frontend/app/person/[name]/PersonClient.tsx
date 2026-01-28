@@ -295,6 +295,7 @@ export default function PersonClient({ person }: Props) {
                         <Link
                           key={work.id}
                           href={`/sutra/${encodeURIComponent(work.title)}/1`}
+                          prefetch={false}
                           aria-label={`阅读 ${work.title}`}
                           className="group flex items-center justify-between gap-3 rounded-lg border border-[#e6d6bf]/60 bg-gradient-to-r from-white/80 to-[#faf6f0]/80 px-4 py-2.5 transition-all duration-150 hover:border-[#d4c4a8] hover:shadow-sm hover:from-white hover:to-[#f5efe5]"
                         >

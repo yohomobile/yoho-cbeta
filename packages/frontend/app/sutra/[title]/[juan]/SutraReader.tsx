@@ -733,6 +733,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                           <Link
                             key={`trans-${idx}`}
                             href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                            prefetch={false}
                             onClick={() => setShowToc(false)}
                             className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
                           >
@@ -758,6 +759,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                           <Link
                             key={`comm-${idx}`}
                             href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                            prefetch={false}
                             onClick={() => setShowToc(false)}
                             className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
                           >
@@ -781,6 +783,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                           <Link
                             key={`rel-${idx}`}
                             href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                            prefetch={false}
                             onClick={() => setShowToc(false)}
                             className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
                           >
@@ -818,6 +821,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                     <Link
                       key={idx}
                       href={`/person/${encodeURIComponent(person.name)}`}
+                      prefetch={false}
                       onClick={() => setShowToc(false)}
                       className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
                     >
@@ -1087,6 +1091,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                               <Link
                                 key={`trans-${idx}`}
                                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                                prefetch={false}
                                 className="block px-3 py-2.5 rounded-xl transition-all hover:bg-[#f5f2ed] group"
                               >
                                 <div className="text-sm text-[#3d3229] group-hover:text-[#2d2419] truncate">{item.title}</div>
@@ -1113,6 +1118,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                               <Link
                                 key={`comm-${idx}`}
                                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                                prefetch={false}
                                 className="block px-3 py-2.5 rounded-xl transition-all hover:bg-[#f5f2ed] group"
                               >
                                 <div className="text-sm text-[#3d3229] group-hover:text-[#2d2419] truncate">{item.title}</div>
@@ -1137,6 +1143,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                               <Link
                                 key={`rel-${idx}`}
                                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                                prefetch={false}
                                 className="block px-3 py-2.5 rounded-xl transition-all hover:bg-[#f5f2ed] group"
                               >
                                 <div className="text-sm text-[#3d3229] group-hover:text-[#2d2419] truncate">{item.title}</div>
@@ -1175,6 +1182,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       <Link
                         key={idx}
                         href={`/person/${encodeURIComponent(person.name)}`}
+                        prefetch={false}
                         className="flex items-center justify-between px-3 py-3 rounded-xl transition-all hover:bg-[#f5f2ed] group"
                       >
                         <div>

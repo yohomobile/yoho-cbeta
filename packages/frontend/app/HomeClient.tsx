@@ -450,6 +450,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                           <li key={text.id}>
                             <Link
                               href={`/sutra/${encodeURIComponent(text.title)}`}
+                              prefetch={false}
                               className="flex items-center justify-between px-4 py-3 transition hover:bg-[#faf8f5]"
                             >
                               <div className="min-w-0 flex-1">
@@ -489,6 +490,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                           <li key={entry.id}>
                             <Link
                               href={`/dictionary/${encodeURIComponent(entry.term)}`}
+                              prefetch={false}
                               className="block px-4 py-3 transition hover:bg-[#faf8f5]"
                             >
                               <div className="flex items-center gap-2">
@@ -515,6 +517,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                           <li key={person.id}>
                             <Link
                               href={`/person/${encodeURIComponent(person.name)}`}
+                              prefetch={false}
                               className="block px-4 py-3 transition hover:bg-[#faf8f5]"
                             >
                               <h3 className="text-sm text-[#3d3229]">{person.name}</h3>
@@ -569,6 +572,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                               <li key={`${item.text_id}-${item.juan}-${idx}`}>
                                 <Link
                                   href={`/sutra/${encodeURIComponent(item.title)}/${item.juan}`}
+                                  prefetch={false}
                                   className="block px-4 py-3 transition hover:bg-[#faf8f5]"
                                 >
                                   <div className="flex items-center gap-2">

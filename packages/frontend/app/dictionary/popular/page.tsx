@@ -146,6 +146,7 @@ export default async function DictionaryPopularPage({ searchParams }: PageProps)
             <Link
               key={entry.id}
               href={`/dictionary/${encodeURIComponent(entry.term)}`}
+              prefetch={false}
               className="group flex h-full flex-col justify-between rounded-2xl border border-[#eadcc4] bg-white/85 px-5 py-4 shadow-[0_12px_30px_-24px_rgba(111,78,46,0.5)] transition hover:-translate-y-0.5 hover:border-[#d7c2a1] hover:bg-[#fffaf2] hover:shadow-[0_16px_36px_-24px_rgba(111,78,46,0.6)]"
             >
               <div>
