@@ -7,22 +7,34 @@ import { useCallback, useEffect, useState } from 'react'
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api'
 
 const popularDictionary = [
-  { term: '般若', description: '智慧' },
-  { term: '空', description: '核心概念' },
-  { term: '涅槃', description: '解脱' },
-  { term: '菩提', description: '觉悟' },
-  { term: '因果', description: '业报' },
-  { term: '三昧', description: '禅定' },
-  { term: '佛陀', description: '觉者' },
-  { term: '菩萨', description: '觉有情' },
-  { term: '阿罗汉', description: '果位' },
-  { term: '缘起', description: '核心教义' },
-  { term: '轮回', description: '六道' },
-  { term: '解脱', description: '出离' },
-  { term: '四谛', description: '苦集灭道' },
-  { term: '八正道', description: '修行' },
-  { term: '五蕴', description: '色受想行识' },
-  { term: '十二因缘', description: '缘起法' },
+  { term: '般若', weight: 5 },
+  { term: '空', weight: 5 },
+  { term: '涅槃', weight: 4 },
+  { term: '菩提', weight: 4 },
+  { term: '因果', weight: 3 },
+  { term: '三昧', weight: 3 },
+  { term: '佛陀', weight: 5 },
+  { term: '菩萨', weight: 4 },
+  { term: '阿罗汉', weight: 3 },
+  { term: '缘起', weight: 4 },
+  { term: '轮回', weight: 3 },
+  { term: '解脱', weight: 4 },
+  { term: '四谛', weight: 3 },
+  { term: '八正道', weight: 2 },
+  { term: '五蕴', weight: 2 },
+  { term: '十二因缘', weight: 2 },
+  { term: '如来', weight: 4 },
+  { term: '法身', weight: 3 },
+  { term: '慈悲', weight: 4 },
+  { term: '无常', weight: 3 },
+]
+
+const tagCloudStyles = [
+  { size: 'text-xs', color: 'text-[#a09080]' },
+  { size: 'text-sm', color: 'text-[#8a7a6a]' },
+  { size: 'text-base', color: 'text-[#6a5a4a]' },
+  { size: 'text-lg', color: 'text-[#5a4a3a]' },
+  { size: 'text-xl', color: 'text-[#4a3a2a]' },
 ]
 
 
@@ -339,17 +351,19 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                       查看全部 →
                     </Link>
                   </header>
-                  <div className="flex flex-wrap gap-2">
-                    {popularDictionary.map((item) => (
-                      <Link
-                        key={item.term}
-                        href={`/dictionary/${encodeURIComponent(item.term)}`}
-                        className="group rounded-lg border border-[#e8e0d5] bg-white px-3 py-2 transition hover:border-[#d0c8bd] hover:shadow-sm"
-                      >
-                        <span className="text-sm text-[#3d3229] group-hover:text-[#5a4a3a]">{item.term}</span>
-                        <span className="ml-1.5 text-[10px] text-[#a09080]">{item.description}</span>
-                      </Link>
-                    ))}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                    {popularDictionary.map((item) => {
+                      const style = tagCloudStyles[item.weight - 1] || tagCloudStyles[2]
+                      return (
+                        <Link
+                          key={item.term}
+                          href={`/dictionary/${encodeURIComponent(item.term)}`}
+                          className={`${style.size} ${style.color} transition-all duration-200 hover:text-[#c4a46a] hover:scale-110`}
+                        >
+                          {item.term}
+                        </Link>
+                      )
+                    })}
                   </div>
                 </section>
               </aside>
