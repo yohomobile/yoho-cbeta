@@ -419,7 +419,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               return (
                 <p
                   key={lineIdx}
-                  className="text-[#2d2419] leading-[2.2] tracking-wider font-medium"
+                  className="text-[#2d2419] leading-[2.2] tracking-wider font-bold"
                 >
                   {currentLine.map((node, i) => renderInline(node, i))}
                 </p>
