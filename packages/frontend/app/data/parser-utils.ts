@@ -76,6 +76,13 @@ export const extractPlainText = (node: CbetaNode, includeNotes = false): string 
     return ''
   }
   if (tag === 'app') {
+    // 从 app 标签中提取 lem（校勘正文）的内容
+    const children = node.children || []
+    for (const child of children) {
+      if (typeof child === 'object' && child.tag === 'lem') {
+        return extractPlainText(child, includeNotes)
+      }
+    }
     return ''
   }
   if (tag === 't' || tag === 'tt' || tag === 'foreign') {
@@ -277,6 +284,13 @@ export const collectInlines = (node: CbetaNode, ctx: ParseContext): InlineNode[]
   }
 
   if (tag === 'app') {
+    // 从 app 标签中提取 lem（校勘正文）的内容
+    const children = node.children || []
+    for (const child of children) {
+      if (typeof child === 'object' && child.tag === 'lem') {
+        return collectInlineChildren(child, ctx)
+      }
+    }
     return []
   }
 
