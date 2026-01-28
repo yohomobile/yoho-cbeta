@@ -362,6 +362,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     <article key={item.id}>
                       <Link
                         href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                        prefetch={false}
                         className="group flex items-center gap-2.5 rounded-lg border border-[#e8e0d5] bg-white px-3 py-2.5 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
                       >
                         <FontAwesomeIcon icon={faBookOpen} className="h-3.5 w-3.5 shrink-0 text-[#a09080] group-hover:text-[#8a7a6a]" />
@@ -398,6 +399,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                       <Link
                         key={term}
                         href={`/dictionary/${encodeURIComponent(term)}`}
+                        prefetch={false}
                         className="rounded-md border border-[#e8e0d5] bg-white px-2.5 py-1 text-[13px] text-[#3d3229] transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:text-[#5a4a3a]"
                       >
                         {term}
