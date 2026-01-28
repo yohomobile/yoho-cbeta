@@ -769,21 +769,23 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
         <main className="flex-1 min-w-0">
           {/* 经文卡片容器 */}
           <div className="bg-white/70 rounded-3xl shadow-sm border border-[#e8e0d5]/50 px-6 sm:px-10 lg:px-14 py-10 lg:py-14">
-            {/* PC端：标题区域 - 精致设计 */}
-            <div className="hidden lg:block mb-12 text-center">
-              {/* 装饰线 */}
-              <div className="flex items-center justify-center gap-4 mb-6">
-                <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#d4c4a8]" />
-                <span className="text-[#c4a46a] text-xs">◈</span>
-                <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#d4c4a8]" />
+            {/* PC端：标题区域 - 精致设计，只在第一卷显示 */}
+            {currentJuan === 1 && (
+              <div className="hidden lg:block mb-12 text-center">
+                {/* 装饰线 */}
+                <div className="flex items-center justify-center gap-4 mb-6">
+                  <div className="h-px w-16 bg-gradient-to-r from-transparent to-[#d4c4a8]" />
+                  <span className="text-[#c4a46a] text-xs">◈</span>
+                  <div className="h-px w-16 bg-gradient-to-l from-transparent to-[#d4c4a8]" />
+                </div>
+                {/* 经题 */}
+                <h1 className="text-3xl font-display text-[#2d2419] mb-4 tracking-wider">{sutra.title}</h1>
+                {/* 底部装饰 */}
+                <div className="mt-4 flex items-center justify-center">
+                  <div className="h-px w-32 bg-gradient-to-r from-transparent via-[#d4c4a8] to-transparent" />
+                </div>
               </div>
-              {/* 经题 */}
-              <h1 className="text-3xl font-display text-[#2d2419] mb-4 tracking-wider">{sutra.title}</h1>
-              {/* 底部装饰 */}
-              <div className="mt-4 flex items-center justify-center">
-                <div className="h-px w-32 bg-gradient-to-r from-transparent via-[#d4c4a8] to-transparent" />
-              </div>
-            </div>
+            )}
 
             {/* Content */}
             {loading ? (
@@ -822,6 +824,17 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
         {/* 右侧：目录导航 */}
         <aside className="hidden lg:block w-[300px] shrink-0 sticky top-[84px] h-[calc(100vh-108px)] overflow-auto scrollbar-thin">
           <div className="space-y-4">
+            {/* 经题与译者信息 */}
+            <div className="bg-white/70 rounded-2xl shadow-sm border border-[#e8e0d5]/50 p-4">
+              <h2 className="text-base font-medium text-[#2d2419] mb-2">{sutra.title}</h2>
+              {sutra.author_raw && (
+                <p className="text-sm text-[#8a7a6a]">
+                  {sutra.translation_dynasty && <span>{sutra.translation_dynasty} · </span>}
+                  {sutra.author_raw}
+                </p>
+              )}
+            </div>
+
             {/* 区块一：分卷/分品 - 只要有多卷就显示此区块 */}
             {juanCount > 1 && (
               <div className="rounded-2xl shadow-sm border border-[#e8e0d5]/50 overflow-hidden">
