@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { TagCloud } from 'react-tagcloud'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api'
