@@ -313,18 +313,25 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     <article key={item.id}>
                       <Link
                         href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                        className="group block rounded-xl border border-[#e8e0d5] bg-white p-4 transition hover:border-[#d0c8bd] hover:shadow-sm"
+                        className="group relative block overflow-hidden rounded-xl border border-[#e8e0d5] bg-gradient-to-br from-white to-[#fdfcfa] p-5 transition-all duration-200 hover:border-[#c8bfb2] hover:shadow-md hover:shadow-[#e8e0d5]/50"
                       >
-                        <h3 className="text-[15px] font-medium text-[#3d3229] group-hover:text-[#5a4a3a]">
+                        {/* 装饰性左边框 */}
+                        <div className="absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b from-[#c4a46a] to-[#d4b87a] opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
+
+                        <h3 className="text-base font-medium tracking-wide text-[#3d3229] transition-colors group-hover:text-[#2a1f16]">
                           {item.title}
                         </h3>
-                        <p className="mt-1 text-xs text-[#9a8a7a]">
-                          {item.dynasty}{item.dynasty && item.author && ' · '}{item.author}
-                        </p>
-                        {item.tag && (
-                          <span className="mt-2 inline-block rounded-full bg-[#f5f2ed] px-2 py-0.5 text-[10px] text-[#8a7a6a]">
-                            {item.tag}
-                          </span>
+                        {(item.dynasty || item.author) && (
+                          <p className="mt-2 flex items-center text-[13px] text-[#8a7a6a]">
+                            {item.dynasty && (
+                              <span className="inline-flex items-center">
+                                <span className="mr-1.5 inline-block h-1 w-1 rounded-full bg-[#c4a46a]" />
+                                {item.dynasty}
+                              </span>
+                            )}
+                            {item.dynasty && item.author && <span className="mx-2 text-[#d0c8bd]">·</span>}
+                            {item.author && <span>{item.author}</span>}
+                          </p>
                         )}
                       </Link>
                     </article>
