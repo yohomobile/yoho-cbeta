@@ -365,6 +365,11 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       const firstNode = firstLine?.[0]
       const hasQuote = firstNode?.type === 'text' && firstNode.text.startsWith('「')
 
+      // 检查最后一行是否以」结尾
+      const lastLine = block.lines[block.lines.length - 1]
+      const lastNode = lastLine?.[lastLine.length - 1]
+      const hasEndQuote = lastNode?.type === 'text' && lastNode.text.endsWith('」')
+
       // 处理第一行：分离「符号和剩余文本
       let processedFirstLine = firstLine
       if (hasQuote && firstNode?.type === 'text') {
@@ -376,24 +381,76 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
         ]
       }
 
+      // 处理最后一行：分离」符号
+      let processedLastLine = lastLine
+      if (hasEndQuote && lastNode?.type === 'text') {
+        const quoteText = lastNode.text
+        const remainingText = quoteText.substring(0, quoteText.length - 1)
+        processedLastLine = [
+          ...lastLine.slice(0, -1),
+          { ...lastNode, text: remainingText }
+        ]
+      }
+
       return (
-        <div key={index} className="my-6 py-4 px-6 bg-[#faf7f2] rounded-lg border-l-2 border-[#d4c4a8] relative">
-          {/* 「符号绝对定位 */}
+        <div key={index} className="my-8 relative">
+          {/* 偈颂容器 */}
+          <div className="mx-auto max-w-[520px] py-6 px-8 bg-gradient-to-b from-[#faf8f5] to-[#f5f2ed] rounded-xl border border-[#e8e0d5] shadow-sm">
+            {/* 顶部装饰 */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#d4c4a8]" />
+              <span className="text-[#c4a46a] text-[10px]">✦</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#d4c4a8]" />
+            </div>
+            {/* 偈颂内容 */}
+            <div className="text-center space-y-2">
+              {block.lines.map((line, lineIdx) => {
+                // 确定当前行使用哪个处理后的版本
+                let currentLine = line
+                const isFirstLine = lineIdx === 0
+                const isLastLine = lineIdx === block.lines.length - 1
+
+                if (isFirstLine && hasQuote) {
+                  currentLine = processedFirstLine
+                }
+                if (isLastLine && hasEndQuote && !isFirstLine) {
+                  currentLine = processedLastLine
+                }
+                // 如果只有一行且同时有开头和结尾引号
+                if (isFirstLine && isLastLine && hasQuote && hasEndQuote && firstNode?.type === 'text') {
+                  const text = firstNode.text
+                  currentLine = [{ ...firstNode, text: text.substring(1, text.length - 1) }]
+                }
+
+                return (
+                  <p
+                    key={lineIdx}
+                    className="text-[#3d3229] leading-[2] tracking-wider"
+                  >
+                    {currentLine.map((node, i) => renderInline(node, i))}
+                  </p>
+                )
+              })}
+            </div>
+            {/* 底部装饰 */}
+            <div className="flex items-center justify-center gap-3 mt-4">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#d4c4a8]" />
+              <span className="text-[#c4a46a] text-[10px]">✦</span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#d4c4a8]" />
+            </div>
+          </div>
+          {/* 引号装饰 - 左上 */}
           {hasQuote && (
-            <span className="absolute left-6 top-4 text-[#5a4a3a] select-none">
+            <span className="absolute -left-2 top-4 text-3xl text-[#d4c4a8] font-serif select-none opacity-60">
               「
             </span>
           )}
-          {block.lines.map((line, lineIdx) => (
-            <p
-              key={lineIdx}
-              className={`my-1.5 leading-relaxed text-[#3d3229] ${
-                hasQuote ? 'pl-[1em]' : ''
-              }`}
-            >
-              {(hasQuote && lineIdx === 0 ? processedFirstLine : line).map((node, i) => renderInline(node, i))}
-            </p>
-          ))}
+          {/* 引号装饰 - 右下 */}
+          {hasEndQuote && (
+            <span className="absolute -right-2 bottom-4 text-3xl text-[#d4c4a8] font-serif select-none opacity-60">
+              」
+            </span>
+          )}
         </div>
       )
     }
