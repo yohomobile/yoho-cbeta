@@ -103,35 +103,20 @@ export default async function SutraPage({ searchParams }: PageProps) {
 
         {/* 经书列表 */}
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {data.map((item) => {
-            const alias = item.title_alt && item.title_alt !== item.title ? item.title_alt : null
-            return (
+          {data.map((item) => (
               <Link
                 key={item.id}
                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                className="group flex flex-col rounded-lg border border-[#e8e0d5] bg-white px-4 py-3 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
+                className="group flex items-center justify-between gap-2 rounded-lg border border-[#e8e0d5] bg-white px-4 py-3 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <h2 className="text-[14px] font-medium text-[#3d3229] group-hover:text-[#2a1f16]">
-                    {item.title}
-                  </h2>
-                  {item.juan_count && item.juan_count > 1 && (
-                    <span className="shrink-0 text-[11px] text-[#a09080]">
-                      {item.juan_count}卷
-                    </span>
-                  )}
-                </div>
-                {alias && (
-                  <p className="mt-0.5 text-[11px] text-[#a09080]">{alias}</p>
-                )}
-                {(item.translation_dynasty || item.author_raw) && (
-                  <p className="mt-1.5 text-xs text-[#8a7a6a]">
-                    {item.translation_dynasty}{item.translation_dynasty && item.author_raw && ' · '}{item.author_raw}
-                  </p>
+                <h2 className="text-[14px] font-medium text-[#3d3229] group-hover:text-[#2a1f16] truncate">
+                  {item.title}
+                </h2>
+                {item.author_raw && (
+                  <span className="shrink-0 text-[11px] text-[#a09080]">{item.author_raw}</span>
                 )}
               </Link>
-            )
-          })}
+          ))}
         </div>
 
         {data.length === 0 && (
