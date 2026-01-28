@@ -15,6 +15,14 @@ const popularDictionary = [
   { term: '三昧', description: '禅定' },
   { term: '佛陀', description: '觉者' },
   { term: '菩萨', description: '觉有情' },
+  { term: '阿罗汉', description: '果位' },
+  { term: '缘起', description: '核心教义' },
+  { term: '轮回', description: '六道' },
+  { term: '解脱', description: '出离' },
+  { term: '四谛', description: '苦集灭道' },
+  { term: '八正道', description: '修行' },
+  { term: '五蕴', description: '色受想行识' },
+  { term: '十二因缘', description: '缘起法' },
 ]
 
 
