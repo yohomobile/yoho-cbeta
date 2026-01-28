@@ -109,6 +109,7 @@ export default async function SutraPage({ searchParams }: PageProps) {
               <Link
                 key={item.id}
                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
+                prefetch={false}
                 className="group flex items-center gap-2.5 rounded-lg border border-[#e8e0d5] bg-white px-3 py-2.5 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
               >
                 <FontAwesomeIcon icon={faBookOpen} className="h-3.5 w-3.5 shrink-0 text-[#a09080] group-hover:text-[#8a7a6a]" />
