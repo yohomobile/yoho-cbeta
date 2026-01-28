@@ -8,31 +8,20 @@ import { faBookOpen } from '@fortawesome/free-solid-svg-icons'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api'
 
-const popularDictionary = [
-  { term: '般若', description: '智慧' },
-  { term: '空', description: '核心概念' },
-  { term: '涅槃', description: '解脱' },
-  { term: '菩提', description: '觉悟' },
-  { term: '因果', description: '业报' },
-  { term: '三昧', description: '禅定' },
-  { term: '佛陀', description: '觉者' },
-  { term: '菩萨', description: '觉有情' },
-  { term: '阿罗汉', description: '果位' },
-  { term: '缘起', description: '核心教义' },
-  { term: '轮回', description: '六道' },
-  { term: '解脱', description: '出离' },
-  { term: '四谛', description: '苦集灭道' },
-  { term: '八正道', description: '修行' },
-  { term: '五蕴', description: '色受想行识' },
-  { term: '十二因缘', description: '缘起法' },
-  { term: '如来', description: '佛号' },
-  { term: '法身', description: '三身' },
-  { term: '慈悲', description: '四无量心' },
-  { term: '无常', description: '三法印' },
-  { term: '无我', description: '三法印' },
-  { term: '六度', description: '菩萨行' },
-  { term: '戒定慧', description: '三学' },
-  { term: '三宝', description: '佛法僧' },
+const popularTerms = [
+  '般若', '空', '涅槃', '菩提', '因果', '三昧', '佛陀', '菩萨',
+  '阿罗汉', '缘起', '轮回', '解脱', '四谛', '八正道', '五蕴', '十二因缘',
+  '如来', '法身', '慈悲', '无常', '无我', '六度', '戒定慧', '三宝',
+  '阿弥陀佛', '观世音', '文殊', '普贤', '地藏', '弥勒', '药师',
+  '净土', '禅宗', '密宗', '华严', '天台', '唯识', '中观',
+  '业力', '福报', '功德', '回向', '发愿', '忏悔', '供养', '礼拜',
+  '布施', '持戒', '忍辱', '精进', '禅定', '智慧',
+  '贪嗔痴', '烦恼', '无明', '执著', '我执', '法执',
+  '真如', '实相', '佛性', '自性', '本心', '觉性',
+  '三界', '六道', '天道', '人道', '畜生', '饿鬼', '地狱',
+  '声闻', '缘觉', '菩萨道', '佛道', '一乘', '三乘',
+  '四圣谛', '十善', '五戒', '菩萨戒', '比丘戒',
+  '念佛', '持咒', '诵经', '打坐', '参禅', '观想',
 ]
 
 
@@ -405,13 +394,13 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     </Link>
                   </header>
                   <div className="flex flex-wrap gap-1.5">
-                    {popularDictionary.map((item) => (
+                    {popularTerms.map((term) => (
                       <Link
-                        key={item.term}
-                        href={`/dictionary/${encodeURIComponent(item.term)}`}
+                        key={term}
+                        href={`/dictionary/${encodeURIComponent(term)}`}
                         className="rounded-md border border-[#e8e0d5] bg-white px-2.5 py-1 text-[13px] text-[#3d3229] transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:text-[#5a4a3a]"
                       >
-                        {item.term}
+                        {term}
                       </Link>
                     ))}
                   </div>
