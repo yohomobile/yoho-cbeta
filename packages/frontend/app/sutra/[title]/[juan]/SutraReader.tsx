@@ -828,10 +828,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             <div className="bg-white/70 rounded-2xl shadow-sm border border-[#e8e0d5]/50 p-4">
               <h2 className="text-base font-medium text-[#2d2419] mb-2">{sutra.title}</h2>
               {sutra.author_raw && (
-                <p className="text-sm text-[#8a7a6a]">
-                  {sutra.translation_dynasty && <span>{sutra.translation_dynasty} · </span>}
-                  {sutra.author_raw}
-                </p>
+                <p className="text-sm text-[#8a7a6a]">{sutra.author_raw}</p>
               )}
             </div>
 
