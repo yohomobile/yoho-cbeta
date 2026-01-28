@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBookOpen } from '@fortawesome/free-solid-svg-icons'
 import Header from '../components/Header'
 
 const API_BASE = process.env.API_BASE || 'http://localhost:3001'
@@ -107,11 +109,14 @@ export default async function SutraPage({ searchParams }: PageProps) {
               <Link
                 key={item.id}
                 href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                className="group flex items-center justify-between gap-2 rounded-lg border border-[#e8e0d5] bg-white px-4 py-3 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
+                className="group flex items-center gap-2.5 rounded-lg border border-[#e8e0d5] bg-white px-3 py-2.5 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
               >
-                <h2 className="text-[14px] font-medium text-[#3d3229] group-hover:text-[#2a1f16] truncate">
-                  {item.title}
-                </h2>
+                <FontAwesomeIcon icon={faBookOpen} className="h-3.5 w-3.5 shrink-0 text-[#a09080] group-hover:text-[#8a7a6a]" />
+                <div className="min-w-0 flex-1">
+                  <h2 className="truncate text-[14px] font-medium text-[#3d3229] group-hover:text-[#2a1f16]">
+                    {item.title}
+                  </h2>
+                </div>
                 {item.author_raw && (
                   <span className="shrink-0 text-[11px] text-[#a09080]">{item.author_raw}</span>
                 )}
