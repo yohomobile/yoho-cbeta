@@ -314,19 +314,24 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     查看全部 →
                   </Link>
                 </header>
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {popularTexts.map((item) => (
                     <article key={item.id}>
                       <Link
                         href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                        className="group flex h-11 items-center justify-between gap-3 rounded-lg border border-[#e8e0d5] bg-white px-4 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa]"
+                        className="group flex items-center gap-3 rounded-xl border border-[#e8e0d5] bg-white p-4 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:shadow-sm"
                       >
-                        <h3 className="truncate text-[15px] text-[#3d3229] group-hover:text-[#2a1f16]">
-                          {item.alias || item.title}
-                        </h3>
-                        {item.author && (
-                          <span className="shrink-0 text-[11px] text-[#a09080]">{item.author}</span>
-                        )}
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-lg text-[#8a7a6a] group-hover:bg-[#ebe6df] group-hover:text-[#6a5a4a]">
+                          📖
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate text-[15px] font-medium text-[#3d3229] group-hover:text-[#2a1f16]">
+                            {item.alias || item.title}
+                          </h3>
+                          {item.author && (
+                            <p className="mt-0.5 truncate text-[12px] text-[#a09080]">{item.author}</p>
+                          )}
+                        </div>
                       </Link>
                     </article>
                   ))}
