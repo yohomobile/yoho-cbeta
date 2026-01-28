@@ -109,12 +109,6 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   }>({ translations: [], commentaries: [], related: [] })
   const [loadingRelated, setLoadingRelated] = useState(false)
   const [relatedPersons, setRelatedPersons] = useState<Array<{ name: string; role?: string; dynasty?: string }>>([])
-  // 当前滚动到的品（用于高亮）
-  const [currentPin, setCurrentPin] = useState<string | null>(null)
-  // 分品列表容器 ref（用于点击后自动滚动到选中项）
-  const pinListRef = useRef<HTMLDivElement>(null)
-  // 用户点击标记：点击后短暂忽略滚动事件的更新
-  const isUserClickingRef = useRef(false)
 
   // 用 ref 跟踪 fullToc 是否已加载，避免切换分卷时重复更新造成闪动
   const fullTocLoadedRef = useRef(false)
@@ -298,68 +292,6 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
     }
   }, [sutra.title, sutra.juan_count, currentJuan])
 
-  // 滚动监听：追踪当前滚动到的品
-  useEffect(() => {
-    if (!chapter) return
-
-    const pinItems = fullToc.filter(item => item.type === '品' || item.type === 'pin')
-    if (pinItems.length === 0) return
-
-    const handleScroll = () => {
-      // 如果是用户点击触发的滚动，暂时不更新
-      if (isUserClickingRef.current) return
-
-      const headingElements = document.querySelectorAll('h3')
-      if (headingElements.length === 0) return
-
-      // 找到当前视口中最靠近顶部的标题
-      let currentHeading: string | null = null
-      const scrollTop = window.scrollY
-      const offset = 100 // 顶部偏移量
-
-      for (let i = headingElements.length - 1; i >= 0; i--) {
-        const el = headingElements[i]
-        const rect = el.getBoundingClientRect()
-        const elementTop = rect.top + scrollTop
-
-        if (elementTop <= scrollTop + offset) {
-          const headingText = el.textContent?.trim() || ''
-          // 查找匹配的品目
-          for (const item of pinItems) {
-            const itemChinese = extractChinesePart(item.title)
-            const headingChinese = extractChinesePart(headingText)
-            if (itemChinese && headingChinese &&
-                (headingChinese === itemChinese ||
-                 headingChinese.includes(itemChinese) ||
-                 itemChinese.includes(headingChinese))) {
-              currentHeading = item.title
-              break
-            }
-          }
-          if (currentHeading) break
-        }
-      }
-
-      setCurrentPin(currentHeading)
-    }
-
-    // 初始化时执行一次
-    handleScroll()
-
-    // 添加滚动监听
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [chapter, fullToc])
-
-  // 当 currentPin 变化时，自动让分品列表中的对应项滚动到可见位置
-  useEffect(() => {
-    if (!currentPin || !pinListRef.current) return
-
-    const button = pinListRef.current.querySelector(`[data-pin-title="${CSS.escape(currentPin)}"]`)
-    if (button) {
-      button.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-    }
-  }, [currentPin])
 
   const juanCount = sutra.juan_count || 1
 
@@ -584,10 +516,6 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                   fullToc
                     .filter((item) => item.type === '品' || item.type === 'pin')
                     .map((item, idx) => {
-                      const isCurrentPin = currentPin === item.title ||
-                        (item.juanNumber === currentJuan && currentPin &&
-                          (extractChinesePart(item.title).includes(extractChinesePart(currentPin)) ||
-                           extractChinesePart(currentPin).includes(extractChinesePart(item.title))))
                       const isInCurrentJuan = item.juanNumber === currentJuan
 
                       return (
@@ -616,11 +544,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                             setShowToc(false)
                           }}
                           className={`w-full text-left px-3 py-2 text-sm rounded transition ${
-                            isCurrentPin
-                              ? 'bg-[#3d3229] text-white'
-                              : isInCurrentJuan
-                                ? 'text-[#3d3229] hover:bg-[#f8f5f0]'
-                                : 'text-[#8a7a6a] hover:bg-[#f8f5f0]'
+                            isInCurrentJuan
+                              ? 'text-[#3d3229] hover:bg-[#f8f5f0] font-medium'
+                              : 'text-[#8a7a6a] hover:bg-[#f8f5f0]'
                           }`}
                         >
                           <span className="truncate block">{item.title}</span>
@@ -900,37 +826,23 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
                   {/* 分品内容 */}
                   {juanPinTab === 'pin' && (
-                    <div ref={pinListRef} className="space-y-1 max-h-[300px] overflow-auto pr-1 scrollbar-thin">
+                    <div className="space-y-1 max-h-[300px] overflow-auto pr-1 scrollbar-thin">
                       {fullToc.length > 0 ? (
                         fullToc
                           .filter((item) => item.type === '品' || item.type === 'pin')
                           .map((item, idx) => {
-                            // 判断是否为当前品（考虑当前卷）
-                            const isCurrentPin = currentPin === item.title ||
-                              (item.juanNumber === currentJuan && currentPin &&
-                                (extractChinesePart(item.title).includes(extractChinesePart(currentPin)) ||
-                                 extractChinesePart(currentPin).includes(extractChinesePart(item.title))))
-                            // 判断是否为当前卷的品
                             const isInCurrentJuan = item.juanNumber === currentJuan
 
                             return (
                               <button
                                 key={idx}
-                                data-pin-title={item.title}
                                 onClick={() => {
                                   const targetJuan = item.juanNumber || 1
                                   const encodedTitle = encodeURIComponent(item.title)
 
-                                  // 设置点击标记，阻止滚动事件覆盖选中状态
-                                  isUserClickingRef.current = true
-
-                                  // 立即更新选中状态（先选中）
-                                  setCurrentPin(item.title)
-
                                   if (targetJuan !== currentJuan) {
                                     router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
                                   } else {
-                                    // 直接滚动，不更新 URL（后滚动）
                                     const headingElements = document.querySelectorAll('h3')
                                     const itemChinese = extractChinesePart(item.title)
                                     for (let i = 0; i < headingElements.length; i++) {
@@ -945,18 +857,11 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                                       }
                                     }
                                   }
-
-                                  // 滚动完成后（约 500ms）恢复滚动监听
-                                  setTimeout(() => {
-                                    isUserClickingRef.current = false
-                                  }, 500)
                                 }}
                                 className={`w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all truncate ${
-                                  isCurrentPin
-                                    ? 'bg-[#3d3229] text-white shadow-md font-medium'
-                                    : isInCurrentJuan
-                                      ? 'text-[#3d3229] hover:bg-[#f5f2ed] font-medium'
-                                      : 'text-[#8a7a6a] hover:bg-[#f5f2ed]'
+                                  isInCurrentJuan
+                                    ? 'text-[#3d3229] hover:bg-[#f5f2ed] font-medium'
+                                    : 'text-[#8a7a6a] hover:bg-[#f5f2ed]'
                                 }`}
                                 title={item.title}
                               >
