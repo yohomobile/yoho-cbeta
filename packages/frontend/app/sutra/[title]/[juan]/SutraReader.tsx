@@ -85,26 +85,36 @@ const isTitleMatch = (headingText: string, tocTitle: string): boolean => {
   return false
 }
 
+// 外字映射表类型
+type GaijiMap = Record<string, string>
+
 // 渲染行内节点
-function renderInline(node: InlineNode, index: number): React.ReactNode {
+function renderInline(node: InlineNode, index: number, gaijiMap: GaijiMap): React.ReactNode {
   switch (node.type) {
     case 'text':
       return node.text
     case 'emph':
-      return <em key={index}>{node.inlines.map((n, i) => renderInline(n, i))}</em>
+      return <em key={index}>{node.inlines.map((n, i) => renderInline(n, i, gaijiMap))}</em>
     case 'foreign':
-      return <span key={index} className="font-serif">{node.inlines.map((n, i) => renderInline(n, i))}</span>
+      return <span key={index} className="font-serif">{node.inlines.map((n, i) => renderInline(n, i, gaijiMap))}</span>
     case 'term':
-      return <span key={index} className="text-[#5a4a3a] font-medium">{node.inlines.map((n, i) => renderInline(n, i))}</span>
+      return <span key={index} className="text-[#5a4a3a] font-medium">{node.inlines.map((n, i) => renderInline(n, i, gaijiMap))}</span>
     case 'ref':
       return null
     case 'sanskritMarker':
       return <span key={index} title={node.text}>{node.chinese}</span>
     case 'gaiji':
-      return <span key={index} className="text-[#c0b0a0]">□</span>
+      // 从映射表查找外字对应的 Unicode 字符
+      const ref = node.ref?.replace('#', '')
+      const char = ref ? gaijiMap[ref] : null
+      if (char) {
+        return <span key={index}>{char}</span>
+      }
+      // 未找到映射时显示占位符
+      return <span key={index} className="text-[#c0b0a0]" title={ref || '未知外字'}>□</span>
     case 'inlineGroup':
       const first = node.items[0]
-      return first ? first.inlines.map((n, i) => renderInline(n, i)) : null
+      return first ? first.inlines.map((n, i) => renderInline(n, i, gaijiMap)) : null
     case 'noteRef':
       return <sup key={index} className="text-[10px] text-[#a09080] ml-0.5">[{node.index + 1}]</sup>
     case 'variantRef':
@@ -128,6 +138,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   const [relatedTab, setRelatedTab] = useState<'related' | 'persons'>('related')
   // 移动端目录 Tab
   const [mobileTocTab, setMobileTocTab] = useState<'juan' | 'pin' | 'related' | 'persons'>('juan')
+  // 外字映射表
+  const [gaijiMap, setGaijiMap] = useState<GaijiMap>({})
 
   // 从 URL 参数同步 Tab 状态
   useEffect(() => {
@@ -156,6 +168,18 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   const fullTocLoadedRef = useRef(false)
   // 用 ref 跟踪相关数据是否已加载，避免重复请求
   const relatedLoadedRef = useRef(false)
+  // 用 ref 跟踪外字映射是否已加载
+  const gaijiLoadedRef = useRef(false)
+
+  // 加载外字映射表
+  useEffect(() => {
+    if (gaijiLoadedRef.current) return
+    gaijiLoadedRef.current = true
+    fetch('/gaiji.json')
+      .then(res => res.json())
+      .then(data => setGaijiMap(data))
+      .catch(() => {}) // 忽略加载失败，使用默认占位符
+  }, [])
 
   const loadJuan = useCallback(async (juan: number) => {
     setLoading(true)
@@ -357,7 +381,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
     if (block.type === 'paragraph') {
       return (
         <p key={index} className="my-5 text-justify indent-[2em]">
-          {block.inlines.map((node, i) => renderInline(node, i))}
+          {block.inlines.map((node, i) => renderInline(node, i, gaijiMap))}
         </p>
       )
     }
@@ -421,7 +445,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                   key={lineIdx}
                   className="text-[#2d2419] leading-[2.2] tracking-wider font-bold"
                 >
-                  {currentLine.map((node, i) => renderInline(node, i))}
+                  {currentLine.map((node, i) => renderInline(node, i, gaijiMap))}
                 </p>
               )
             })}
@@ -461,7 +485,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       )
     }
     return null
-  }, [fullToc, currentJuan])
+  }, [fullToc, currentJuan, gaijiMap])
 
   return (
     <div className="min-h-screen bg-[#f8f5f0]">
