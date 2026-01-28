@@ -841,7 +841,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                 </div>
 
                 {/* 内容区域 */}
-                <div className="bg-white/60 p-4">
+                <div className="bg-white/60 p-4 min-h-[200px]">
 
                   {/* 分卷内容 */}
                   {juanPinTab === 'juan' && juanCount > 1 && (
@@ -865,7 +865,14 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                   {/* 分品内容 */}
                   {juanPinTab === 'pin' && (
                     <div className="space-y-1 max-h-[300px] overflow-auto pr-1 scrollbar-thin">
-                      {fullToc.length > 0 ? (
+                      {/* 骨架加载 */}
+                      {loading && fullToc.length === 0 ? (
+                        <div className="space-y-2">
+                          {Array.from({ length: 6 }).map((_, i) => (
+                            <div key={i} className="h-10 w-full animate-pulse rounded-xl bg-[#e8e0d5]" />
+                          ))}
+                        </div>
+                      ) : fullToc.length > 0 ? (
                         fullToc
                           .filter((item) => item.type === '品' || item.type === 'pin')
                           .map((item, idx) => {
@@ -945,11 +952,22 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               </div>
 
               {/* 内容区域 */}
-              <div className="bg-white/60 p-4">
+              <div className="bg-white/60 p-4 min-h-[200px]">
 
               {/* 相关内容 */}
               {relatedTab === 'related' && (
                 <div className="space-y-4 max-h-[400px] overflow-auto pr-1 scrollbar-thin">
+                  {/* 骨架加载 */}
+                  {!relatedDataLoaded ? (
+                    <div className="space-y-3">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="space-y-2">
+                          <div className="h-4 w-16 animate-pulse rounded bg-[#e8e0d5]" />
+                          <div className="h-12 w-full animate-pulse rounded-xl bg-[#e8e0d5]" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
                   <>
                       {/* 同本异译 */}
                       {relatedSutras.translations.length > 0 && (
@@ -1026,20 +1044,27 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       )}
 
                       {/* 无数据 - 只在数据加载完成后显示 */}
-                      {relatedDataLoaded &&
-                        relatedSutras.translations.length === 0 &&
+                      {relatedSutras.translations.length === 0 &&
                         relatedSutras.commentaries.length === 0 &&
                         relatedSutras.related.length === 0 && (
                           <div className="text-sm text-[#a09080] py-6 text-center">暂无相关经书</div>
                         )}
                     </>
+                  )}
                 </div>
               )}
 
               {/* 人物内容 */}
               {relatedTab === 'persons' && (
                 <div className="space-y-1 max-h-[400px] overflow-auto pr-1 scrollbar-thin">
-                  {relatedPersons.length > 0 ? (
+                  {/* 骨架加载 */}
+                  {!relatedDataLoaded ? (
+                    <div className="space-y-2">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="h-14 w-full animate-pulse rounded-xl bg-[#e8e0d5]" />
+                      ))}
+                    </div>
+                  ) : relatedPersons.length > 0 ? (
                     relatedPersons.map((person, idx) => (
                       <Link
                         key={idx}
@@ -1059,9 +1084,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                         )}
                       </Link>
                     ))
-                  ) : relatedDataLoaded ? (
+                  ) : (
                     <div className="text-sm text-[#a09080] py-6 text-center">暂无相关人物</div>
-                  ) : null}
+                  )}
                 </div>
               )}
               </div>
