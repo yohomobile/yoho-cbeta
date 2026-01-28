@@ -79,3 +79,39 @@ export async function createSingleEmbedding(text: string): Promise<EmbeddingResu
 export function vectorToString(embedding: number[]): string {
   return `[${embedding.join(',')}]`
 }
+
+/**
+ * RAG 问答 - 根据经文上下文回答问题
+ */
+export async function askWithContext(
+  question: string,
+  contexts: Array<{ title: string; juan: number; content: string }>
+): Promise<string> {
+  const contextText = contexts
+    .map((c, i) => `【参考${i + 1}】《${c.title}》卷${c.juan}：\n${c.content}`)
+    .join('\n\n')
+
+  const response = await getClient().chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'system',
+        content: `你是一个佛学专家助手。请根据提供的佛经原文回答用户问题。
+要求：
+1. 答案必须基于提供的经文内容，不要编造
+2. 用现代白话文解释，通俗易懂
+3. 适当引用原文作为依据
+4. 如果经文内容不足以回答问题，请如实说明
+5. 回答简洁明了，控制在 300 字以内`,
+      },
+      {
+        role: 'user',
+        content: `经文参考：\n${contextText}\n\n问题：${question}`,
+      },
+    ],
+    temperature: 0.3,
+    max_tokens: 500,
+  })
+
+  return response.choices[0]?.message?.content || '无法生成回答'
+}

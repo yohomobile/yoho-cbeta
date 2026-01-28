@@ -8,7 +8,7 @@ import { db } from './db/index.js'
 import { sql, eq, like, or, and, count, asc, desc } from 'drizzle-orm'
 import { dictionaryEntries } from './db/schema.js'
 import { toSimplified } from './zhconv.js'
-import { createSingleEmbedding, vectorToString } from './embedding/openai-service.js'
+import { createSingleEmbedding, vectorToString, askWithContext } from './embedding/openai-service.js'
 
 const app = new Hono()
 
@@ -1322,6 +1322,77 @@ app.get('/texts/:id/similar', async (c) => {
     })
   } catch (error) {
     console.error('获取相似经文失败:', error)
+    return c.json({ error: '服务器错误' }, 500)
+  }
+})
+
+/**
+ * RAG 问答 API
+ * GET /ask?q=问题
+ * 语义搜索 + LLM 生成答案
+ */
+app.get('/ask', async (c) => {
+  const question = c.req.query('q') || ''
+
+  if (!question.trim()) {
+    return c.json({ error: '请输入问题' }, 400)
+  }
+
+  try {
+    // 1. 检查是否有嵌入数据
+    const countResult = await db.execute(sql`SELECT COUNT(*) as cnt FROM text_chunks`)
+    const chunkCount = Number((countResult as unknown as { cnt: string }[])[0]?.cnt) || 0
+
+    if (chunkCount === 0) {
+      return c.json({ error: '暂无语义搜索数据' }, 503)
+    }
+
+    // 2. 语义搜索获取相关经文
+    const { embedding } = await createSingleEmbedding(question)
+    const vectorStr = vectorToString(embedding)
+
+    const results = await db.execute(sql.raw(`
+      SELECT
+        tc.text_id,
+        tc.juan,
+        tc.content,
+        t.title,
+        1 - (tc.embedding <=> '${vectorStr}'::vector) as similarity
+      FROM text_chunks tc
+      JOIN texts t ON t.id = tc.text_id
+      ORDER BY tc.embedding <=> '${vectorStr}'::vector
+      LIMIT 5
+    `))
+
+    const contexts = (results as unknown as Array<{
+      text_id: string
+      juan: number
+      content: string
+      title: string
+      similarity: number
+    }>).map(r => ({
+      textId: r.text_id,
+      title: r.title,
+      juan: r.juan,
+      content: r.content,
+      similarity: r.similarity,
+    }))
+
+    // 3. 调用 LLM 生成答案
+    const answer = await askWithContext(question, contexts)
+
+    return c.json({
+      question,
+      answer,
+      sources: contexts.map(c => ({
+        textId: c.textId,
+        title: c.title,
+        juan: c.juan,
+        similarity: c.similarity,
+      })),
+    })
+  } catch (error) {
+    console.error('RAG 问答失败:', error)
     return c.json({ error: '服务器错误' }, 500)
   }
 })
