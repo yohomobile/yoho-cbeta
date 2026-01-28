@@ -298,6 +298,58 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
           </div>
         </section>
 
+        {/* 特色介绍 */}
+        <section className="border-b border-[#e8e0d5] bg-[#fdfcfa]">
+          <div className="mx-auto max-w-[1000px] px-4 py-8">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="flex items-start gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-[#8a7a6a]">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 className="text-sm font-medium text-[#3d3229]">简体中文支持</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-[#8a7a6a]">全部经文支持繁简切换，方便阅读</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-[#8a7a6a]">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 className="text-sm font-medium text-[#3d3229]">优质阅读体验</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-[#8a7a6a]">精心设计的排版，支持字号调节</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-[#8a7a6a]">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 className="text-sm font-medium text-[#3d3229]">经书关联</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-[#8a7a6a]">同本异译、注疏关联，深入研读</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-[#8a7a6a]">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </span>
+                <div>
+                  <h3 className="text-sm font-medium text-[#3d3229]">白话翻译</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-[#8a7a6a]">即将上线，助您理解经文深意</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* 主内容区 */}
         <div className="mx-auto max-w-[1000px] px-4 py-8 sm:py-12">
           {/* 无搜索时显示热门内容 */}
@@ -590,17 +642,21 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#e8e0d5] bg-[#faf8f5] px-4 py-6">
+      <footer className="border-t border-[#e8e0d5] bg-[#faf8f5] px-4 py-8">
         <div className="mx-auto max-w-[1000px]">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-xs text-[#9a8a7a]">
-              数据来源：<a href="https://cbeta.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#6a5a4a]">CBETA 中华电子佛典协会</a>
-            </p>
-            <div className="flex items-center gap-4 text-xs text-[#9a8a7a]">
-              <Link href="/dictionary" className="hover:text-[#6a5a4a]">佛学词典</Link>
-              <span className="text-[#d0c8bd]">·</span>
-              <Link href="/sutra" className="hover:text-[#6a5a4a]">经典列表</Link>
+          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row sm:items-start">
+            <div className="text-center sm:text-left">
+              <p className="text-sm font-medium text-[#3d3229]">佛典数据库</p>
+              <p className="mt-1 text-xs text-[#9a8a7a]">
+                数据来源：<a href="https://cbeta.org" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#6a5a4a]">CBETA 中华电子佛典协会</a>
+              </p>
             </div>
+            <nav className="flex items-center gap-6 text-xs text-[#9a8a7a]">
+              <Link href="/about" className="hover:text-[#6a5a4a]">关于本站</Link>
+              <Link href="/sutra" className="hover:text-[#6a5a4a]">全部佛典</Link>
+              <Link href="/dictionary" className="hover:text-[#6a5a4a]">全部词条</Link>
+              <Link href="/person" className="hover:text-[#6a5a4a]">全部人物</Link>
+            </nav>
           </div>
         </div>
       </footer>
