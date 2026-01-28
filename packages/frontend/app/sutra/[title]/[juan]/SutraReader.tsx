@@ -348,6 +348,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   const handleJuanChange = useCallback((newJuan: number) => {
     setCurrentJuan(newJuan)
     router.push(`/sutra/${encodeURIComponent(sutra.title)}/${newJuan}`, { scroll: false })
+    // 滚动到页面顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [router, sutra.title])
 
   // 渲染段落 - 在组件内部定义，可以访问 fullToc
