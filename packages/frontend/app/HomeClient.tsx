@@ -201,20 +201,20 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
 
       <div className="relative">
         {/* Header */}
-        <header className="sticky top-0 z-50 border-b border-[#e8e0d5] bg-[#f8f5f0]/95 backdrop-blur-sm">
+        <header className="sticky top-0 z-50 border-b border-white/40 bg-[#2a1f16]/90 backdrop-blur-md">
           <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-4">
-            <Link href="/" className="flex items-center gap-2 text-[#5a4a3a] transition hover:opacity-70">
-              <span className="shrink-0 text-xl" role="img" aria-hidden="true">📿</span>
-              <span className="text-sm font-medium tracking-wide">佛典数据库</span>
+            <Link href="/" className="flex items-center gap-2 text-[#fff4e0] transition hover:opacity-70">
+              <span className="shrink-0 text-2xl" role="img" aria-hidden="true">📿</span>
+              <span className="text-sm font-display tracking-wide">佛典数据库</span>
             </Link>
-            <div className="hidden md:flex items-center gap-3 text-xs text-[#8a7a6a]">
+            <div className="hidden md:flex items-center gap-3 text-xs text-[#d4c4a8]">
               <span className="px-2.5 py-1">收录 {initialTotal.toLocaleString()} 部</span>
               {showMatch && (
-                <span className="px-2.5 py-1 text-[#a08060]">匹配 {matchedTotal.toLocaleString()} 部</span>
+                <span className="px-2.5 py-1 text-[#f6dfbe]">匹配 {matchedTotal.toLocaleString()} 部</span>
               )}
               <Link
                 href="/dictionary"
-                className="rounded-md border border-[#d8d0c5] bg-white/50 px-3 py-1.5 text-[#5a4a3a] transition hover:bg-white hover:border-[#c8c0b5]"
+                className="rounded-md border border-[#fff4e0]/30 bg-white/10 px-3 py-1.5 text-[#fff4e0] transition hover:bg-white/20"
               >
                 词典
               </Link>
@@ -222,7 +222,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
             <div className="flex items-center md:hidden">
               <Link
                 href="/dictionary"
-                className="rounded-md border border-[#d8d0c5] bg-white/50 px-3 py-1.5 text-xs text-[#5a4a3a] transition hover:bg-white"
+                className="rounded-md border border-[#fff4e0]/30 bg-white/10 px-3 py-1.5 text-xs text-[#fff4e0] transition hover:bg-white/20"
               >
                 词典
               </Link>
