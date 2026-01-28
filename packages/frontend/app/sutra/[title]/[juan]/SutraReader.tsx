@@ -83,27 +83,24 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   const [error, setError] = useState<string | null>(null)
   const [showToc, setShowToc] = useState(false)
   // 分卷/分品 Tab 状态
-  const [juanPinTab, setJuanPinTab] = useState<'juan' | 'pin'>(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const tab = params.get('tab')
-      if (tab === 'pin') return 'pin'
-    }
-    return 'juan'
-  })
+  const [juanPinTab, setJuanPinTab] = useState<'juan' | 'pin'>('juan')
   // 相关/人物 Tab 状态
   const [relatedTab, setRelatedTab] = useState<'related' | 'persons'>('related')
-  // 移动端目录 Tab（保留原有逻辑）
-  const [mobileTocTab, setMobileTocTab] = useState<'juan' | 'pin' | 'related' | 'persons'>(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      const tab = params.get('tab')
-      if (tab === 'pin') return 'pin'
-      if (tab === 'related') return 'related'
-      if (tab === 'persons') return 'persons'
+  // 移动端目录 Tab
+  const [mobileTocTab, setMobileTocTab] = useState<'juan' | 'pin' | 'related' | 'persons'>('juan')
+
+  // 从 URL 参数同步 Tab 状态
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab === 'pin') {
+      setJuanPinTab('pin')
+      setMobileTocTab('pin')
+    } else if (tab === 'related') {
+      setMobileTocTab('related')
+    } else if (tab === 'persons') {
+      setMobileTocTab('persons')
     }
-    return 'juan'
-  })
+  }, [searchParams])
   const [fullToc, setFullToc] = useState<Array<{ title: string; juanNumber?: number; type?: string }>>([])
   const [relatedSutras, setRelatedSutras] = useState<{
     translations: Array<{ title: string; author?: string; dynasty?: string }>
@@ -726,47 +723,47 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             {(juanCount > 1 || fullToc.some(item => item.type === '品' || item.type === 'pin')) && (
               <div className="bg-[#faf8f5] rounded-lg p-3">
                 {/* 分卷/分品 Tab 切换 */}
-                <div className="flex gap-1 mb-3">
+                <div className="flex gap-2 mb-3 border-b border-[#e8e0d5] pb-2">
                   {juanCount > 1 && (
                     <button
                       onClick={() => setJuanPinTab('juan')}
-                      className={`flex-1 py-1.5 text-xs font-medium rounded-md transition ${
+                      className={`px-3 py-1 text-xs font-medium rounded transition ${
                         juanPinTab === 'juan'
-                          ? 'bg-[#6b5b4b] text-white'
-                          : 'bg-white text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-[#f0ebe5]'
+                          ? 'bg-[#5a4a3a] text-white'
+                          : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                       }`}
                     >
-                      分卷
+                      分卷 ({juanCount})
                     </button>
                   )}
                   {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
                     <button
                       onClick={() => setJuanPinTab('pin')}
-                      className={`flex-1 py-1.5 text-xs font-medium rounded-md transition ${
+                      className={`px-3 py-1 text-xs font-medium rounded transition ${
                         juanPinTab === 'pin'
-                          ? 'bg-[#6b5b4b] text-white'
-                          : 'bg-white text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-[#f0ebe5]'
+                          ? 'bg-[#5a4a3a] text-white'
+                          : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                       }`}
                     >
-                      分品
+                      分品 ({fullToc.filter(item => item.type === '品' || item.type === 'pin').length})
                     </button>
                   )}
                 </div>
 
-                {/* 分卷内容 */}
+                {/* 分卷内容 - 列表样式 */}
                 {juanPinTab === 'juan' && juanCount > 1 && (
-                  <div className="grid grid-cols-5 gap-1.5">
+                  <div className="space-y-0.5 max-h-[280px] overflow-auto">
                     {Array.from({ length: juanCount }, (_, i) => i + 1).map((juan) => (
                       <button
                         key={juan}
                         onClick={() => handleJuanChange(juan)}
-                        className={`py-2 text-xs rounded-md transition ${
+                        className={`w-full text-left px-2.5 py-1.5 text-sm rounded-md transition truncate ${
                           currentJuan === juan
-                            ? 'bg-[#6b5b4b] text-white font-medium shadow-sm'
-                            : 'bg-white text-[#5a4a3a] hover:bg-[#e8e0d5] border border-[#e8e0d5]'
+                            ? 'bg-[#5a4a3a] text-white font-medium'
+                            : 'text-[#5a4a3a] hover:bg-white'
                         }`}
                       >
-                        {juan}
+                        第{juan}卷
                       </button>
                     ))}
                   </div>
@@ -774,7 +771,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
                 {/* 分品内容 */}
                 {juanPinTab === 'pin' && (
-                  <div className="space-y-0.5 max-h-[240px] overflow-auto">
+                  <div className="space-y-0.5 max-h-[280px] overflow-auto">
                     {fullToc.length > 0 ? (
                       fullToc
                         .filter((item) => item.type === '品' || item.type === 'pin')
@@ -819,23 +816,23 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             {/* 区块二：相关/人物 */}
             <div className="bg-[#faf8f5] rounded-lg p-3">
               {/* 相关/人物 Tab 切换 */}
-              <div className="flex gap-1 mb-3">
+              <div className="flex gap-2 mb-3 border-b border-[#e8e0d5] pb-2">
                 <button
                   onClick={() => setRelatedTab('related')}
-                  className={`flex-1 py-1.5 text-xs font-medium rounded-md transition ${
+                  className={`px-3 py-1 text-xs font-medium rounded transition ${
                     relatedTab === 'related'
-                      ? 'bg-[#6b5b4b] text-white'
-                      : 'bg-white text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-[#f0ebe5]'
+                      ? 'bg-[#5a4a3a] text-white'
+                      : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                   }`}
                 >
                   相关经书
                 </button>
                 <button
                   onClick={() => setRelatedTab('persons')}
-                  className={`flex-1 py-1.5 text-xs font-medium rounded-md transition ${
+                  className={`px-3 py-1 text-xs font-medium rounded transition ${
                     relatedTab === 'persons'
-                      ? 'bg-[#6b5b4b] text-white'
-                      : 'bg-white text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-[#f0ebe5]'
+                      ? 'bg-[#5a4a3a] text-white'
+                      : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                   }`}
                 >
                   相关人物
