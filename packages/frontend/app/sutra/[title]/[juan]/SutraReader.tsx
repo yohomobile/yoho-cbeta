@@ -565,7 +565,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                   }`}
                 >
-                  目录
+                  分品
                 </button>
               )}
               <button
@@ -894,7 +894,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                         : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
                     }`}
                   >
-                    目录
+                    分品
                     <span className="ml-1 text-xs text-[#a09080]">({tocItems.length})</span>
                     {juanPinTab === 'pin' && (
                       <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>

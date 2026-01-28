@@ -136,8 +136,9 @@ export const parseJuanContent = (
       if (muluType === '卷') {
         return
       }
-      // 提取 mulu 的文本内容作为标题
-      const text = normalizeText(extractPlainText(node))
+      // 提取 mulu 的文本内容作为标题，去掉开头的数字序号（如 "1 本地分" -> "本地分"）
+      let text = normalizeText(extractPlainText(node))
+      text = text.replace(/^\d+\s*/, '').replace(/^\d+(?:章|节|项|目)\s*/, '')
       if (text) {
         pushBlock({
           type: 'heading',
