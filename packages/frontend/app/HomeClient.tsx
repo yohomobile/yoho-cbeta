@@ -23,6 +23,14 @@ const popularDictionary = [
   { term: '八正道', description: '修行' },
   { term: '五蕴', description: '色受想行识' },
   { term: '十二因缘', description: '缘起法' },
+  { term: '如来', description: '佛号' },
+  { term: '法身', description: '三身' },
+  { term: '慈悲', description: '四无量心' },
+  { term: '无常', description: '三法印' },
+  { term: '无我', description: '三法印' },
+  { term: '六度', description: '菩萨行' },
+  { term: '戒定慧', description: '三学' },
+  { term: '三宝', description: '佛法僧' },
 ]
 
 
