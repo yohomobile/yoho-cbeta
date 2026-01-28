@@ -804,23 +804,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               </div>
               {/* 经题 */}
               <h1 className="text-3xl font-display text-[#2d2419] mb-4 tracking-wider">{sutra.title}</h1>
-              {/* 译者信息 */}
-              {sutra.author_raw && (
-                <p className="text-sm text-[#7a6a5a] tracking-wide">
-                  {sutra.translation_dynasty && <span className="text-[#9a8a7a]">{sutra.translation_dynasty} · </span>}
-                  {sutra.author_raw}{sutra.author_raw.endsWith('译') ? '' : ' 译'}
-                </p>
-              )}
-              {/* 卷数指示 */}
-              {juanCount > 1 && (
-                <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 bg-[#f5f2ed] rounded-full">
-                  <span className="text-xs text-[#8a7a6a]">卷</span>
-                  <span className="text-sm font-medium text-[#5a4a3a]">{currentJuan}</span>
-                  <span className="text-xs text-[#a09080]">/ {juanCount}</span>
-                </div>
-              )}
               {/* 底部装饰 */}
-              <div className="mt-8 flex items-center justify-center">
+              <div className="mt-4 flex items-center justify-center">
                 <div className="h-px w-32 bg-gradient-to-r from-transparent via-[#d4c4a8] to-transparent" />
               </div>
             </div>
@@ -876,7 +861,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                     }`}
                   >
                     分卷
-                    <span className="ml-1 text-xs text-[#a09080]">({juanCount})</span>
+                    <span className="ml-1 text-xs text-[#a09080]">({currentJuan}/{juanCount})</span>
                     {juanPinTab === 'juan' && (
                       <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
                     )}
