@@ -309,7 +309,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                           {item.alias || item.title}
                         </h3>
                         {item.author && (
-                          <span className="shrink-0 text-xs text-[#a09080]">{item.author}</span>
+                          <span className="shrink-0 text-[11px] text-[#a09080]">{item.author}</span>
                         )}
                       </Link>
                     </article>
