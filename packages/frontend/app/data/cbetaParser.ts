@@ -129,8 +129,23 @@ export const parseJuanContent = (
       return
     }
 
-    // mulu 是目录标签，用于生成侧边栏目录，不在正文中显示
+    // mulu 是目录标签，既用于生成侧边栏目录，也生成页面中的 heading
+    // 排除"卷"类型的 mulu（因为卷标题已经单独处理）
     if (tag === 'mulu') {
+      const muluType = node.attrs?.type
+      if (muluType === '卷') {
+        return
+      }
+      // 提取 mulu 的文本内容作为标题
+      const text = normalizeText(extractPlainText(node))
+      if (text) {
+        pushBlock({
+          type: 'heading',
+          text,
+          level: node.attrs?.level,
+          kind: muluType,
+        })
+      }
       return
     }
 
