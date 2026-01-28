@@ -3,37 +3,26 @@
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { TagCloud } from 'react-tagcloud'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api'
 
 const popularDictionary = [
-  { value: '般若', count: 50 },
-  { value: '空', count: 48 },
-  { value: '涅槃', count: 40 },
-  { value: '菩提', count: 38 },
-  { value: '因果', count: 30 },
-  { value: '三昧', count: 28 },
-  { value: '佛陀', count: 45 },
-  { value: '菩萨', count: 42 },
-  { value: '阿罗汉', count: 25 },
-  { value: '缘起', count: 35 },
-  { value: '轮回', count: 32 },
-  { value: '解脱', count: 36 },
-  { value: '四谛', count: 26 },
-  { value: '八正道', count: 20 },
-  { value: '五蕴', count: 22 },
-  { value: '十二因缘', count: 18 },
-  { value: '如来', count: 38 },
-  { value: '法身', count: 28 },
-  { value: '慈悲', count: 40 },
-  { value: '无常', count: 30 },
-  { value: '无我', count: 32 },
-  { value: '六度', count: 24 },
-  { value: '禅定', count: 26 },
-  { value: '智慧', count: 35 },
+  { term: '般若', description: '智慧' },
+  { term: '空', description: '核心概念' },
+  { term: '涅槃', description: '解脱' },
+  { term: '菩提', description: '觉悟' },
+  { term: '因果', description: '业报' },
+  { term: '三昧', description: '禅定' },
+  { term: '佛陀', description: '觉者' },
+  { term: '菩萨', description: '觉有情' },
+  { term: '阿罗汉', description: '果位' },
+  { term: '缘起', description: '核心教义' },
+  { term: '轮回', description: '六道' },
+  { term: '解脱', description: '出离' },
+  { term: '四谛', description: '苦集灭道' },
+  { term: '八正道', description: '修行' },
+  { term: '五蕴', description: '色受想行识' },
+  { term: '十二因缘', description: '缘起法' },
 ]
 
 
@@ -350,33 +339,18 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                       查看全部 →
                     </Link>
                   </header>
-                  <TagCloud
-                    minSize={14}
-                    maxSize={28}
-                    tags={popularDictionary}
-                    colorOptions={{
-                      luminosity: 'dark',
-                      hue: 'orange',
-                    }}
-                    className="cursor-pointer"
-                    onClick={(tag: { value: string }) => router.push(`/dictionary/${encodeURIComponent(tag.value)}`)}
-                    renderer={(tag: { value: string }, size: number, color: string) => (
-                      <span
-                        key={tag.value}
-                        style={{
-                          fontSize: `${size}px`,
-                          color,
-                          margin: '4px 8px',
-                          display: 'inline-block',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                        }}
-                        className="hover:scale-110 hover:opacity-80"
+                  <div className="flex flex-wrap gap-2">
+                    {popularDictionary.map((item) => (
+                      <Link
+                        key={item.term}
+                        href={`/dictionary/${encodeURIComponent(item.term)}`}
+                        className="group rounded-lg border border-[#e8e0d5] bg-white px-3 py-2 transition hover:border-[#d0c8bd] hover:shadow-sm"
                       >
-                        {tag.value}
-                      </span>
-                    )}
-                  />
+                        <span className="text-sm text-[#3d3229] group-hover:text-[#5a4a3a]">{item.term}</span>
+                        <span className="ml-1.5 text-[10px] text-[#a09080]">{item.description}</span>
+                      </Link>
+                    ))}
+                  </div>
                 </section>
               </aside>
             </div>
