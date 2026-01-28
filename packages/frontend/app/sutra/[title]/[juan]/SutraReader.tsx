@@ -13,6 +13,13 @@ type SutraReaderProps = {
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api'
 
+// 辅助函数：去掉标题中的数字前缀
+const removeNumberPrefix = (title: string): string => {
+  return title
+    .replace(/^\d+(?:章|节|项|目)\s*/, '')
+    .replace(/^\d+\s*/, '')
+}
+
 // 辅助函数：从标题中提取中文部分（去除梵文、数字、标点等）
 const extractChinesePart = (title: string): string => {
   // 匹配中文字符、中文数字、中文标点
@@ -326,18 +333,15 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
     // 使用 requestAnimationFrame 确保 DOM 已渲染
     const scrollToHeading = () => {
-      const headingElements = document.querySelectorAll('h3')
-      const hashChinese = extractChinesePart(decodeURIComponent(hash))
+      // 查找所有 heading 标签（h2-h6）
+      const headingElements = document.querySelectorAll('h2, h3, h4, h5, h6')
+      // URL 中的 hash 可能带数字前缀，需要去掉
+      const targetTitle = removeNumberPrefix(decodeURIComponent(hash))
 
       for (let i = 0; i < headingElements.length; i++) {
         const headingText = headingElements[i].textContent?.trim() || ''
-        const headingChinese = extractChinesePart(headingText)
-
-        // 优先使用中文部分匹配
-        if (hashChinese && headingChinese &&
-            (headingChinese === hashChinese ||
-             headingChinese.includes(hashChinese) ||
-             hashChinese.includes(headingChinese))) {
+        // 直接匹配或使用 isTitleMatch
+        if (headingText === targetTitle || isTitleMatch(headingText, targetTitle)) {
           headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
           break
         }
@@ -690,11 +694,12 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                             if (targetJuan !== currentJuan) {
                               router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
                             } else {
-                              // 使用 isTitleMatch 查找匹配的标题
-                              const headingElements = document.querySelectorAll('h3')
+                              // 查找所有 heading 标签（h2-h6），用去掉数字前缀后的标题比较
+                              const headingElements = document.querySelectorAll('h2, h3, h4, h5, h6')
+                              const targetTitle = removeNumberPrefix(item.title)
                               for (let i = 0; i < headingElements.length; i++) {
                                 const headingText = headingElements[i].textContent?.trim() || ''
-                                if (isTitleMatch(headingText, item.title)) {
+                                if (headingText === targetTitle || isTitleMatch(headingText, targetTitle)) {
                                   headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
                                   break
                                 }
@@ -997,11 +1002,12 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                                 if (targetJuan !== currentJuan) {
                                   router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
                                 } else {
-                                  // 使用 isTitleMatch 查找匹配的标题
-                                  const headingElements = document.querySelectorAll('h3')
+                                  // 查找所有 heading 标签（h2-h6），用去掉数字前缀后的标题比较
+                                  const headingElements = document.querySelectorAll('h2, h3, h4, h5, h6')
+                                  const targetTitle = removeNumberPrefix(item.title)
                                   for (let i = 0; i < headingElements.length; i++) {
                                     const headingText = headingElements[i].textContent?.trim() || ''
-                                    if (isTitleMatch(headingText, item.title)) {
+                                    if (headingText === targetTitle || isTitleMatch(headingText, targetTitle)) {
                                       headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
                                       break
                                     }
