@@ -404,15 +404,14 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                       查看全部 →
                     </Link>
                   </header>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {popularDictionary.map((item) => (
                       <Link
                         key={item.term}
                         href={`/dictionary/${encodeURIComponent(item.term)}`}
-                        className="group rounded-lg border border-[#e8e0d5] bg-white px-3 py-2 transition hover:border-[#d0c8bd] hover:shadow-sm"
+                        className="rounded-md border border-[#e8e0d5] bg-white px-2.5 py-1 text-[13px] text-[#3d3229] transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa] hover:text-[#5a4a3a]"
                       >
-                        <span className="text-sm text-[#3d3229] group-hover:text-[#5a4a3a]">{item.term}</span>
-                        <span className="ml-1.5 text-[10px] text-[#a09080]">{item.description}</span>
+                        {item.term}
                       </Link>
                     ))}
                   </div>
