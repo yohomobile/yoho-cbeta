@@ -393,64 +393,37 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       }
 
       return (
-        <div key={index} className="my-8 relative">
-          {/* 偈颂容器 */}
-          <div className="mx-auto max-w-[520px] py-6 px-8 bg-gradient-to-b from-[#faf8f5] to-[#f5f2ed] rounded-xl border border-[#e8e0d5] shadow-sm">
-            {/* 顶部装饰 */}
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#d4c4a8]" />
-              <span className="text-[#c4a46a] text-[10px]">✦</span>
-              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#d4c4a8]" />
-            </div>
-            {/* 偈颂内容 */}
-            <div className="text-center space-y-2">
-              {block.lines.map((line, lineIdx) => {
-                // 确定当前行使用哪个处理后的版本
-                let currentLine = line
-                const isFirstLine = lineIdx === 0
-                const isLastLine = lineIdx === block.lines.length - 1
+        <div key={index} className="my-8">
+          {/* 偈颂内容 */}
+          <div className="text-center space-y-1">
+            {block.lines.map((line, lineIdx) => {
+              // 确定当前行使用哪个处理后的版本
+              let currentLine = line
+              const isFirstLine = lineIdx === 0
+              const isLastLine = lineIdx === block.lines.length - 1
 
-                if (isFirstLine && hasQuote) {
-                  currentLine = processedFirstLine
-                }
-                if (isLastLine && hasEndQuote && !isFirstLine) {
-                  currentLine = processedLastLine
-                }
-                // 如果只有一行且同时有开头和结尾引号
-                if (isFirstLine && isLastLine && hasQuote && hasEndQuote && firstNode?.type === 'text') {
-                  const text = firstNode.text
-                  currentLine = [{ ...firstNode, text: text.substring(1, text.length - 1) }]
-                }
+              if (isFirstLine && hasQuote) {
+                currentLine = processedFirstLine
+              }
+              if (isLastLine && hasEndQuote && !isFirstLine) {
+                currentLine = processedLastLine
+              }
+              // 如果只有一行且同时有开头和结尾引号
+              if (isFirstLine && isLastLine && hasQuote && hasEndQuote && firstNode?.type === 'text') {
+                const text = firstNode.text
+                currentLine = [{ ...firstNode, text: text.substring(1, text.length - 1) }]
+              }
 
-                return (
-                  <p
-                    key={lineIdx}
-                    className="text-[#3d3229] leading-[2] tracking-wider"
-                  >
-                    {currentLine.map((node, i) => renderInline(node, i))}
-                  </p>
-                )
-              })}
-            </div>
-            {/* 底部装饰 */}
-            <div className="flex items-center justify-center gap-3 mt-4">
-              <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#d4c4a8]" />
-              <span className="text-[#c4a46a] text-[10px]">✦</span>
-              <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#d4c4a8]" />
-            </div>
+              return (
+                <p
+                  key={lineIdx}
+                  className="text-[#2d2419] leading-[2.2] tracking-wider font-medium"
+                >
+                  {currentLine.map((node, i) => renderInline(node, i))}
+                </p>
+              )
+            })}
           </div>
-          {/* 引号装饰 - 左上 */}
-          {hasQuote && (
-            <span className="absolute -left-2 top-4 text-3xl text-[#d4c4a8] font-serif select-none opacity-60">
-              「
-            </span>
-          )}
-          {/* 引号装饰 - 右下 */}
-          {hasEndQuote && (
-            <span className="absolute -right-2 bottom-4 text-3xl text-[#d4c4a8] font-serif select-none opacity-60">
-              」
-            </span>
-          )}
         </div>
       )
     }
