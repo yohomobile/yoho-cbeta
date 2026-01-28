@@ -113,6 +113,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   const [currentPin, setCurrentPin] = useState<string | null>(null)
   // 分品列表容器 ref（用于点击后自动滚动到选中项）
   const pinListRef = useRef<HTMLDivElement>(null)
+  // 用户点击标记：点击后短暂忽略滚动事件的更新
+  const isUserClickingRef = useRef(false)
 
   const loadJuan = useCallback(async (juan: number) => {
     setLoading(true)
@@ -300,6 +302,9 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
     if (pinItems.length === 0) return
 
     const handleScroll = () => {
+      // 如果是用户点击触发的滚动，暂时不更新
+      if (isUserClickingRef.current) return
+
       const headingElements = document.querySelectorAll('h3')
       if (headingElements.length === 0) return
 
@@ -341,6 +346,16 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [chapter, fullToc])
+
+  // 当 currentPin 变化时，自动让分品列表中的对应项滚动到可见位置
+  useEffect(() => {
+    if (!currentPin || !pinListRef.current) return
+
+    const button = pinListRef.current.querySelector(`[data-pin-title="${CSS.escape(currentPin)}"]`)
+    if (button) {
+      button.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [currentPin])
 
   const juanCount = sutra.juan_count || 1
 
@@ -883,23 +898,20 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                             <button
                               key={idx}
                               data-pin-title={item.title}
-                              onClick={(e) => {
+                              onClick={() => {
                                 const targetJuan = item.juanNumber || 1
                                 const encodedTitle = encodeURIComponent(item.title)
 
-                                // 立即更新选中状态，避免等待滚动事件
-                                setCurrentPin(item.title)
+                                // 设置点击标记，阻止滚动事件覆盖选中状态
+                                isUserClickingRef.current = true
 
-                                // 让点击的按钮在侧边栏列表中滚动到可见位置
-                                const button = e.currentTarget
-                                requestAnimationFrame(() => {
-                                  button.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-                                })
+                                // 立即更新选中状态（先选中）
+                                setCurrentPin(item.title)
 
                                 if (targetJuan !== currentJuan) {
                                   router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
                                 } else {
-                                  // 直接滚动，不更新 URL
+                                  // 直接滚动，不更新 URL（后滚动）
                                   const headingElements = document.querySelectorAll('h3')
                                   const itemChinese = extractChinesePart(item.title)
                                   for (let i = 0; i < headingElements.length; i++) {
@@ -914,6 +926,11 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                                     }
                                   }
                                 }
+
+                                // 滚动完成后（约 500ms）恢复滚动监听
+                                setTimeout(() => {
+                                  isUserClickingRef.current = false
+                                }, 500)
                               }}
                               className={`w-full text-left px-3 py-2 text-sm rounded-lg transition truncate ${
                                 isCurrentPin
