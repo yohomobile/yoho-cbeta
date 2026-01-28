@@ -875,10 +875,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       ) : fullToc.length > 0 ? (
                         fullToc
                           .filter((item) => item.type === '品' || item.type === 'pin')
-                          .map((item, idx) => {
-                            const isInCurrentJuan = item.juanNumber === currentJuan
-
-                            return (
+                          .map((item, idx) => (
                               <button
                                 key={idx}
                                 onClick={() => {
@@ -899,17 +896,12 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                                     }
                                   }
                                 }}
-                                className={`w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all truncate ${
-                                  isInCurrentJuan
-                                    ? 'text-[#3d3229] hover:bg-[#f5f2ed] font-medium'
-                                    : 'text-[#8a7a6a] hover:bg-[#f5f2ed]'
-                                }`}
+                                className="w-full text-left px-4 py-2.5 text-sm rounded-xl transition-all truncate text-[#5a4a3a] hover:bg-[#f5f2ed]"
                                 title={item.title}
                               >
                                 {item.title}
                               </button>
-                            )
-                          })
+                            ))
                       ) : (
                         <div className="text-sm text-[#a09080] py-6 text-center">暂无品目</div>
                       )}
