@@ -368,6 +368,22 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
   const juanCount = sutra.juan_count || 1
 
+  // 获取分品列表 - 优先显示"品"，如果没有则显示"经"，再没有则显示"分"
+  const getPinItems = useCallback(() => {
+    const pins = fullToc.filter(item => item.type === '品' || item.type === 'pin')
+    if (pins.length > 0) return { items: pins, label: '分品' }
+
+    const jings = fullToc.filter(item => item.type === '经')
+    if (jings.length > 0) return { items: jings, label: '分经' }
+
+    const fens = fullToc.filter(item => item.type === '分')
+    if (fens.length > 0) return { items: fens, label: '分节' }
+
+    return { items: [], label: '分品' }
+  }, [fullToc])
+
+  const pinData = getPinItems()
+
   // 切换卷并更新 URL
   const handleJuanChange = useCallback((newJuan: number) => {
     setCurrentJuan(newJuan)
@@ -619,10 +635,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             {/* 分品内容 */}
             {mobileTocTab === 'pin' && (
               <div className="space-y-1">
-                {fullToc.length > 0 ? (
-                  fullToc
-                    .filter((item) => item.type === '品' || item.type === 'pin')
-                    .map((item, idx) => {
+                {pinData.items.length > 0 ? (
+                  pinData.items.map((item, idx) => {
                       const isInCurrentJuan = item.juanNumber === currentJuan
 
                       return (
@@ -885,8 +899,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                         : 'text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-white/40'
                     }`}
                   >
-                    分品
-                    <span className="ml-1 text-xs text-[#a09080]">({fullToc.filter(item => item.type === '品' || item.type === 'pin').length})</span>
+                    {pinData.label}
+                    <span className="ml-1 text-xs text-[#a09080]">({pinData.items.length})</span>
                     {juanPinTab === 'pin' && (
                       <span className="absolute bottom-0 inset-x-0 h-0.5 bg-[#3d3229]"></span>
                     )}
@@ -925,10 +939,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                             <div key={i} className="h-10 w-full animate-pulse rounded-xl bg-[#e8e0d5]" />
                           ))}
                         </div>
-                      ) : fullToc.length > 0 ? (
-                        fullToc
-                          .filter((item) => item.type === '品' || item.type === 'pin')
-                          .map((item, idx) => (
+                      ) : pinData.items.length > 0 ? (
+                        pinData.items.map((item, idx) => (
                               <button
                                 key={idx}
                                 onClick={() => {
