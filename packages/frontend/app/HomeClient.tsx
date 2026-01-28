@@ -308,31 +308,16 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     查看全部 →
                   </Link>
                 </header>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-2 sm:grid-cols-2">
                   {popularTexts.map((item) => (
                     <article key={item.id}>
                       <Link
                         href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                        className="group relative block overflow-hidden rounded-xl border border-[#e8e0d5] bg-gradient-to-br from-white to-[#fdfcfa] p-5 transition-all duration-200 hover:border-[#c8bfb2] hover:shadow-md hover:shadow-[#e8e0d5]/50"
+                        className="group block rounded-lg border border-[#e8e0d5] bg-white px-3 py-2 transition hover:border-[#d0c8bd] hover:bg-[#fdfcfa]"
                       >
-                        {/* 装饰性左边框 */}
-                        <div className="absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b from-[#c4a46a] to-[#d4b87a] opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
-
-                        <h3 className="text-base font-medium tracking-wide text-[#3d3229] transition-colors group-hover:text-[#2a1f16]">
+                        <h3 className="text-[15px] text-[#3d3229] group-hover:text-[#2a1f16]">
                           {item.title}
                         </h3>
-                        {(item.dynasty || item.author) && (
-                          <p className="mt-2 flex items-center text-[13px] text-[#8a7a6a]">
-                            {item.dynasty && (
-                              <span className="inline-flex items-center">
-                                <span className="mr-1.5 inline-block h-1 w-1 rounded-full bg-[#c4a46a]" />
-                                {item.dynasty}
-                              </span>
-                            )}
-                            {item.dynasty && item.author && <span className="mx-2 text-[#d0c8bd]">·</span>}
-                            {item.author && <span>{item.author}</span>}
-                          </p>
-                        )}
                       </Link>
                     </article>
                   ))}
