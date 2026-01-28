@@ -109,6 +109,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   }>({ translations: [], commentaries: [], related: [] })
   const [loadingRelated, setLoadingRelated] = useState(false)
   const [relatedPersons, setRelatedPersons] = useState<Array<{ name: string; role?: string; dynasty?: string }>>([])
+  // 当前滚动到的品（用于高亮）
+  const [currentPin, setCurrentPin] = useState<string | null>(null)
 
   const loadJuan = useCallback(async (juan: number) => {
     setLoading(true)
@@ -287,6 +289,56 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
       document.title = `${sutra.title} - 佛典数据库`
     }
   }, [sutra.title, sutra.juan_count, currentJuan])
+
+  // 滚动监听：追踪当前滚动到的品
+  useEffect(() => {
+    if (!chapter) return
+
+    const pinItems = fullToc.filter(item => item.type === '品' || item.type === 'pin')
+    if (pinItems.length === 0) return
+
+    const handleScroll = () => {
+      const headingElements = document.querySelectorAll('h3')
+      if (headingElements.length === 0) return
+
+      // 找到当前视口中最靠近顶部的标题
+      let currentHeading: string | null = null
+      const scrollTop = window.scrollY
+      const offset = 100 // 顶部偏移量
+
+      for (let i = headingElements.length - 1; i >= 0; i--) {
+        const el = headingElements[i]
+        const rect = el.getBoundingClientRect()
+        const elementTop = rect.top + scrollTop
+
+        if (elementTop <= scrollTop + offset) {
+          const headingText = el.textContent?.trim() || ''
+          // 查找匹配的品目
+          for (const item of pinItems) {
+            const itemChinese = extractChinesePart(item.title)
+            const headingChinese = extractChinesePart(headingText)
+            if (itemChinese && headingChinese &&
+                (headingChinese === itemChinese ||
+                 headingChinese.includes(itemChinese) ||
+                 itemChinese.includes(headingChinese))) {
+              currentHeading = item.title
+              break
+            }
+          }
+          if (currentHeading) break
+        }
+      }
+
+      setCurrentPin(currentHeading)
+    }
+
+    // 初始化时执行一次
+    handleScroll()
+
+    // 添加滚动监听
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [chapter, fullToc])
 
   const juanCount = sutra.juan_count || 1
 
@@ -510,38 +562,50 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                 {fullToc.length > 0 ? (
                   fullToc
                     .filter((item) => item.type === '品' || item.type === 'pin')
-                    .map((item, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          const targetJuan = item.juanNumber || 1
-                          const encodedTitle = encodeURIComponent(item.title)
-                          if (targetJuan !== currentJuan) {
-                            // 切换到目标卷，并带上锚点参数和 tab 参数
-                            router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
-                          } else {
-                            // 当前卷，直接滚动到对应位置
-                            const headingElements = document.querySelectorAll('h3')
-                            const itemChinese = extractChinesePart(item.title)
-                            for (let i = 0; i < headingElements.length; i++) {
-                              const headingText = headingElements[i].textContent?.trim() || ''
-                              const headingChinese = extractChinesePart(headingText)
-                              if (itemChinese && headingChinese &&
-                                  (headingChinese === itemChinese ||
-                                   headingChinese.includes(itemChinese) ||
-                                   itemChinese.includes(headingChinese))) {
-                                headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                break
+                    .map((item, idx) => {
+                      const isCurrentPin = currentPin === item.title ||
+                        (item.juanNumber === currentJuan && currentPin &&
+                          (extractChinesePart(item.title).includes(extractChinesePart(currentPin)) ||
+                           extractChinesePart(currentPin).includes(extractChinesePart(item.title))))
+                      const isInCurrentJuan = item.juanNumber === currentJuan
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => {
+                            const targetJuan = item.juanNumber || 1
+                            const encodedTitle = encodeURIComponent(item.title)
+                            if (targetJuan !== currentJuan) {
+                              router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
+                            } else {
+                              const headingElements = document.querySelectorAll('h3')
+                              const itemChinese = extractChinesePart(item.title)
+                              for (let i = 0; i < headingElements.length; i++) {
+                                const headingText = headingElements[i].textContent?.trim() || ''
+                                const headingChinese = extractChinesePart(headingText)
+                                if (itemChinese && headingChinese &&
+                                    (headingChinese === itemChinese ||
+                                     headingChinese.includes(itemChinese) ||
+                                     itemChinese.includes(headingChinese))) {
+                                  headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                  break
+                                }
                               }
                             }
-                          }
-                          setShowToc(false)
-                        }}
-                        className={`w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0]`}
-                      >
-                        <span className="truncate block">{item.title}</span>
-                      </button>
-                    ))
+                            setShowToc(false)
+                          }}
+                          className={`w-full text-left px-3 py-2 text-sm rounded transition ${
+                            isCurrentPin
+                              ? 'bg-[#3d3229] text-white'
+                              : isInCurrentJuan
+                                ? 'text-[#3d3229] hover:bg-[#f8f5f0]'
+                                : 'text-[#8a7a6a] hover:bg-[#f8f5f0]'
+                          }`}
+                        >
+                          <span className="truncate block">{item.title}</span>
+                        </button>
+                      )
+                    })
                 ) : (
                   <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无品目数据</div>
                 )}
@@ -804,36 +868,53 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                     {fullToc.length > 0 ? (
                       fullToc
                         .filter((item) => item.type === '品' || item.type === 'pin')
-                        .map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => {
-                              const targetJuan = item.juanNumber || 1
-                              const encodedTitle = encodeURIComponent(item.title)
-                              if (targetJuan !== currentJuan) {
-                                router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
-                              } else {
-                                const headingElements = document.querySelectorAll('h3')
-                                const itemChinese = extractChinesePart(item.title)
-                                for (let i = 0; i < headingElements.length; i++) {
-                                  const headingText = headingElements[i].textContent?.trim() || ''
-                                  const headingChinese = extractChinesePart(headingText)
-                                  if (itemChinese && headingChinese &&
-                                      (headingChinese === itemChinese ||
-                                       headingChinese.includes(itemChinese) ||
-                                       itemChinese.includes(headingChinese))) {
-                                    headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                    break
+                        .map((item, idx) => {
+                          // 判断是否为当前品（考虑当前卷）
+                          const isCurrentPin = currentPin === item.title ||
+                            (item.juanNumber === currentJuan && currentPin &&
+                              (extractChinesePart(item.title).includes(extractChinesePart(currentPin)) ||
+                               extractChinesePart(currentPin).includes(extractChinesePart(item.title))))
+                          // 判断是否为当前卷的品
+                          const isInCurrentJuan = item.juanNumber === currentJuan
+
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                const targetJuan = item.juanNumber || 1
+                                const encodedTitle = encodeURIComponent(item.title)
+                                if (targetJuan !== currentJuan) {
+                                  router.push(`/sutra/${encodeURIComponent(sutra.title)}/${targetJuan}?tab=pin&pin=${encodedTitle}`, { scroll: false })
+                                } else {
+                                  // 直接滚动，不更新 URL
+                                  const headingElements = document.querySelectorAll('h3')
+                                  const itemChinese = extractChinesePart(item.title)
+                                  for (let i = 0; i < headingElements.length; i++) {
+                                    const headingText = headingElements[i].textContent?.trim() || ''
+                                    const headingChinese = extractChinesePart(headingText)
+                                    if (itemChinese && headingChinese &&
+                                        (headingChinese === itemChinese ||
+                                         headingChinese.includes(itemChinese) ||
+                                         itemChinese.includes(headingChinese))) {
+                                      headingElements[i].scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                      break
+                                    }
                                   }
                                 }
-                              }
-                            }}
-                            className="w-full text-left px-3 py-2 text-sm rounded-lg transition text-[#5a4a3a] hover:bg-[#f5f2ed] truncate"
-                            title={item.title}
-                          >
-                            {item.title}
-                          </button>
-                        ))
+                              }}
+                              className={`w-full text-left px-3 py-2 text-sm rounded-lg transition truncate ${
+                                isCurrentPin
+                                  ? 'bg-[#3d3229] text-white'
+                                  : isInCurrentJuan
+                                    ? 'text-[#3d3229] hover:bg-[#f5f2ed]'
+                                    : 'text-[#8a7a6a] hover:bg-[#f5f2ed]'
+                              }`}
+                              title={item.title}
+                            >
+                              {item.title}
+                            </button>
+                          )
+                        })
                     ) : (
                       <div className="text-sm text-[#a09080] py-4 text-center">暂无品目</div>
                     )}
