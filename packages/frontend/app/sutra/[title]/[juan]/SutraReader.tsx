@@ -82,8 +82,19 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showToc, setShowToc] = useState(false)
-  const [tocTab, setTocTab] = useState<'juan' | 'pin' | 'related' | 'persons'>(() => {
-    // 从 URL 参数读取初始 tab
+  // 分卷/分品 Tab 状态
+  const [juanPinTab, setJuanPinTab] = useState<'juan' | 'pin'>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const tab = params.get('tab')
+      if (tab === 'pin') return 'pin'
+    }
+    return 'juan'
+  })
+  // 相关/人物 Tab 状态
+  const [relatedTab, setRelatedTab] = useState<'related' | 'persons'>('related')
+  // 移动端目录 Tab（保留原有逻辑）
+  const [mobileTocTab, setMobileTocTab] = useState<'juan' | 'pin' | 'related' | 'persons'>(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search)
       const tab = params.get('tab')
@@ -408,14 +419,13 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               {juanCount > 1 && (
                 <button
                   onClick={() => {
-                    setTocTab('juan')
-                    // 更新 URL 参数
+                    setMobileTocTab('juan')
                     const url = new URL(window.location.href)
                     url.searchParams.set('tab', 'juan')
                     router.replace(url.pathname + url.search, { scroll: false })
                   }}
                   className={`flex-1 py-2 text-xs font-medium transition ${
-                    tocTab === 'juan'
+                    mobileTocTab === 'juan'
                       ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
                       : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                   }`}
@@ -426,14 +436,13 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
                 <button
                   onClick={() => {
-                    setTocTab('pin')
-                    // 更新 URL 参数
+                    setMobileTocTab('pin')
                     const url = new URL(window.location.href)
                     url.searchParams.set('tab', 'pin')
                     router.replace(url.pathname + url.search, { scroll: false })
                   }}
                   className={`flex-1 py-2 text-xs font-medium transition ${
-                    tocTab === 'pin'
+                    mobileTocTab === 'pin'
                       ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
                       : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                   }`}
@@ -443,14 +452,13 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               )}
               <button
                 onClick={() => {
-                  setTocTab('related')
-                  // 更新 URL 参数
+                  setMobileTocTab('related')
                   const url = new URL(window.location.href)
                   url.searchParams.set('tab', 'related')
                   router.replace(url.pathname + url.search, { scroll: false })
                 }}
                 className={`flex-1 py-2 text-xs font-medium transition ${
-                  tocTab === 'related'
+                  mobileTocTab === 'related'
                     ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
                     : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                 }`}
@@ -459,14 +467,13 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               </button>
               <button
                 onClick={() => {
-                  setTocTab('persons')
-                  // 更新 URL 参数
+                  setMobileTocTab('persons')
                   const url = new URL(window.location.href)
                   url.searchParams.set('tab', 'persons')
                   router.replace(url.pathname + url.search, { scroll: false })
                 }}
                 className={`flex-1 py-2 text-xs font-medium transition ${
-                  tocTab === 'persons'
+                  mobileTocTab === 'persons'
                     ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
                     : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
                 }`}
@@ -478,7 +485,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             <div className="flex-1 overflow-auto p-4">
 
             {/* 分卷内容 */}
-            {tocTab === 'juan' && (
+            {mobileTocTab === 'juan' && (
               <div className="space-y-1">
                 {Array.from({ length: juanCount }, (_, i) => i + 1).map((juan) => (
                   <button
@@ -500,7 +507,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             )}
 
             {/* 分品内容 */}
-            {tocTab === 'pin' && (
+            {mobileTocTab === 'pin' && (
               <div className="space-y-1">
                 {fullToc.length > 0 ? (
                   fullToc
@@ -544,7 +551,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             )}
 
             {/* 相关内容 */}
-            {tocTab === 'related' && (
+            {mobileTocTab === 'related' && (
               <div className="space-y-4">
                 {loadingRelated ? (
                   <div className="text-sm text-[#8a7a6a] px-3 py-2">加载中...</div>
@@ -633,7 +640,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             )}
 
             {/* 人物内容 */}
-            {tocTab === 'persons' && (
+            {mobileTocTab === 'persons' && (
               <div className="space-y-1">
                 {loadingRelated ? (
                   <div className="text-sm text-[#8a7a6a] px-3 py-2">加载中...</div>
@@ -714,19 +721,19 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
         {/* 右侧：分卷/分品区块 + 相关/人物区块 */}
         <aside className="hidden lg:block w-[320px] border-l border-[#e8e0d5] bg-white/50 overflow-auto sticky top-[60px] h-[calc(100vh-60px)]">
-          <div className="p-4 space-y-6">
+          <div className="p-4 space-y-4">
             {/* 区块一：分卷/分品 */}
             {(juanCount > 1 || fullToc.some(item => item.type === '品' || item.type === 'pin')) && (
-              <div>
+              <div className="bg-[#faf8f5] rounded-lg p-3">
                 {/* 分卷/分品 Tab 切换 */}
-                <div className="flex border-b border-[#e8e0d5] mb-3">
+                <div className="flex gap-1 mb-3">
                   {juanCount > 1 && (
                     <button
-                      onClick={() => setTocTab('juan')}
-                      className={`flex-1 py-2 text-xs font-medium transition ${
-                        tocTab === 'juan'
-                          ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
-                          : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
+                      onClick={() => setJuanPinTab('juan')}
+                      className={`flex-1 py-1.5 text-xs font-medium rounded-md transition ${
+                        juanPinTab === 'juan'
+                          ? 'bg-[#6b5b4b] text-white'
+                          : 'bg-white text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-[#f0ebe5]'
                       }`}
                     >
                       分卷
@@ -734,11 +741,11 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                   )}
                   {fullToc.some(item => item.type === '品' || item.type === 'pin') && (
                     <button
-                      onClick={() => setTocTab('pin')}
-                      className={`flex-1 py-2 text-xs font-medium transition ${
-                        tocTab === 'pin'
-                          ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
-                          : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
+                      onClick={() => setJuanPinTab('pin')}
+                      className={`flex-1 py-1.5 text-xs font-medium rounded-md transition ${
+                        juanPinTab === 'pin'
+                          ? 'bg-[#6b5b4b] text-white'
+                          : 'bg-white text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-[#f0ebe5]'
                       }`}
                     >
                       分品
@@ -747,16 +754,16 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                 </div>
 
                 {/* 分卷内容 */}
-                {tocTab === 'juan' && juanCount > 1 && (
-                  <div className="grid grid-cols-5 gap-1">
+                {juanPinTab === 'juan' && juanCount > 1 && (
+                  <div className="grid grid-cols-5 gap-1.5">
                     {Array.from({ length: juanCount }, (_, i) => i + 1).map((juan) => (
                       <button
                         key={juan}
                         onClick={() => handleJuanChange(juan)}
-                        className={`py-2 text-xs rounded transition ${
+                        className={`py-2 text-xs rounded-md transition ${
                           currentJuan === juan
-                            ? 'bg-[#6b5b4b] text-white font-medium'
-                            : 'bg-[#f5f2ee] text-[#5a4a3a] hover:bg-[#e8e0d5]'
+                            ? 'bg-[#6b5b4b] text-white font-medium shadow-sm'
+                            : 'bg-white text-[#5a4a3a] hover:bg-[#e8e0d5] border border-[#e8e0d5]'
                         }`}
                       >
                         {juan}
@@ -766,8 +773,8 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                 )}
 
                 {/* 分品内容 */}
-                {tocTab === 'pin' && (
-                  <div className="space-y-1 max-h-[300px] overflow-auto">
+                {juanPinTab === 'pin' && (
+                  <div className="space-y-0.5 max-h-[240px] overflow-auto">
                     {fullToc.length > 0 ? (
                       fullToc
                         .filter((item) => item.type === '品' || item.type === 'pin')
@@ -795,14 +802,14 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                                 }
                               }
                             }}
-                            className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] truncate"
+                            className="w-full text-left px-2.5 py-1.5 text-sm rounded-md transition text-[#5a4a3a] hover:bg-white truncate"
                             title={item.title}
                           >
                             {item.title}
                           </button>
                         ))
                     ) : (
-                      <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无品目数据</div>
+                      <div className="text-sm text-[#8a7a6a] px-2 py-2">暂无品目数据</div>
                     )}
                   </div>
                 )}
@@ -810,54 +817,57 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
             )}
 
             {/* 区块二：相关/人物 */}
-            <div>
+            <div className="bg-[#faf8f5] rounded-lg p-3">
               {/* 相关/人物 Tab 切换 */}
-              <div className="flex border-b border-[#e8e0d5] mb-3">
+              <div className="flex gap-1 mb-3">
                 <button
-                  onClick={() => setTocTab('related')}
-                  className={`flex-1 py-2 text-xs font-medium transition ${
-                    tocTab === 'related'
-                      ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
-                      : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
+                  onClick={() => setRelatedTab('related')}
+                  className={`flex-1 py-1.5 text-xs font-medium rounded-md transition ${
+                    relatedTab === 'related'
+                      ? 'bg-[#6b5b4b] text-white'
+                      : 'bg-white text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-[#f0ebe5]'
                   }`}
                 >
-                  相关
+                  相关经书
                 </button>
                 <button
-                  onClick={() => setTocTab('persons')}
-                  className={`flex-1 py-2 text-xs font-medium transition ${
-                    tocTab === 'persons'
-                      ? 'text-[#3d3229] border-b-2 border-[#6b5b4b]'
-                      : 'text-[#8a7a6a] hover:text-[#5a4a3a]'
+                  onClick={() => setRelatedTab('persons')}
+                  className={`flex-1 py-1.5 text-xs font-medium rounded-md transition ${
+                    relatedTab === 'persons'
+                      ? 'bg-[#6b5b4b] text-white'
+                      : 'bg-white text-[#8a7a6a] hover:text-[#5a4a3a] hover:bg-[#f0ebe5]'
                   }`}
                 >
-                  人物
+                  相关人物
                 </button>
               </div>
 
               {/* 相关内容 */}
-              {tocTab === 'related' && (
-                <div className="space-y-4 max-h-[400px] overflow-auto">
+              {relatedTab === 'related' && (
+                <div className="space-y-3 max-h-[320px] overflow-auto">
                   {loadingRelated ? (
-                    <div className="text-sm text-[#8a7a6a] px-3 py-2">加载中...</div>
+                    <div className="text-sm text-[#8a7a6a] px-2 py-2">加载中...</div>
                   ) : (
                     <>
                       {/* 同本异译 */}
                       {relatedSutras.translations.length > 0 && (
-                        <div className="space-y-1">
-                          <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">同本异译</div>
+                        <div className="space-y-0.5">
+                          <div className="text-xs font-medium text-[#6b5b4b] px-2 py-1 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#b8a080]"></span>
+                            同本异译
+                          </div>
                           {relatedSutras.translations.map((item, idx) => (
                             <Link
                               key={`trans-${idx}`}
                               href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                              className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                              className="block px-2.5 py-2 text-sm rounded-md transition text-[#5a4a3a] hover:bg-white"
                             >
                               <div className="flex items-center gap-2">
-                                <span className="truncate">{item.title}</span>
+                                <span className="truncate flex-1">{item.title}</span>
                                 <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#e8e0d5] text-[#6b5b4b] rounded">异译</span>
                               </div>
                               {(item.author || item.dynasty) && (
-                                <span className="text-xs text-[#8a7a6a]">
+                                <span className="text-xs text-[#8a7a6a] mt-0.5 block">
                                   {item.dynasty} {item.author}
                                 </span>
                               )}
@@ -868,20 +878,23 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
                       {/* 注疏 */}
                       {relatedSutras.commentaries.length > 0 && (
-                        <div className="space-y-1">
-                          <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">注疏</div>
+                        <div className="space-y-0.5">
+                          <div className="text-xs font-medium text-[#6b5b4b] px-2 py-1 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#7a9a7a]"></span>
+                            注疏
+                          </div>
                           {relatedSutras.commentaries.map((item, idx) => (
                             <Link
                               key={`comm-${idx}`}
                               href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                              className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                              className="block px-2.5 py-2 text-sm rounded-md transition text-[#5a4a3a] hover:bg-white"
                             >
                               <div className="flex items-center gap-2">
-                                <span className="truncate">{item.title}</span>
+                                <span className="truncate flex-1">{item.title}</span>
                                 <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#d4e8d4] text-[#4a6b4a] rounded">注疏</span>
                               </div>
                               {item.author && (
-                                <span className="text-xs text-[#8a7a6a]">{item.author}</span>
+                                <span className="text-xs text-[#8a7a6a] mt-0.5 block">{item.author}</span>
                               )}
                             </Link>
                           ))}
@@ -890,20 +903,23 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
 
                       {/* 其他相关 */}
                       {relatedSutras.related.length > 0 && (
-                        <div className="space-y-1">
-                          <div className="text-xs font-medium text-[#8a7a6a] px-3 py-1">相关</div>
+                        <div className="space-y-0.5">
+                          <div className="text-xs font-medium text-[#6b5b4b] px-2 py-1 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#8a7aa0]"></span>
+                            相关
+                          </div>
                           {relatedSutras.related.map((item, idx) => (
                             <Link
                               key={`rel-${idx}`}
                               href={`/sutra/${encodeURIComponent(item.title)}/1`}
-                              className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                              className="block px-2.5 py-2 text-sm rounded-md transition text-[#5a4a3a] hover:bg-white"
                             >
                               <div className="flex items-center gap-2">
-                                <span className="truncate">{item.title}</span>
+                                <span className="truncate flex-1">{item.title}</span>
                                 <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#e5e0f0] text-[#5a4a7a] rounded">相关</span>
                               </div>
                               {item.author && (
-                                <span className="text-xs text-[#8a7a6a]">{item.author}</span>
+                                <span className="text-xs text-[#8a7a6a] mt-0.5 block">{item.author}</span>
                               )}
                             </Link>
                           ))}
@@ -914,7 +930,7 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                       {relatedSutras.translations.length === 0 &&
                         relatedSutras.commentaries.length === 0 &&
                         relatedSutras.related.length === 0 && (
-                          <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无相关经书</div>
+                          <div className="text-sm text-[#8a7a6a] px-2 py-2">暂无相关经书</div>
                         )}
                     </>
                   )}
@@ -922,19 +938,19 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
               )}
 
               {/* 人物内容 */}
-              {tocTab === 'persons' && (
-                <div className="space-y-1 max-h-[400px] overflow-auto">
+              {relatedTab === 'persons' && (
+                <div className="space-y-0.5 max-h-[320px] overflow-auto">
                   {loadingRelated ? (
-                    <div className="text-sm text-[#8a7a6a] px-3 py-2">加载中...</div>
+                    <div className="text-sm text-[#8a7a6a] px-2 py-2">加载中...</div>
                   ) : relatedPersons.length > 0 ? (
                     relatedPersons.map((person, idx) => (
                       <Link
                         key={idx}
                         href={`/person/${encodeURIComponent(person.name)}`}
-                        className="w-full text-left px-3 py-2 text-sm rounded transition text-[#5a4a3a] hover:bg-[#f8f5f0] block"
+                        className="block px-2.5 py-2 text-sm rounded-md transition text-[#5a4a3a] hover:bg-white"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="truncate">{person.name}</span>
+                          <span className="truncate flex-1">{person.name}</span>
                           {person.role && (
                             <span className="shrink-0 text-[10px] px-1.5 py-0.5 bg-[#f0e5d4] text-[#7a6b4a] rounded">
                               {person.role}
@@ -942,12 +958,12 @@ export default function SutraReader({ sutra, initialJuan }: SutraReaderProps) {
                           )}
                         </div>
                         {person.dynasty && (
-                          <span className="text-xs text-[#8a7a6a]">{person.dynasty}</span>
+                          <span className="text-xs text-[#8a7a6a] mt-0.5 block">{person.dynasty}</span>
                         )}
                       </Link>
                     ))
                   ) : (
-                    <div className="text-sm text-[#8a7a6a] px-3 py-2">暂无相关人物</div>
+                    <div className="text-sm text-[#8a7a6a] px-2 py-2">暂无相关人物</div>
                   )}
                 </div>
               )}
