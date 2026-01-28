@@ -18,12 +18,24 @@ type PopularText = {
 }
 
 const POPULAR_TEXT_SEEDS = [
+  // 经
   { id: 'T08n0235', tag: '般若', fallbackTitle: '金刚般若波罗蜜经' },
   { id: 'T08n0251', tag: '般若', fallbackTitle: '般若波罗蜜多心经' },
   { id: 'T12n0366', tag: '净土', fallbackTitle: '佛说阿弥陀经' },
   { id: 'T09n0262', tag: '法华', fallbackTitle: '妙法莲华经' },
   { id: 'T19n0945', tag: '首楞严', fallbackTitle: '大佛顶首楞严经' },
   { id: 'T13n0412', tag: '本愿', fallbackTitle: '地藏菩萨本愿经' },
+  { id: 'T10n0279', tag: '华严', fallbackTitle: '大方广佛华严经' },
+  { id: 'T12n0374', tag: '涅槃', fallbackTitle: '大般涅槃经' },
+  { id: 'T14n0475', tag: '净名', fallbackTitle: '维摩诘所说经' },
+  { id: 'T16n0670', tag: '唯识', fallbackTitle: '解深密经' },
+  // 论
+  { id: 'T25n1509', tag: '论', fallbackTitle: '大智度论' },
+  { id: 'T30n1579', tag: '论', fallbackTitle: '瑜伽师地论' },
+  { id: 'T31n1585', tag: '论', fallbackTitle: '成唯识论' },
+  { id: 'T32n1666', tag: '论', fallbackTitle: '中论' },
+  { id: 'T32n1564', tag: '论', fallbackTitle: '大乘起信论' },
+  { id: 'T29n1558', tag: '论', fallbackTitle: '阿毘达磨俱舍论' },
 ] as const
 
 export const metadata: Metadata = {

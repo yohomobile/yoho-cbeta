@@ -308,7 +308,7 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                     查看全部 →
                   </Link>
                 </header>
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                   {popularTexts.map((item) => (
                     <article key={item.id}>
                       <Link
