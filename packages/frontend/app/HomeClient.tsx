@@ -3,38 +3,35 @@
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+import { TagCloud } from 'react-tagcloud'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api'
 
 const popularDictionary = [
-  { term: '般若', weight: 5 },
-  { term: '空', weight: 5 },
-  { term: '涅槃', weight: 4 },
-  { term: '菩提', weight: 4 },
-  { term: '因果', weight: 3 },
-  { term: '三昧', weight: 3 },
-  { term: '佛陀', weight: 5 },
-  { term: '菩萨', weight: 4 },
-  { term: '阿罗汉', weight: 3 },
-  { term: '缘起', weight: 4 },
-  { term: '轮回', weight: 3 },
-  { term: '解脱', weight: 4 },
-  { term: '四谛', weight: 3 },
-  { term: '八正道', weight: 2 },
-  { term: '五蕴', weight: 2 },
-  { term: '十二因缘', weight: 2 },
-  { term: '如来', weight: 4 },
-  { term: '法身', weight: 3 },
-  { term: '慈悲', weight: 4 },
-  { term: '无常', weight: 3 },
-]
-
-const tagCloudStyles = [
-  { size: 'text-xs', color: 'text-[#a09080]' },
-  { size: 'text-sm', color: 'text-[#8a7a6a]' },
-  { size: 'text-base', color: 'text-[#6a5a4a]' },
-  { size: 'text-lg', color: 'text-[#5a4a3a]' },
-  { size: 'text-xl', color: 'text-[#4a3a2a]' },
+  { value: '般若', count: 50 },
+  { value: '空', count: 48 },
+  { value: '涅槃', count: 40 },
+  { value: '菩提', count: 38 },
+  { value: '因果', count: 30 },
+  { value: '三昧', count: 28 },
+  { value: '佛陀', count: 45 },
+  { value: '菩萨', count: 42 },
+  { value: '阿罗汉', count: 25 },
+  { value: '缘起', count: 35 },
+  { value: '轮回', count: 32 },
+  { value: '解脱', count: 36 },
+  { value: '四谛', count: 26 },
+  { value: '八正道', count: 20 },
+  { value: '五蕴', count: 22 },
+  { value: '十二因缘', count: 18 },
+  { value: '如来', count: 38 },
+  { value: '法身', count: 28 },
+  { value: '慈悲', count: 40 },
+  { value: '无常', count: 30 },
+  { value: '无我', count: 32 },
+  { value: '六度', count: 24 },
+  { value: '禅定', count: 26 },
+  { value: '智慧', count: 35 },
 ]
 
 
@@ -351,20 +348,33 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                       查看全部 →
                     </Link>
                   </header>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                    {popularDictionary.map((item) => {
-                      const style = tagCloudStyles[item.weight - 1] || tagCloudStyles[2]
-                      return (
-                        <Link
-                          key={item.term}
-                          href={`/dictionary/${encodeURIComponent(item.term)}`}
-                          className={`${style.size} ${style.color} transition-all duration-200 hover:text-[#c4a46a] hover:scale-110`}
-                        >
-                          {item.term}
-                        </Link>
-                      )
-                    })}
-                  </div>
+                  <TagCloud
+                    minSize={14}
+                    maxSize={28}
+                    tags={popularDictionary}
+                    colorOptions={{
+                      luminosity: 'dark',
+                      hue: 'orange',
+                    }}
+                    className="cursor-pointer"
+                    onClick={(tag: { value: string }) => router.push(`/dictionary/${encodeURIComponent(tag.value)}`)}
+                    renderer={(tag: { value: string }, size: number, color: string) => (
+                      <span
+                        key={tag.value}
+                        style={{
+                          fontSize: `${size}px`,
+                          color,
+                          margin: '4px 8px',
+                          display: 'inline-block',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                        }}
+                        className="hover:scale-110 hover:opacity-80"
+                      >
+                        {tag.value}
+                      </span>
+                    )}
+                  />
                 </section>
               </aside>
             </div>
