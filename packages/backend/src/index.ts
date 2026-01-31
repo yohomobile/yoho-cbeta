@@ -8,7 +8,7 @@ import { db } from './db/index.js'
 import { sql, eq, like, or, and, count, asc, desc } from 'drizzle-orm'
 import { dictionaryEntries } from './db/schema.js'
 import { toSimplified } from './zhconv.js'
-import { createSingleEmbedding, vectorToString, askWithContext } from './embedding/openai-service.js'
+import { createSingleEmbedding, vectorToString } from './embedding/openai-service.js'
 import { DeepRAGChain, BM25DeepRAGChain } from './langchain/index.js'
 import { RAGEvaluator, TEST_QUESTIONS, getQuestionsByCategory, getQuestionsByDifficulty, getRandomQuestions } from './langchain/evaluation/index.js'
 
@@ -1331,7 +1331,7 @@ app.get('/texts/:id/similar', async (c) => {
 /**
  * RAG 问答 API
  * GET /ask?q=问题
- * 语义搜索 + LLM 生成答案
+ * 使用 DeepRAGChain 进行多路检索 + LLM 生成答案
  */
 app.get('/ask', async (c) => {
   const question = c.req.query('q') || ''
@@ -1341,7 +1341,7 @@ app.get('/ask', async (c) => {
   }
 
   try {
-    // 1. 检查是否有嵌入数据
+    // 检查是否有嵌入数据
     const countResult = await db.execute(sql`SELECT COUNT(*) as cnt FROM text_chunks`)
     const chunkCount = Number((countResult as unknown as { cnt: string }[])[0]?.cnt) || 0
 
@@ -1349,53 +1349,28 @@ app.get('/ask', async (c) => {
       return c.json({ error: '暂无语义搜索数据' }, 503)
     }
 
-    // 2. 语义搜索获取相关经文
-    const { embedding } = await createSingleEmbedding(question)
-    const vectorStr = vectorToString(embedding)
+    // 使用 DeepRAGChain 执行深度问答
+    const chain = new DeepRAGChain()
+    const result = await chain.invoke(question)
 
-    const results = await db.execute(sql.raw(`
-      SELECT
-        tc.text_id,
-        tc.juan,
-        tc.content,
-        t.title,
-        1 - (tc.embedding <=> '${vectorStr}'::vector) as similarity
-      FROM text_chunks tc
-      JOIN texts t ON t.id = tc.text_id
-      ORDER BY tc.embedding <=> '${vectorStr}'::vector
-      LIMIT 5
-    `))
-
-    const contexts = (results as unknown as Array<{
-      text_id: string
-      juan: number
-      content: string
-      title: string
-      similarity: number
-    }>).map(r => ({
-      textId: r.text_id,
-      title: r.title,
-      juan: r.juan,
-      content: r.content,
-      similarity: r.similarity,
-    }))
-
-    // 3. 调用 LLM 生成结构化答案
-    const structuredAnswer = await askWithContext(question, contexts)
-
+    // 转换返回格式以兼容旧版
     return c.json({
-      question,
-      ...structuredAnswer,
-      sources: contexts.map(c => ({
-        textId: c.textId,
-        title: c.title,
-        juan: c.juan,
-        similarity: c.similarity,
+      question: result.question,
+      summary: result.summary,
+      details: result.points.map(p => ({
+        point: p.title,
+        explanation: p.explanation,
+        citations: p.citations,
       })),
+      conclusion: result.comparison && result.comparison.length > 0
+        ? result.comparison[0]?.views[0]?.quote || ''
+        : result.levels?.practice || '',
+      relatedQuestions: result.followUpQuestions,
+      sources: result.sources,
     })
   } catch (error) {
     console.error('RAG 问答失败:', error)
-    return c.json({ error: '服务器错误' }, 500)
+    return c.json({ error: '服务器错误', details: String(error) }, 500)
   }
 })
 
