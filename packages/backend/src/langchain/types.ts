@@ -242,6 +242,8 @@ export interface TestQuestion {
   question: string
   /** 期望在检索结果中出现的关键词 */
   expectedKeywords: string[]
+  /** 期望在 LLM 答案中出现的关键词（对于后学概括术语） */
+  expectedAnswerKeywords?: string[]
   /** 期望检索到的经文 ID（可选） */
   expectedTextIds?: string[]
   /** 期望检索到的经文标题关键词（可选） */
@@ -249,16 +251,16 @@ export interface TestQuestion {
   /** 问题类别 */
   category: "concept" | "quote" | "comparison" | "practice" | "terminology"
   /** 难度 */
-  difficulty: "easy" | "medium" | "hard"
+  difficulty: "easy" | "medium" | "hard" | "expert"
 }
 
 /** 检索质量评分 */
 export interface RetrievalQuality {
-  /** 关键词命中率 (0-1) */
+  /** 关键词命中率 (0-1) - 检索结果中 */
   keywordHitRate: number
-  /** 命中的关键词 */
+  /** 命中的关键词（检索结果中） */
   hitKeywords: string[]
-  /** 未命中的关键词 */
+  /** 未命中的关键词（检索结果中） */
   missedKeywords: string[]
   /** 经文 ID 命中率 (0-1) */
   textIdHitRate: number
@@ -268,6 +270,12 @@ export interface RetrievalQuality {
   titleHitRate: number
   /** 命中的标题关键词 */
   hitTitles: string[]
+  /** 答案关键词命中率 (0-1) - LLM 答案中 */
+  answerKeywordHitRate?: number
+  /** 命中的答案关键词 */
+  hitAnswerKeywords?: string[]
+  /** 未命中的答案关键词 */
+  missedAnswerKeywords?: string[]
   /** 多路检索贡献分析 */
   sourceContribution: {
     semantic: number

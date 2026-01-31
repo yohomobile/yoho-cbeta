@@ -39,9 +39,12 @@ export class RAGEvaluator {
     // 2. 获取检索结果（用于评估检索质量）
     const retrievalResults = await this.chain.getRetrievalResults(question.question)
 
-    // 3. 评估检索质量
-    const retrievalQuality = this.evaluateRetrievalQuality(question, retrievalResults)
+    // 3. 评估检索质量（包括答案关键词检查）
+    const retrievalQuality = this.evaluateRetrievalQuality(question, retrievalResults, response)
     console.log(`  - 检索质量: 关键词命中 ${(retrievalQuality.keywordHitRate * 100).toFixed(1)}%`)
+    if (retrievalQuality.answerKeywordHitRate !== undefined) {
+      console.log(`  - 答案关键词: ${retrievalQuality.hitAnswerKeywords!.length}/${retrievalQuality.hitAnswerKeywords!.length + retrievalQuality.missedAnswerKeywords!.length} (${(retrievalQuality.answerKeywordHitRate * 100).toFixed(1)}%)`)
+    }
 
     // 4. 验证引用
     const citationValidation = await this.validateCitations(response)
@@ -73,9 +76,10 @@ export class RAGEvaluator {
    */
   private evaluateRetrievalQuality(
     question: TestQuestion,
-    results: FusedResult[]
+    results: FusedResult[],
+    response?: DeepAnswerResponse
   ): RetrievalQuality {
-    // 1. 关键词命中检查
+    // 1. 关键词命中检查 - 检索结果中
     const hitKeywords: string[] = []
     const missedKeywords: string[] = []
 
@@ -91,6 +95,37 @@ export class RAGEvaluator {
     const keywordHitRate = question.expectedKeywords.length > 0
       ? hitKeywords.length / question.expectedKeywords.length
       : 1
+
+    // 1.5. 答案关键词命中检查 - LLM 答案中（针对后学概括术语）
+    let answerKeywordHitRate: number | undefined
+    let hitAnswerKeywords: string[] | undefined
+    let missedAnswerKeywords: string[] | undefined
+
+    if (question.expectedAnswerKeywords && question.expectedAnswerKeywords.length > 0) {
+      hitAnswerKeywords = []
+      missedAnswerKeywords = []
+
+      // 合并答案中的所有文本内容
+      const answerText = [
+        response?.summary || "",
+        ...response?.points.map(p => p.title + p.explanation) || [],
+        ...response?.terminology.map(t => t.term + t.definition) || [],
+        response?.levels?.literal || "",
+        response?.levels?.profound || "",
+        response?.levels?.practice || "",
+        ...response?.comparison?.map(c => c.aspect + c.views.map(v => v.position).join("")) || [],
+      ].join("")
+
+      for (const keyword of question.expectedAnswerKeywords) {
+        if (answerText.includes(keyword)) {
+          hitAnswerKeywords.push(keyword)
+        } else {
+          missedAnswerKeywords.push(keyword)
+        }
+      }
+
+      answerKeywordHitRate = hitAnswerKeywords.length / question.expectedAnswerKeywords.length
+    }
 
     // 2. 经文 ID 命中检查
     const hitTextIds: string[] = []
@@ -154,6 +189,9 @@ export class RAGEvaluator {
       hitTextIds,
       titleHitRate,
       hitTitles,
+      answerKeywordHitRate,
+      hitAnswerKeywords,
+      missedAnswerKeywords,
       sourceContribution,
     }
   }
