@@ -10,6 +10,7 @@ import { SemanticRetriever } from "./semantic-retriever.js"
 import { FulltextRetriever } from "./fulltext-retriever.js"
 import { DictionaryRetriever } from "./dictionary-retriever.js"
 import { aliasResolver, type AliasMapping } from "./alias-resolver.js"
+import { synonymResolver, type ExpandedQuery } from "./synonym-resolver.js"
 import type {
   EnsembleConfig,
   RetrieverConfig,
@@ -77,18 +78,20 @@ export class EnsembleRetriever extends BaseRetriever {
   }
 
   /**
-   * 初始化（加载别名缓存）
+   * 初始化（加载别名和同义词缓存）
    */
   async init(): Promise<void> {
     await aliasResolver.init()
+    await synonymResolver.init()
   }
 
   async _getRelevantDocuments(
     query: string,
     runManager?: CallbackManagerForRetrieverRun
   ): Promise<Document[]> {
-    // 0. 确保别名解析器已初始化
+    // 0. 确保解析器已初始化
     await aliasResolver.init()
+    await synonymResolver.init()
 
     // 1. 解析查询中的经书别名
     const aliasMatches = aliasResolver.extractAliases(query)
@@ -97,14 +100,26 @@ export class EnsembleRetriever extends BaseRetriever {
       console.log(`    [Ensemble] 识别到经书别名: ${aliasMatches.map(a => `${a.alias}→${a.textId}`).join(", ")}`)
     }
 
-    // 2. 并行执行所有检索
+    // 2. 同义词扩展查询
+    const expandedQueries = synonymResolver.expandQuery(query)
+    const synonymQueries = expandedQueries.filter(q => q.type !== 'original')
+
+    if (synonymQueries.length > 0) {
+      console.log(`    [Synonym] 扩展查询: ${synonymQueries.map(q => `"${q.query}"`).join(", ")}`)
+    }
+
+    // 3. 并行执行所有检索（原查询 + 扩展查询）
+    const allQueries = [query, ...synonymQueries.map(q => q.query)]
     const [semanticDocs, fulltextDocs, dictionaryDocs] = await Promise.all([
-      this.semanticRetriever._getRelevantDocuments(query, runManager),
-      this.fulltextRetriever._getRelevantDocuments(query, runManager),
+      // 合并所有查询的语义检索结果
+      this.mergeRetrieverResults(allQueries, (q) => this.semanticRetriever._getRelevantDocuments(q, runManager)),
+      // 合并所有查询的全文检索结果
+      this.mergeRetrieverResults(allQueries, (q) => this.fulltextRetriever._getRelevantDocuments(q, runManager)),
+      // 词典检索只用原查询
       this.dictionaryRetriever._getRelevantDocuments(query, runManager),
     ])
 
-    // 3. 使用 RRF 算法融合结果
+    // 4. 使用 RRF 算法融合结果
     const fusedResults = this.rrfFusion(
       [
         { docs: semanticDocs, weight: this.config.semanticWeight, source: "semantic" },
@@ -115,10 +130,35 @@ export class EnsembleRetriever extends BaseRetriever {
       targetTextIds
     )
 
-    // 4. 返回 Top K 结果
+    // 5. 返回 Top K 结果
     return fusedResults
       .slice(0, this.config.finalTopK)
       .map(r => r.document)
+  }
+
+  /**
+   * 合并多个查询的检索结果，去重
+   */
+  private async mergeRetrieverResults<T>(
+    queries: string[],
+    retrieverFn: (query: string) => Promise<T>
+  ): Promise<T[]> {
+    const results = await Promise.all(queries.map(q => retrieverFn(q)))
+    // 扁平化并去重（基于文档内容）
+    const seen = new Set<string>()
+    const merged: T[] = []
+
+    for (const result of results) {
+      for (const item of result as unknown as Document[]) {
+        const id = this.getDocumentId(item as Document)
+        if (!seen.has(id)) {
+          seen.add(id)
+          merged.push(item as unknown as T)
+        }
+      }
+    }
+
+    return merged
   }
 
   /**
@@ -241,8 +281,9 @@ export class EnsembleRetriever extends BaseRetriever {
     query: string,
     runManager?: CallbackManagerForRetrieverRun
   ): Promise<RetrievalResultWithMetrics> {
-    // 确保别名解析器已初始化
+    // 确保解析器已初始化
     await aliasResolver.init()
+    await synonymResolver.init()
 
     // 解析查询中的经书别名
     const aliasMatches = aliasResolver.extractAliases(query)
@@ -251,6 +292,14 @@ export class EnsembleRetriever extends BaseRetriever {
       console.log(`    [Ensemble] 识别到经书别名: ${aliasMatches.map(a => `${a.alias}→${a.textId}`).join(", ")}`)
     }
 
+    // 同义词扩展查询
+    const expandedQueries = synonymResolver.expandQuery(query)
+    const synonymQueries = expandedQueries.filter(q => q.type !== 'original')
+    if (synonymQueries.length > 0) {
+      console.log(`    [Synonym] 扩展查询: ${synonymQueries.map(q => `"${q.query}"`).join(", ")}`)
+    }
+
+    const allQueries = [query, ...synonymQueries.map(q => q.query)]
     console.log(`    [Ensemble] 并行执行三路检索...`)
     const startTime = Date.now()
 
@@ -264,20 +313,23 @@ export class EnsembleRetriever extends BaseRetriever {
     const [semanticDocs, fulltextDocs, dictionaryDocs] = await Promise.all([
       (async () => {
         const t0 = Date.now()
-        const docs = await this.semanticRetriever._getRelevantDocuments(query, runManager)
+        // 合并所有查询的语义检索结果
+        const allDocs = await this.mergeRetrieverResults(allQueries, (q) => this.semanticRetriever._getRelevantDocuments(q, runManager))
         semanticTime = Date.now() - t0
-        console.log(`      - 语义检索: ${docs.length} 条 (${semanticTime}ms)`)
-        return docs
+        console.log(`      - 语义检索: ${allDocs.length} 条 (${semanticTime}ms)`)
+        return allDocs
       })(),
       (async () => {
         const t0 = Date.now()
-        const docs = await this.fulltextRetriever._getRelevantDocuments(query, runManager)
+        // 合并所有查询的全文检索结果
+        const allDocs = await this.mergeRetrieverResults(allQueries, (q) => this.fulltextRetriever._getRelevantDocuments(q, runManager))
         fulltextTime = Date.now() - t0
-        console.log(`      - 全文检索: ${docs.length} 条 (${fulltextTime}ms)`)
-        return docs
+        console.log(`      - 全文检索: ${allDocs.length} 条 (${fulltextTime}ms)`)
+        return allDocs
       })(),
       (async () => {
         const t0 = Date.now()
+        // 词典检索只用原查询
         const docs = await this.dictionaryRetriever._getRelevantDocuments(query, runManager)
         dictTime = Date.now() - t0
         console.log(`      - 词典检索: ${docs.length} 条 (${dictTime}ms)`)

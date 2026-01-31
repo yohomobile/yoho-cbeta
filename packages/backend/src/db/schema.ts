@@ -220,9 +220,40 @@ export const dictionaryEntries = pgTable('dictionary_entries', {
   index('dictionary_entries_source_idx').on(table.source),
 ])
 
+/**
+ * 术语同义词表
+ * 存储佛学术语的同义词关系，用于查询扩展
+ */
+export const termSynonyms = pgTable('term_synonyms', {
+  id: serial('id').primaryKey(),
+  /** 标准词条（主词） */
+  canonicalTerm: varchar('canonical_term', { length: 500 }).notNull(),
+  /** 同义词 */
+  synonym: varchar('synonym', { length: 500 }).notNull(),
+  /** 实体类型 (term=术语, text=经文, person=人物) */
+  entityType: varchar('entity_type', { length: 32 }).notNull().default('term'),
+  /** 关联的实体ID (如经文的 textId) */
+  entityId: varchar('entity_id', { length: 32 }),
+  /** 关系类型 (exact=完全同义, related=相关概念, abbreviation=缩写) */
+  relationType: varchar('relation_type', { length: 32 }).notNull().default('exact'),
+  /** 优先级（数字越大优先级越高） */
+  priority: integer('priority').notNull().default(0),
+  /** 数据来源 (manual=手工, dict=词典提取, ai=AI生成) */
+  source: varchar('source', { length: 100 }),
+  /** 备注 */
+  notes: text('notes'),
+}, (table) => [
+  uniqueIndex('term_synonyms_canonical_synonym_idx').on(table.canonicalTerm, table.synonym),
+  index('term_synonyms_synonym_idx').on(table.synonym),
+  index('term_synonyms_entity_type_idx').on(table.entityType),
+  index('term_synonyms_priority_idx').on(table.priority),
+])
+
 // 类型导出
 export type DictionaryEntry = typeof dictionaryEntries.$inferSelect
 export type NewDictionaryEntry = typeof dictionaryEntries.$inferInsert
+export type TermSynonym = typeof termSynonyms.$inferSelect
+export type NewTermSynonym = typeof termSynonyms.$inferInsert
 export type Dynasty = typeof dynasties.$inferSelect
 export type NewDynasty = typeof dynasties.$inferInsert
 export type Person = typeof persons.$inferSelect
