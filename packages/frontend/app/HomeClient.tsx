@@ -117,37 +117,113 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
   const [loading, setLoading] = useState(false)
   const [contentLoading, setContentLoading] = useState(false)
   const [showContentSearch, setShowContentSearch] = useState(false)
+  const [aiMode, setAiMode] = useState(false)
+  const [aiAnswer, setAiAnswer] = useState<{
+    question: string
+    summary: string
+    // 术语解释
+    terminology?: Array<{
+      term: string
+      definition: string
+      source: string
+    }>
+    // 详细要点
+    points: Array<{
+      title: string
+      explanation: string
+      citations: Array<{
+        quote: string
+        sutraTitle: string
+        juan: number
+        textId: string
+        matchType: string[]
+      }>
+    }>
+    // 多经对比（可选）
+    comparison?: Array<{
+      aspect: string
+      views: Array<{
+        sutra: string
+        position: string
+        quote: string
+      }>
+    }>
+    // 层次解读（可选）
+    levels?: {
+      literal: string
+      profound: string
+      practice?: string
+    }
+    // 推荐追问
+    followUpQuestions: string[]
+    // 来源
+    sources: Array<{
+      textId: string
+      title: string
+      juan: number
+      retrievalMethods: string[]
+      similarity?: number
+    }>
+    // 性能指标
+    meta?: {
+      totalChunksSearched: number
+      retrievalTimeMs: number
+      generationTimeMs: number
+    }
+  } | null>(null)
 
-  const doSearch = useCallback(async (searchQuery: string) => {
+  const doSearch = useCallback(async (searchQuery: string, useAi: boolean) => {
     if (!searchQuery.trim()) return
 
     setLoading(true)
     setResults(null)
     setContentResults(null)
     setShowContentSearch(false)
+    setAiAnswer(null)
 
-    try {
-      const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(searchQuery)}&limit=5`)
-      const data: SearchResults = await res.json()
-      setResults(data)
-    } catch (err) {
-      console.error('搜索失败:', err)
-    } finally {
-      setLoading(false)
+    if (useAi) {
+      // AI 深度问答模式 (使用 LangChain 多路检索)
+      // 使用 BM25 版本的 API 端点
+      const apiEndpoint = 'deep-ask-bm25'
+      try {
+        const res = await fetch(`${API_BASE}/${apiEndpoint}?q=${encodeURIComponent(searchQuery)}`)
+        const data = await res.json()
+        if (data.error) {
+          console.error('AI 问答失败:', data.error)
+        } else {
+          setAiAnswer(data)
+        }
+      } catch (err) {
+        console.error('AI 问答失败:', err)
+      } finally {
+        setLoading(false)
+      }
+    } else {
+      // 普通搜索模式
+      try {
+        const res = await fetch(`${API_BASE}/search?q=${encodeURIComponent(searchQuery)}&limit=5`)
+        const data: SearchResults = await res.json()
+        setResults(data)
+      } catch (err) {
+        console.error('搜索失败:', err)
+      } finally {
+        setLoading(false)
+      }
     }
   }, [])
 
   useEffect(() => {
     if (q) {
       setQuery(q)
-      doSearch(q)
+      doSearch(q, aiMode)
     } else {
       setQuery('')
       setResults(null)
       setContentResults(null)
       setShowContentSearch(false)
+      setAiAnswer(null)
     }
-  }, [q, doSearch])
+  }, [q, doSearch, aiMode])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -279,63 +355,24 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                   搜索
                 </button>
               </div>
+              {/* AI 问答选项 */}
+              <div className="mt-3 flex items-center justify-center gap-4">
+                <label className="flex cursor-pointer items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={aiMode}
+                    onChange={(e) => setAiMode(e.target.checked)}
+                    className="h-4 w-4 rounded border-white/30 bg-white/10 text-[#c4a46a] focus:ring-[#c4a46a] focus:ring-offset-0"
+                  />
+                  <span className="text-sm text-[#d4c4a8]">AI 问答</span>
+                  <span className="text-xs text-[#8a7a6a]">(基于 BM25 + 语义搜索)</span>
+                </label>
+              </div>
               {/* 搜索提示 */}
-              <p className="mt-3 text-center text-xs text-[#8a7a6a]">
-                试试搜索：金刚经、玄奘、般若、唐代
+              <p className="mt-2 text-center text-xs text-[#8a7a6a]">
+                {aiMode ? '试试问：什么是五蕴、菩萨如何修行、什么是涅槃' : '试试搜索：金刚经、玄奘、般若、唐代'}
               </p>
             </form>
-          </div>
-        </section>
-
-        {/* 特色介绍 */}
-        <section className="border-b border-[#e8e0d5] bg-[#fdfcfa]">
-          <div className="mx-auto max-w-[1000px] px-4 py-8">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="flex items-start gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-[#8a7a6a]">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                  </svg>
-                </span>
-                <div>
-                  <h3 className="text-sm font-medium text-[#3d3229]">简体中文支持</h3>
-                  <p className="mt-1 text-xs leading-relaxed text-[#8a7a6a]">全部经文支持繁简切换，方便阅读</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-[#8a7a6a]">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </span>
-                <div>
-                  <h3 className="text-sm font-medium text-[#3d3229]">优质阅读体验</h3>
-                  <p className="mt-1 text-xs leading-relaxed text-[#8a7a6a]">精心设计的排版，支持字号调节</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-[#8a7a6a]">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                </span>
-                <div>
-                  <h3 className="text-sm font-medium text-[#3d3229]">经书关联</h3>
-                  <p className="mt-1 text-xs leading-relaxed text-[#8a7a6a]">同本异译、注疏关联，深入研读</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f2ed] text-[#8a7a6a]">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </span>
-                <div>
-                  <h3 className="text-sm font-medium text-[#3d3229]">白话翻译</h3>
-                  <p className="mt-1 text-xs leading-relaxed text-[#8a7a6a]">即将上线，助您理解经文深意</p>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -431,12 +468,225 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
               {loading && (
                 <div className="flex flex-col items-center justify-center py-16">
                   <div className="mb-3 h-8 w-8 animate-spin rounded-full border-2 border-[#e0d8cd] border-t-[#8a7a6a]" />
-                  <span className="text-sm text-[#8a7a6a]">搜索中...</span>
+                  <span className="text-sm text-[#8a7a6a]">{aiMode ? 'AI 正在思考...' : '搜索中...'}</span>
+                </div>
+              )}
+
+              {/* AI 问答结果 */}
+              {!loading && aiAnswer && (
+                <div className="space-y-4">
+                  <section className="overflow-hidden rounded-xl border border-[#d4c4a8] bg-gradient-to-b from-[#fdfcfa] to-white shadow-sm" aria-labelledby="ai-answer">
+                    <header className="flex items-center gap-2 bg-gradient-to-r from-[#f5f0e8] to-[#fdfcfa] px-5 py-3">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c4a46a] text-sm text-white">AI</span>
+                      <h2 id="ai-answer" className="text-sm font-medium text-[#3d3229]">智能问答</h2>
+                    </header>
+
+                    <div className="px-5 py-5 space-y-5">
+                      {/* 简要回答 */}
+                      <div className="rounded-lg bg-[#f8f5f0] px-4 py-3">
+                        <p className="text-[15px] leading-relaxed text-[#3d3229]">{aiAnswer.summary}</p>
+                      </div>
+
+                      {/* 术语解释 */}
+                      {aiAnswer.terminology && aiAnswer.terminology.length > 0 && (
+                        <div className="space-y-2">
+                          <h3 className="text-sm font-medium text-[#5a4a3a]">相关术语</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {aiAnswer.terminology.map((term, idx) => (
+                              <div key={idx} className="group relative">
+                                <span className="inline-flex cursor-help items-center gap-1 rounded-md border border-[#d4c4a8] bg-[#faf8f5] px-2 py-1 text-sm text-[#3d3229]">
+                                  <svg className="h-3 w-3 text-[#c4a46a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  {term.term}
+                                </span>
+                                <div className="absolute left-0 top-full z-10 mt-1 hidden w-64 rounded-lg border border-[#e8e0d5] bg-white p-3 shadow-lg group-hover:block">
+                                  <p className="text-xs leading-relaxed text-[#3d3229]">{term.definition}</p>
+                                  <p className="mt-1 text-[10px] text-[#9a8a7a]">来源：{term.source}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 详细要点 */}
+                      {aiAnswer.points && aiAnswer.points.length > 0 && (
+                        <div className="space-y-4">
+                          <h3 className="text-sm font-medium text-[#5a4a3a]">详细解释</h3>
+                          {aiAnswer.points.map((point, idx) => (
+                            <div key={idx} className="rounded-lg border border-[#e8e0d5] bg-white p-4">
+                              <h4 className="mb-2 font-semibold text-[#2a1f16]">{point.title}</h4>
+                              <p className="mb-3 text-sm leading-relaxed text-[#3d3229]">{point.explanation}</p>
+                              {/* 经文引用列表 */}
+                              {point.citations && point.citations.length > 0 && (
+                                <div className="space-y-2">
+                                  {point.citations.map((citation, citIdx) => (
+                                    <div key={citIdx} className="rounded-md bg-[#faf8f5] p-3">
+                                      <p className="mb-2 text-sm italic text-[#6a5a4a]">"{citation.quote}"</p>
+                                      <div className="flex items-center justify-between">
+                                        <Link
+                                          href={`/sutra/${encodeURIComponent(citation.sutraTitle)}/${citation.juan}`}
+                                          prefetch={false}
+                                          className="inline-flex items-center gap-1 text-xs text-[#8a7a6a] hover:text-[#5a4a3a] hover:underline"
+                                        >
+                                          <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                          </svg>
+                                          《{citation.sutraTitle}》第{citation.juan}卷
+                                        </Link>
+                                        {/* 检索方式标记 */}
+                                        {citation.matchType && citation.matchType.length > 0 && (
+                                          <div className="flex gap-1">
+                                            {citation.matchType.includes('semantic') && citation.matchType.includes('fulltext') ? (
+                                              <span className="rounded bg-[#c4a46a] px-1.5 py-0.5 text-[10px] text-white">多路命中</span>
+                                            ) : citation.matchType.includes('semantic') ? (
+                                              <span className="rounded bg-[#8a9a7a] px-1.5 py-0.5 text-[10px] text-white">语义</span>
+                                            ) : citation.matchType.includes('fulltext') ? (
+                                              <span className="rounded bg-[#7a8a9a] px-1.5 py-0.5 text-[10px] text-white">关键词</span>
+                                            ) : null}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 多经对比 */}
+                      {aiAnswer.comparison && aiAnswer.comparison.length > 0 && (
+                        <div className="border-t border-[#e8e0d5] pt-4">
+                          <h3 className="mb-3 text-sm font-medium text-[#5a4a3a]">📊 多经对比</h3>
+                          {aiAnswer.comparison.map((comp, idx) => (
+                            <div key={idx} className="mb-4 rounded-lg border border-[#d4c4a8] bg-[#fdfcfa] p-4">
+                              <h4 className="mb-3 text-sm font-medium text-[#2a1f16]">{comp.aspect}</h4>
+                              <div className="grid gap-3 sm:grid-cols-2">
+                                {comp.views.map((view, vIdx) => (
+                                  <div key={vIdx} className="rounded-md bg-white p-3 border border-[#e8e0d5]">
+                                    <p className="mb-1 text-xs font-medium text-[#c4a46a]">《{view.sutra}》</p>
+                                    <p className="mb-2 text-sm text-[#3d3229]">{view.position}</p>
+                                    <p className="text-xs italic text-[#6a5a4a]">"{view.quote}"</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 层次解读 */}
+                      {aiAnswer.levels && (
+                        <div className="border-t border-[#e8e0d5] pt-4">
+                          <h3 className="mb-3 text-sm font-medium text-[#5a4a3a]">📚 层次解读</h3>
+                          <div className="space-y-3">
+                            <div className="rounded-lg bg-[#f8f5f0] p-3">
+                              <p className="mb-1 text-xs font-medium text-[#8a7a6a]">字面含义</p>
+                              <p className="text-sm text-[#3d3229]">{aiAnswer.levels.literal}</p>
+                            </div>
+                            <div className="rounded-lg bg-[#f5f0e8] p-3">
+                              <p className="mb-1 text-xs font-medium text-[#8a7a6a]">深层义理</p>
+                              <p className="text-sm text-[#3d3229]">{aiAnswer.levels.profound}</p>
+                            </div>
+                            {aiAnswer.levels.practice && (
+                              <div className="rounded-lg bg-[#f0ebe5] p-3">
+                                <p className="mb-1 text-xs font-medium text-[#8a7a6a]">修行指导</p>
+                                <p className="text-sm text-[#3d3229]">{aiAnswer.levels.practice}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 推荐追问 */}
+                      {aiAnswer.followUpQuestions && aiAnswer.followUpQuestions.length > 0 && (
+                        <div className="border-t border-[#e8e0d5] pt-4">
+                          <h3 className="mb-3 text-sm font-medium text-[#5a4a3a]">相关问题</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {aiAnswer.followUpQuestions.map((question, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => {
+                                  setQuery(question)
+                                  router.push(`/?q=${encodeURIComponent(question)}`)
+                                }}
+                                className="rounded-full border border-[#d4c4a8] bg-white px-3 py-1.5 text-sm text-[#5a4a3a] transition hover:bg-[#f8f5f0] hover:border-[#c4a46a]"
+                              >
+                                {question}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 参考来源 - 折叠在回答下方 */}
+                    {aiAnswer.sources.length > 0 && (
+                      <div className="border-t border-[#e8e0d5] bg-[#faf8f5] px-5 py-3">
+                        <details className="group">
+                          <summary className="flex cursor-pointer list-none items-center gap-2 text-xs text-[#8a7a6a] hover:text-[#5a4a3a]">
+                            <svg className="h-4 w-4 transition group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                            查看检索来源（{aiAnswer.sources.length} 条）
+                            {aiAnswer.meta && (
+                              <span className="ml-2 text-[10px] text-[#a09080]">
+                                检索 {aiAnswer.meta.retrievalTimeMs}ms · 生成 {(aiAnswer.meta.generationTimeMs / 1000).toFixed(1)}s
+                              </span>
+                            )}
+                          </summary>
+                          <ul className="mt-3 space-y-2">
+                            {aiAnswer.sources.map((source, idx) => (
+                              <li key={`${source.textId}-${source.juan}-${idx}`}>
+                                <Link
+                                  href={`/sutra/${encodeURIComponent(source.title)}/${source.juan}`}
+                                  prefetch={false}
+                                  className="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm transition hover:bg-[#f5f2ed]"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-[#3d3229]">《{source.title}》</span>
+                                    <span className="text-xs text-[#9a8a7a]">第{source.juan}卷</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {/* 检索方式标签 */}
+                                    {source.retrievalMethods && source.retrievalMethods.length > 0 && (
+                                      <div className="flex gap-1">
+                                        {source.retrievalMethods.map((method, mIdx) => (
+                                          <span
+                                            key={mIdx}
+                                            className={`rounded px-1.5 py-0.5 text-[10px] ${
+                                              method === 'semantic' ? 'bg-[#8a9a7a] text-white' :
+                                              method === 'fulltext' ? 'bg-[#7a8a9a] text-white' :
+                                              'bg-[#9a8a7a] text-white'
+                                            }`}
+                                          >
+                                            {method === 'semantic' ? '语义' : method === 'fulltext' ? '关键词' : '词典'}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {source.similarity !== undefined && source.similarity < 1 && (
+                                      <span className="rounded bg-[#e8e0d5] px-1.5 py-0.5 text-[10px] text-[#6a5a4a]">
+                                        {(source.similarity * 100).toFixed(0)}%
+                                      </span>
+                                    )}
+                                  </div>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </details>
+                      </div>
+                    )}
+                  </section>
                 </div>
               )}
 
               {/* 搜索结果列表 */}
-              {!loading && results && (
+              {!loading && !aiMode && results && (
                 <div className="space-y-6">
                   {/* 经文结果 */}
                   {results.results.texts.items.length > 0 && (
@@ -627,8 +877,12 @@ export default function HomeClient({ initialTotal, popularTexts }: HomeClientPro
                 </div>
               )}
 
-              {!loading && !results && (
+              {!loading && !aiMode && !results && (
                 <div className="py-16 text-center text-sm text-[#9a8a7a]">搜索出错，请稍后重试</div>
+              )}
+
+              {!loading && aiMode && !aiAnswer && (
+                <div className="py-16 text-center text-sm text-[#9a8a7a]">AI 问答暂时不可用，请稍后重试</div>
               )}
             </div>
           )}

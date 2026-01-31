@@ -26,8 +26,12 @@
   "dependencies": {
     "@cbeta/scripts": "workspace:*",
     "@hono/node-server": "^1.0.0",
+    "@langchain/community": "^1.1.9",
+    "@langchain/core": "^1.1.17",
+    "@langchain/openai": "^1.2.3",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.0.0",
+    "langchain": "^1.2.15",
     "openai": "^6.16.0",
     "opencc-js": "^1.0.5",
     "postgres": "^3.4.8"

@@ -161,6 +161,90 @@ convert('人体内存在很多微生物', 'zh-tw')
 
 只有当源文件 commit 发生变化时，才会重新转换。
 
+## 后端 API 功能
+
+### RAG 问答 API
+
+#### 基础问答 (`/ask`)
+基于语义搜索的简单 RAG 问答：
+- 使用 OpenAI Embedding 进行向量检索
+- 返回相关经文片段和 AI 生成的答案
+
+#### 深度问答 (`/deep-ask`)
+基于 LangChain 的多路检索深度问答系统：
+
+**检索策略**：
+- **语义检索** (权重 50%)：基于向量相似度检索相关经文
+- **全文检索** (权重 30%)：基于 PostgreSQL 全文搜索
+- **词典检索** (权重 20%)：匹配佛学词典条目
+
+**RRF 融合**：使用 Reciprocal Rank Fusion 合并多路检索结果
+
+**上下文扩展**：自动获取匹配 chunk 的前后文（±2 chunks）
+
+**答案结构**：
+```typescript
+{
+  question: string,           // 问题
+  summary: string,            // 简要回答
+  terminology: Array<{        // 术语解释
+    term: string,
+    definition: string,
+    source: string
+  }>,
+  points: Array<{             // 详细要点
+    title: string,
+    explanation: string,
+    citations: Array<{        // 经文引用
+      quote: string,
+      sutraTitle: string,
+      juan: number,
+      textId: string,
+      matchType: string[]     // 检索方式标记
+    }>
+  }>,
+  comparison?: Array<{        // 多经对比（可选）
+    aspect: string,
+    views: Array<{
+      sutra: string,
+      position: string,
+      quote: string
+    }>
+  }>,
+  levels?: {                  // 层次解读（可选）
+    literal: string,          // 字面含义
+    profound: string,         // 深层义理
+    practice?: string         // 修行指导
+  },
+  followUpQuestions: string[], // 推荐追问
+  sources: Array<{            // 参考来源
+    textId: string,
+    title: string,
+    juan: number,
+    retrievalMethods: string[],
+    similarity?: number
+  }>,
+  meta: {                     // 性能指标
+    totalChunksSearched: number,
+    retrievalTimeMs: number,
+    generationTimeMs: number
+  }
+}
+```
+
+### 其他 API 端点
+
+| 端点 | 说明 |
+|------|------|
+| `GET /search` | 聚合搜索（经文、词典、人物） |
+| `GET /search/content` | 经文正文全文搜索 |
+| `GET /semantic-search` | 语义搜索（向量相似度） |
+| `GET /texts` | 获取经文列表 |
+| `GET /texts/:id` | 获取经文详情 |
+| `GET /sutra/:title` | 按标题获取经文 |
+| `GET /dictionary` | 搜索词典 |
+| `GET /person/:name` | 获取人物详情 |
+
 ## 数据统计
 
 - 繁体 JSON 文件：4996 个
