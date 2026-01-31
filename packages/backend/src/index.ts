@@ -1329,52 +1329,6 @@ app.get('/texts/:id/similar', async (c) => {
 })
 
 /**
- * RAG 问答 API
- * GET /ask?q=问题
- * 使用 DeepRAGChain 进行多路检索 + LLM 生成答案
- */
-app.get('/ask', async (c) => {
-  const question = c.req.query('q') || ''
-
-  if (!question.trim()) {
-    return c.json({ error: '请输入问题' }, 400)
-  }
-
-  try {
-    // 检查是否有嵌入数据
-    const countResult = await db.execute(sql`SELECT COUNT(*) as cnt FROM text_chunks`)
-    const chunkCount = Number((countResult as unknown as { cnt: string }[])[0]?.cnt) || 0
-
-    if (chunkCount === 0) {
-      return c.json({ error: '暂无语义搜索数据' }, 503)
-    }
-
-    // 使用 DeepRAGChain 执行深度问答
-    const chain = new DeepRAGChain()
-    const result = await chain.invoke(question)
-
-    // 转换返回格式以兼容旧版
-    return c.json({
-      question: result.question,
-      summary: result.summary,
-      details: result.points.map(p => ({
-        point: p.title,
-        explanation: p.explanation,
-        citations: p.citations,
-      })),
-      conclusion: result.comparison && result.comparison.length > 0
-        ? result.comparison[0]?.views[0]?.quote || ''
-        : result.levels?.practice || '',
-      relatedQuestions: result.followUpQuestions,
-      sources: result.sources,
-    })
-  } catch (error) {
-    console.error('RAG 问答失败:', error)
-    return c.json({ error: '服务器错误', details: String(error) }, 500)
-  }
-})
-
-/**
  * 深度 RAG 问答 API (LangChain 版本)
  * GET /deep-ask?q=问题
  * 多路检索（语义+全文+词典）+ RRF 融合 + LLM 深度回答
