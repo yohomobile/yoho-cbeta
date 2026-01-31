@@ -1330,11 +1330,12 @@ app.get('/texts/:id/similar', async (c) => {
 
 /**
  * 深度 RAG 问答 API (LangChain 版本)
- * GET /deep-ask?q=问题
+ * GET /deep-ask?q=问题&perf=true
  * 多路检索（语义+全文+词典）+ RRF 融合 + LLM 深度回答
  */
 app.get('/deep-ask', async (c) => {
   const question = c.req.query('q') || ''
+  const includePerf = c.req.query('perf') === 'true'
 
   if (!question.trim()) {
     return c.json({ error: '请输入问题' }, 400)
@@ -1351,7 +1352,7 @@ app.get('/deep-ask', async (c) => {
 
     // 使用 DeepRAGChain 执行深度问答
     const chain = new DeepRAGChain()
-    const result = await chain.invoke(question)
+    const result = await chain.invoke(question, { includePerformance: includePerf })
 
     return c.json(result)
   } catch (error) {
