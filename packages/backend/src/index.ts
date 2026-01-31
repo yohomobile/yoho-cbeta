@@ -9,6 +9,8 @@ import { sql, eq, like, or, and, count, asc, desc } from 'drizzle-orm'
 import { dictionaryEntries } from './db/schema.js'
 import { toSimplified } from './zhconv.js'
 import { createSingleEmbedding, vectorToString, askWithContext } from './embedding/openai-service.js'
+import { DeepRAGChain, BM25DeepRAGChain } from './langchain/index.js'
+import { RAGEvaluator, TEST_QUESTIONS, getQuestionsByCategory, getQuestionsByDifficulty, getRandomQuestions } from './langchain/evaluation/index.js'
 
 const app = new Hono()
 
@@ -1378,12 +1380,12 @@ app.get('/ask', async (c) => {
       similarity: r.similarity,
     }))
 
-    // 3. 调用 LLM 生成答案
-    const answer = await askWithContext(question, contexts)
+    // 3. 调用 LLM 生成结构化答案
+    const structuredAnswer = await askWithContext(question, contexts)
 
     return c.json({
       question,
-      answer,
+      ...structuredAnswer,
       sources: contexts.map(c => ({
         textId: c.textId,
         title: c.title,
@@ -1394,6 +1396,200 @@ app.get('/ask', async (c) => {
   } catch (error) {
     console.error('RAG 问答失败:', error)
     return c.json({ error: '服务器错误' }, 500)
+  }
+})
+
+/**
+ * 深度 RAG 问答 API (LangChain 版本)
+ * GET /deep-ask?q=问题
+ * 多路检索（语义+全文+词典）+ RRF 融合 + LLM 深度回答
+ */
+app.get('/deep-ask', async (c) => {
+  const question = c.req.query('q') || ''
+
+  if (!question.trim()) {
+    return c.json({ error: '请输入问题' }, 400)
+  }
+
+  try {
+    // 检查是否有嵌入数据
+    const countResult = await db.execute(sql`SELECT COUNT(*) as cnt FROM text_chunks`)
+    const chunkCount = Number((countResult as unknown as { cnt: string }[])[0]?.cnt) || 0
+
+    if (chunkCount === 0) {
+      return c.json({ error: '暂无语义搜索数据' }, 503)
+    }
+
+    // 使用 DeepRAGChain 执行深度问答
+    const chain = new DeepRAGChain()
+    const result = await chain.invoke(question)
+
+    return c.json(result)
+  } catch (error) {
+    console.error('深度 RAG 问答失败:', error)
+    return c.json({ error: '服务器错误', details: String(error) }, 500)
+  }
+})
+
+/**
+ * BM25 深度 RAG 问答 API
+ * GET /deep-ask-bm25?q=问题
+ * 使用 BM25 替代 tsvector 的全文检索
+ */
+app.get('/deep-ask-bm25', async (c) => {
+  const question = c.req.query('q') || ''
+
+  if (!question.trim()) {
+    return c.json({ error: '请输入问题' }, 400)
+  }
+
+  try {
+    // 检查是否有嵌入数据
+    const countResult = await db.execute(sql`SELECT COUNT(*) as cnt FROM text_chunks`)
+    const chunkCount = Number((countResult as unknown as { cnt: string }[])[0]?.cnt) || 0
+
+    if (chunkCount === 0) {
+      return c.json({ error: '暂无语义搜索数据' }, 503)
+    }
+
+    // 使用 BM25DeepRAGChain 执行深度问答
+    const chain = new BM25DeepRAGChain()
+    const result = await chain.invoke(question)
+
+    return c.json(result)
+  } catch (error) {
+    console.error('BM25 深度 RAG 问答失败:', error)
+    return c.json({ error: '服务器错误', details: String(error) }, 500)
+  }
+})
+
+// ============ RAG 评估 API ============
+
+/**
+ * 获取测试问题列表
+ * GET /evaluate/questions?category=concept&difficulty=easy
+ */
+app.get('/evaluate/questions', (c) => {
+  const category = c.req.query('category') as 'concept' | 'quote' | 'comparison' | 'practice' | 'terminology' | undefined
+  const difficulty = c.req.query('difficulty') as 'easy' | 'medium' | 'hard' | undefined
+
+  let questions = TEST_QUESTIONS
+
+  if (category) {
+    questions = getQuestionsByCategory(category)
+  }
+  if (difficulty) {
+    questions = questions.filter(q => q.difficulty === difficulty)
+  }
+
+  return c.json({
+    total: questions.length,
+    questions: questions.map(q => ({
+      id: q.id,
+      question: q.question,
+      category: q.category,
+      difficulty: q.difficulty,
+    })),
+  })
+})
+
+/**
+ * 运行单个问题评估
+ * POST /evaluate/single
+ * Body: { questionId: string } 或 { question: string, expectedKeywords: string[], ... }
+ */
+app.post('/evaluate/single', async (c) => {
+  try {
+    const body = await c.req.json()
+    const evaluator = new RAGEvaluator()
+
+    let testQuestion
+    if (body.questionId) {
+      testQuestion = TEST_QUESTIONS.find(q => q.id === body.questionId)
+      if (!testQuestion) {
+        return c.json({ error: '测试问题不存在' }, 404)
+      }
+    } else if (body.question) {
+      testQuestion = {
+        id: 'custom',
+        question: body.question,
+        expectedKeywords: body.expectedKeywords || [],
+        expectedTextIds: body.expectedTextIds,
+        expectedTitles: body.expectedTitles,
+        category: body.category || 'concept',
+        difficulty: body.difficulty || 'medium',
+      }
+    } else {
+      return c.json({ error: '请提供 questionId 或 question' }, 400)
+    }
+
+    const result = await evaluator.evaluateQuestion(testQuestion)
+
+    return c.json({
+      question: result.question.question,
+      overallScore: result.overallScore,
+      retrievalQuality: result.retrievalQuality,
+      citationValidation: {
+        totalCitations: result.citationValidation.totalCitations,
+        validCitations: result.citationValidation.validCitations,
+        accuracy: result.citationValidation.accuracy,
+      },
+      answerQuality: result.answerQuality,
+      timeMs: result.timeMs,
+    })
+  } catch (error) {
+    console.error('单问题评估失败:', error)
+    return c.json({ error: '服务器错误', details: String(error) }, 500)
+  }
+})
+
+/**
+ * 运行完整评估
+ * POST /evaluate/full
+ * Body: { category?: string, difficulty?: string, count?: number }
+ */
+app.post('/evaluate/full', async (c) => {
+  try {
+    const body = await c.req.json().catch(() => ({}))
+    const evaluator = new RAGEvaluator()
+
+    let questions = TEST_QUESTIONS
+
+    if (body.category) {
+      questions = getQuestionsByCategory(body.category)
+    }
+    if (body.difficulty) {
+      questions = questions.filter(q => q.difficulty === body.difficulty)
+    }
+    if (body.count && body.count < questions.length) {
+      questions = getRandomQuestions(body.count)
+    }
+
+    const report = await evaluator.runEvaluation(questions)
+
+    // 返回摘要（不含详细的 response）
+    return c.json({
+      timestamp: report.timestamp,
+      totalQuestions: report.totalQuestions,
+      overallScore: report.overallScore,
+      avgTimeMs: report.avgTimeMs,
+      byCategory: report.byCategory,
+      byDifficulty: report.byDifficulty,
+      retrievalSummary: report.retrievalSummary,
+      citationSummary: report.citationSummary,
+      answerSummary: report.answerSummary,
+      details: report.details.map(d => ({
+        questionId: d.question.id,
+        question: d.question.question,
+        overallScore: d.overallScore,
+        keywordHitRate: d.retrievalQuality.keywordHitRate,
+        citationAccuracy: d.citationValidation.accuracy,
+        timeMs: d.timeMs,
+      })),
+    })
+  } catch (error) {
+    console.error('完整评估失败:', error)
+    return c.json({ error: '服务器错误', details: String(error) }, 500)
   }
 })
 

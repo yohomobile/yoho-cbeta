@@ -105,6 +105,8 @@ export const texts = pgTable('texts', {
   hasDharani: integer('has_dharani'),
   /** 内容类型 */
   contentType: varchar('content_type', { length: 32 }),
+  /** 经文类型 (经/律/论/注疏/仪轨/其他) - 根据标题后缀判断 */
+  textType: varchar('text_type', { length: 16 }),
   /** 目录结构 (JSONB) */
   toc: text('toc'),
   // body_simplified 和 body_traditional 已迁移到 text_juans 表并从数据库删除

@@ -21,7 +21,9 @@ const isDryRun = args.includes('--dry-run')
 const limitArg = args.find(a => a.startsWith('--limit='))
 const limit = limitArg ? parseInt(limitArg.split('=')[1], 10) : 0
 const textIdArg = args.find(a => a.startsWith('--text-id='))
-const specificTextId = textIdArg ? textIdArg.split('=')[1] : null
+// 支持 --text-id=XXX 或直接传入 text_id (如 T12n0375)
+const directTextId = args.find(a => !a.startsWith('--') && /^[A-Z]\d+n\d+/.test(a))
+const specificTextId = textIdArg ? textIdArg.split('=')[1] : directTextId || null
 
 // 统计
 let totalChunks = 0
@@ -110,32 +112,51 @@ async function main() {
   if (specificTextId) console.log(`指定经书: ${specificTextId}`)
   console.log('')
 
-  // 查询要处理的卷
-  let query = `
+  // 先查询卷列表（不包含内容），避免内存溢出
+  let listQuery = `
     SELECT
-      tj.text_id, tj.juan, tj.content_simplified,
+      tj.text_id, tj.juan,
       t.title, t.author_raw, t.translation_dynasty, t.juan_count
     FROM text_juans tj
     JOIN texts t ON t.id = tj.text_id
     WHERE tj.content_simplified IS NOT NULL
   `
   if (specificTextId) {
-    query += ` AND tj.text_id = '${specificTextId}'`
+    listQuery += ` AND tj.text_id = '${specificTextId}'`
   }
-  query += ` ORDER BY tj.text_id, tj.juan`
+  listQuery += ` ORDER BY tj.text_id, tj.juan`
   if (limit > 0) {
-    query += ` LIMIT ${limit}`
+    listQuery += ` LIMIT ${limit}`
   }
 
-  const juans = await db.execute(sql.raw(query)) as unknown as JuanRow[]
+  const juanList = await db.execute(sql.raw(listQuery)) as unknown as Omit<JuanRow, 'content_simplified'>[]
 
-  console.log(`找到 ${juans.length} 卷待处理`)
+  console.log(`找到 ${juanList.length} 卷待处理`)
   console.log('')
 
   const startTime = Date.now()
 
-  for (const juan of juans) {
+  // 逐卷加载内容处理，避免内存溢出
+  for (const juanInfo of juanList) {
     try {
+      // 单独加载这一卷的内容
+      const contentQuery = `
+        SELECT content_simplified
+        FROM text_juans
+        WHERE text_id = '${juanInfo.text_id}' AND juan = ${juanInfo.juan}
+      `
+      const contentResult = await db.execute(sql.raw(contentQuery)) as unknown as { content_simplified: unknown[] }[]
+
+      if (!contentResult[0]) {
+        console.log(`  跳过 ${juanInfo.text_id} 第${juanInfo.juan}卷 (无内容)`)
+        continue
+      }
+
+      const juan: JuanRow = {
+        ...juanInfo,
+        content_simplified: contentResult[0].content_simplified
+      }
+
       const chunkCount = await processJuan(juan)
       totalChunks += chunkCount
       processedJuans++
@@ -144,13 +165,13 @@ async function main() {
       if (processedJuans % 100 === 0) {
         const elapsed = (Date.now() - startTime) / 1000
         const rate = processedJuans / elapsed
-        const remaining = (juans.length - processedJuans) / rate
-        console.log(`\n进度: ${processedJuans}/${juans.length} (${(processedJuans/juans.length*100).toFixed(1)}%)`)
+        const remaining = (juanList.length - processedJuans) / rate
+        console.log(`\n进度: ${processedJuans}/${juanList.length} (${(processedJuans/juanList.length*100).toFixed(1)}%)`)
         console.log(`已用时: ${elapsed.toFixed(0)}s, 预计剩余: ${remaining.toFixed(0)}s`)
         console.log(`总块数: ${totalChunks}, 总tokens: ${totalTokens}\n`)
       }
     } catch (error) {
-      console.error(`处理 ${juan.text_id} 第${juan.juan}卷 失败:`, error)
+      console.error(`处理 ${juanInfo.text_id} 第${juanInfo.juan}卷 失败:`, error)
     }
   }
 
@@ -166,6 +187,31 @@ async function main() {
   console.log(`总tokens: ${totalTokens.toLocaleString()}`)
   console.log(`预估成本: $${estimatedCost.toFixed(4)}`)
   console.log(`总用时: ${totalTime.toFixed(1)}s`)
+
+  // 更新向量化状态表
+  if (!isDryRun && specificTextId && totalChunks > 0) {
+    const firstJuan = juans[0]
+    await db.execute(sql`
+      INSERT INTO text_embedding_status
+      (text_id, title, juan_count, chunk_count, token_count, estimated_cost, status)
+      VALUES (
+        ${specificTextId},
+        ${firstJuan.title},
+        ${firstJuan.juan_count},
+        ${totalChunks},
+        ${totalTokens},
+        ${estimatedCost},
+        'completed'
+      )
+      ON CONFLICT (text_id) DO UPDATE SET
+        chunk_count = EXCLUDED.chunk_count,
+        token_count = EXCLUDED.token_count,
+        estimated_cost = EXCLUDED.estimated_cost,
+        status = 'completed',
+        updated_at = CURRENT_TIMESTAMP
+    `)
+    console.log(`\n已更新 text_embedding_status 表`)
+  }
 }
 
 main().catch(console.error)
